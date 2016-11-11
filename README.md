@@ -1,0 +1,2 @@
+# ProjectWORDLE
+Bachelor's Thesis
