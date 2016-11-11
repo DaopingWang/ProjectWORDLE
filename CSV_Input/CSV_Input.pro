@@ -13,8 +13,10 @@ TEMPLATE = app
 
 
 SOURCES += main.cpp\
-        mainwindow.cpp
+        mainwindow.cpp \
+    csvreader.cpp
 
-HEADERS  += mainwindow.h
+HEADERS  += mainwindow.h \
+    csvreader.h
 
 FORMS    += mainwindow.ui
