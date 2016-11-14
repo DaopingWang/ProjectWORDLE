@@ -4,22 +4,35 @@ import com.opencsv.CSVReader;
 
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.List;
 
 /**
  * Created by wang.daoping on 11.11.2016.
  */
 public class CSVFileIO {
-    /*
-    public static List<String[]> getListFromCSV(String filename) throws IOException{
-        CSVReader reader = new CSVReader(new FileReader(filename), ',', '\'',1);
+    private static String filename = "H:/test.csv";
+    public static KeywordVertex[] keywordArray;
+    public static ProductVertex[] productArray;
+    public static int keywordEntries = 0;
+    public static int productEntries = 0;
 
-        return reader.readAll();
+    public static void createGraphFromCSV(String filename) throws IOException{
+        int index = 0;
+        String[] lineBuffer;
+        CSVReader reader = new CSVReader(new FileReader(CSVFileIO.filename), ',', '\'', 1);
+        while((lineBuffer = reader.readNext()) != null){
+            if(CSVFileIO.keywordEntries == 0){
+                keywordArray[CSVFileIO.keywordEntries] = new KeywordVertex(lineBuffer[0], lineBuffer[2]);
+            } else {
+                for( )
+            }
+        }
+
+
+
     }
-    */
-
-    public static String[] getLineFromCSV(String filename, int lineNum) throws IOException{
-        CSVReader reader = new CSVReader(new FileReader(filename), ',', '\'', lineNum);
+/*
+    private static String[] getLineFromCSV(int lineNum) throws IOException{
+        CSVReader reader = new CSVReader(new FileReader(CSVFileIO.filename), ',', '\'', lineNum);
         String[] nextLine;
         if ((nextLine = reader.readNext()) != null) {
             return nextLine;
@@ -27,14 +40,22 @@ public class CSVFileIO {
             return null;
         }
     }
+*/
+    public static void setFilename(String file) {
+        CSVFileIO.filename = file;
+    }
+
+    public static String getFilename() {
+        return CSVFileIO.filename;
+    }
 
     public static void main(String[] args) {
-        String CSVFile = "H:/test.csv";
+        CSVFileIO.setFilename("H:/Keyword_Graph.csv");
         String[] content;
         System.out.println("Loading CSV...");
-        for(int i = 0; ; i++) {
+        for(int i = 0; i<100 ; i++) {
             try {
-                content = CSVFileIO.getLineFromCSV(CSVFile, i);
+                content = CSVFileIO.getLineFromCSV(i);
                 if(content == null) {
                     break;
                 } else {
