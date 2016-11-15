@@ -15,14 +15,13 @@ public class CSVFileIO {
     public static int productEntries = 0;
 
     public static void createGraphFromCSV(String filename) throws IOException{
-        CSVFileIO.keywordArray = new KeywordVertex[10000];
+        CSVFileIO.keywordArray = new KeywordVertex[50000];
         String[] lineBuffer;
-        CSVReader reader = new CSVReader(new FileReader(CSVFileIO.filename), ',', '\'', 1);
-        while((lineBuffer = reader.readNext()) != null && CSVFileIO.keywordEntries < 1000){
+        CSVReader reader = new CSVReader(new FileReader(CSVFileIO.filename), ',', '\"', 1);
+        while((lineBuffer = reader.readNext()) != null && CSVFileIO.keywordEntries < 50000){
             if(CSVFileIO.keywordEntries == 0){
                 CSVFileIO.keywordArray[CSVFileIO.keywordEntries] = new KeywordVertex(lineBuffer[0], lineBuffer[1]);
                 CSVFileIO.keywordEntries += 1;
-                //System.out.println("Iteration " + CSVFileIO.keywordEntries);
             } else {
                 for(int i = 0; i < CSVFileIO.keywordEntries; i++){
                     if(CSVFileIO.keywordArray[i].name.equals(lineBuffer[0])){
@@ -30,9 +29,9 @@ public class CSVFileIO {
                         break;
                     }
                     if(i == CSVFileIO.keywordEntries - 1){
-                        CSVFileIO.keywordArray[CSVFileIO.keywordEntries] = new KeywordVertex(lineBuffer[0], lineBuffer[2]);
+                        CSVFileIO.keywordArray[CSVFileIO.keywordEntries] = new KeywordVertex(lineBuffer[0], lineBuffer[1]);
                         CSVFileIO.keywordEntries += 1;
-                        //System.out.println("Iteration " + CSVFileIO.keywordEntries);
+                        System.out.println(i + ". Keyword: " + CSVFileIO.keywordArray[i].name);
                         break;
                     }
                 }
@@ -71,12 +70,11 @@ public class CSVFileIO {
             e.printStackTrace();
         }
         System.out.println("We have " + CSVFileIO.keywordEntries + " keywords.");
-        for(int i = 0; i < 1000; i++){
-            System.out.println(i + ". Keyword: " + CSVFileIO.keywordArray[i].name);
-        }
-        System.out.println(CSVFileIO.keywordArray[506].name + " has these parents: ");
-        for(int i = 0; i < CSVFileIO.keywordArray[506].parentNum; i++){
-            System.out.println(CSVFileIO.keywordArray[506].parent[i]);
+
+
+        System.out.println(CSVFileIO.keywordArray[40000].name + " has these parents: ");
+        for(int i = 0; i < CSVFileIO.keywordArray[40000].parentNum; i++){
+            System.out.println(CSVFileIO.keywordArray[40000].parent[i]);
         }
 
         /*
