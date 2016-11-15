@@ -1,7 +1,6 @@
 package DataBackend;
 
 import com.opencsv.CSVReader;
-
 import java.io.FileReader;
 import java.io.IOException;
 
@@ -9,21 +8,34 @@ import java.io.IOException;
  * Created by wang.daoping on 11.11.2016.
  */
 public class CSVFileIO {
-    private static String filename = "H:/test.csv";
+    private static String filename;
     public static KeywordVertex[] keywordArray;
     public static ProductVertex[] productArray;
     public static int keywordEntries = 0;
     public static int productEntries = 0;
 
     public static void createGraphFromCSV(String filename) throws IOException{
-        int index = 0;
+        CSVFileIO.keywordArray = new KeywordVertex[10000];
         String[] lineBuffer;
         CSVReader reader = new CSVReader(new FileReader(CSVFileIO.filename), ',', '\'', 1);
-        while((lineBuffer = reader.readNext()) != null){
+        while((lineBuffer = reader.readNext()) != null && CSVFileIO.keywordEntries < 1000){
             if(CSVFileIO.keywordEntries == 0){
-                keywordArray[CSVFileIO.keywordEntries] = new KeywordVertex(lineBuffer[0], lineBuffer[2]);
+                CSVFileIO.keywordArray[CSVFileIO.keywordEntries] = new KeywordVertex(lineBuffer[0], lineBuffer[1]);
+                CSVFileIO.keywordEntries += 1;
+                //System.out.println("Iteration " + CSVFileIO.keywordEntries);
             } else {
-                for( )
+                for(int i = 0; i < CSVFileIO.keywordEntries; i++){
+                    if(CSVFileIO.keywordArray[i].name.equals(lineBuffer[0])){
+                        CSVFileIO.keywordArray[i].setParent(lineBuffer[1]);
+                        break;
+                    }
+                    if(i == CSVFileIO.keywordEntries - 1){
+                        CSVFileIO.keywordArray[CSVFileIO.keywordEntries] = new KeywordVertex(lineBuffer[0], lineBuffer[2]);
+                        CSVFileIO.keywordEntries += 1;
+                        //System.out.println("Iteration " + CSVFileIO.keywordEntries);
+                        break;
+                    }
+                }
             }
         }
 
@@ -50,9 +62,24 @@ public class CSVFileIO {
     }
 
     public static void main(String[] args) {
-        CSVFileIO.setFilename("H:/Keyword_Graph.csv");
+        CSVFileIO.setFilename("C:/Users/wang.daoping/Documents/Keyword_Graph.csv");
         String[] content;
         System.out.println("Loading CSV...");
+        try{
+            CSVFileIO.createGraphFromCSV(CSVFileIO.filename);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        System.out.println("We have " + CSVFileIO.keywordEntries + " keywords.");
+        for(int i = 0; i < 1000; i++){
+            System.out.println(i + ". Keyword: " + CSVFileIO.keywordArray[i].name);
+        }
+        System.out.println(CSVFileIO.keywordArray[506].name + " has these parents: ");
+        for(int i = 0; i < CSVFileIO.keywordArray[506].parentNum; i++){
+            System.out.println(CSVFileIO.keywordArray[506].parent[i]);
+        }
+
+        /*
         for(int i = 0; i<100 ; i++) {
             try {
                 content = CSVFileIO.getLineFromCSV(i);
@@ -68,6 +95,7 @@ public class CSVFileIO {
                 e.getStackTrace();
             }
         }
+        */
 
     }
 

@@ -8,26 +8,28 @@ public abstract class Vertex {
     public double[] weight;
     public short[] pathLength;
     public String name;
-
-
+    public int parentNum;
 
     public Vertex(String inputName, String inputParent){
+        this.parentNum = 0;
+        this.parent = new String[20];
         this.setName(inputName);
-        if(!this.parentExist(inputParent)){
-            this.setParent(inputParent, this.parent.length);
-        }
+        this.setParent(inputParent);
     }
 
     public void setName(String inputName){
         this.name = inputName;
     }
 
-    public void setParent(String inputParent, int i){
-        this.parent[i] = inputParent;
+    public void setParent(String inputParent){
+        if (!this.parentExist(inputParent)) {
+            this.parent[this.parentNum] = inputParent;
+            this.parentNum += 1;
+        }
     }
 
     private boolean parentExist(String inputParent){
-        for(int i = 0; i < this.parent.length; i++){
+        for(int i = 0; i < this.parentNum; i++){
             if(inputParent.equals(this.parent[i])){
                 return true;
             }
