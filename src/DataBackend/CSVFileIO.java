@@ -7,6 +7,11 @@ import java.io.IOException;
 /**
  * Created by wang.daoping on 11.11.2016.
  */
+
+/**
+ * read data from .csv files and hold them in an array of Vertex objects.
+ * If needed, .csv output should also be implemented in this class.
+ */
 public class CSVFileIO {
     private static String filename;
     public static KeywordVertex[] keywordArray;
