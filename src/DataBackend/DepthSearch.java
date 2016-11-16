@@ -18,6 +18,7 @@ public class DepthSearch {
             for(int j = 0; j < CSVFileIO.keywordEntries; j++){
                 if(vertex.parent[i].equals(CSVFileIO.keywordArray[j].name)){    // This is a must!
                     v = CSVFileIO.keywordArray[j];
+                    break;
                 }
             }
             for(int z = 0; z < CSVFileIO.keywordEntries; z++){
@@ -40,7 +41,7 @@ public class DepthSearch {
                     }
                 }
             }
-            vertex.pathLength[i] = discoveredDepth;
+            vertex.pathLength[i] = discoveredDepth + 1;
         }
     }
 }

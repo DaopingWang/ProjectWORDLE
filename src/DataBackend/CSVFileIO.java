@@ -20,10 +20,10 @@ public class CSVFileIO {
     public static int productEntries = 0;
 
     public static void createGraphFromCSV(String filename) throws IOException{
-        CSVFileIO.keywordArray = new KeywordVertex[20000];
+        CSVFileIO.keywordArray = new KeywordVertex[50000];
         String[] lineBuffer;
         CSVReader reader = new CSVReader(new FileReader(CSVFileIO.filename), ',', '\"', 1);
-        while((lineBuffer = reader.readNext()) != null && CSVFileIO.keywordEntries < 20000){
+        while((lineBuffer = reader.readNext()) != null && CSVFileIO.keywordEntries < 50000){
             if(CSVFileIO.keywordEntries == 0){
                 CSVFileIO.keywordArray[CSVFileIO.keywordEntries] = new KeywordVertex(lineBuffer[0], lineBuffer[1]);
                 CSVFileIO.keywordEntries += 1;
@@ -56,7 +56,7 @@ public class CSVFileIO {
     }
 
     public static void main(String[] args) {
-        int testKeyword = 10000;
+        int testKeyword = 29980;
         CSVFileIO.setFilename("C:/Users/wang.daoping/Documents/Keyword_Graph.csv");
         String[] content;
         System.out.println("Loading CSV...");
@@ -68,10 +68,17 @@ public class CSVFileIO {
         System.out.println("We have " + CSVFileIO.keywordEntries + " keywords.");
 
 
-        System.out.println(CSVFileIO.keywordArray[testKeyword].name + " has these parents: ");
+        System.out.println(testKeyword + ". keyword " + CSVFileIO.keywordArray[testKeyword].name + " has these parents: ");
         for(int i = 0; i < CSVFileIO.keywordArray[testKeyword].parentNum; i++){
-            System.out.println(CSVFileIO.keywordArray[testKeyword].parent[i]);
+            for(int j = 0; j < CSVFileIO.keywordEntries;j++){
+                if(CSVFileIO.keywordArray[j].name.equals(CSVFileIO.keywordArray[testKeyword].parent[i])){
+                    System.out.print(j + ". keyword: ");
+                }
+            }
+            System.out.print(CSVFileIO.keywordArray[testKeyword].parent[i]);
+            System.out.println();
         }
+        System.out.println();
         System.out.println("And these lengths:");
         DepthSearch.findDepthFor(CSVFileIO.keywordArray[testKeyword]);
         for(int i = 0; i < CSVFileIO.keywordArray[testKeyword].parentNum; i++){
