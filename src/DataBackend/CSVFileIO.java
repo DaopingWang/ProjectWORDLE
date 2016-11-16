@@ -20,10 +20,10 @@ public class CSVFileIO {
     public static int productEntries = 0;
 
     public static void createGraphFromCSV(String filename) throws IOException{
-        CSVFileIO.keywordArray = new KeywordVertex[50000];
+        CSVFileIO.keywordArray = new KeywordVertex[20000];
         String[] lineBuffer;
         CSVReader reader = new CSVReader(new FileReader(CSVFileIO.filename), ',', '\"', 1);
-        while((lineBuffer = reader.readNext()) != null && CSVFileIO.keywordEntries < 50000){
+        while((lineBuffer = reader.readNext()) != null && CSVFileIO.keywordEntries < 20000){
             if(CSVFileIO.keywordEntries == 0){
                 CSVFileIO.keywordArray[CSVFileIO.keywordEntries] = new KeywordVertex(lineBuffer[0], lineBuffer[1]);
                 CSVFileIO.keywordEntries += 1;
@@ -36,27 +36,17 @@ public class CSVFileIO {
                     if(i == CSVFileIO.keywordEntries - 1){
                         CSVFileIO.keywordArray[CSVFileIO.keywordEntries] = new KeywordVertex(lineBuffer[0], lineBuffer[1]);
                         CSVFileIO.keywordEntries += 1;
-                        System.out.println(i + ". Keyword: " + CSVFileIO.keywordArray[i].name);
+                        //System.out.println(i + ". Keyword: " + CSVFileIO.keywordArray[i].name);
                         break;
                     }
                 }
             }
         }
-
-
-
-    }
-/*
-    private static String[] getLineFromCSV(int lineNum) throws IOException{
-        CSVReader reader = new CSVReader(new FileReader(CSVFileIO.filename), ',', '\'', lineNum);
-        String[] nextLine;
-        if ((nextLine = reader.readNext()) != null) {
-            return nextLine;
-        } else {
-            return null;
+        for(int q = 0; q < CSVFileIO.keywordEntries; q++){
+            CSVFileIO.keywordArray[q].pathLength = new int[CSVFileIO.keywordArray[q].parentNum];
         }
     }
-*/
+
     public static void setFilename(String file) {
         CSVFileIO.filename = file;
     }
@@ -66,6 +56,7 @@ public class CSVFileIO {
     }
 
     public static void main(String[] args) {
+        int testKeyword = 10000;
         CSVFileIO.setFilename("C:/Users/wang.daoping/Documents/Keyword_Graph.csv");
         String[] content;
         System.out.println("Loading CSV...");
@@ -77,11 +68,15 @@ public class CSVFileIO {
         System.out.println("We have " + CSVFileIO.keywordEntries + " keywords.");
 
 
-        System.out.println(CSVFileIO.keywordArray[40000].name + " has these parents: ");
-        for(int i = 0; i < CSVFileIO.keywordArray[40000].parentNum; i++){
-            System.out.println(CSVFileIO.keywordArray[40000].parent[i]);
+        System.out.println(CSVFileIO.keywordArray[testKeyword].name + " has these parents: ");
+        for(int i = 0; i < CSVFileIO.keywordArray[testKeyword].parentNum; i++){
+            System.out.println(CSVFileIO.keywordArray[testKeyword].parent[i]);
         }
-
+        System.out.println("And these lengths:");
+        DepthSearch.findDepthFor(CSVFileIO.keywordArray[testKeyword]);
+        for(int i = 0; i < CSVFileIO.keywordArray[testKeyword].parentNum; i++){
+            System.out.println(CSVFileIO.keywordArray[testKeyword].pathLength[i]);
+        }
         /*
         for(int i = 0; i<100 ; i++) {
             try {
