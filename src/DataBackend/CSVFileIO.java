@@ -36,7 +36,7 @@ public class CSVFileIO {
                     if(i == CSVFileIO.keywordEntries - 1){
                         CSVFileIO.keywordArray[CSVFileIO.keywordEntries] = new KeywordVertex(lineBuffer[0], lineBuffer[1]);
                         CSVFileIO.keywordEntries += 1;
-                        //System.out.println(i + ". Keyword: " + CSVFileIO.keywordArray[i].name);
+                        System.out.println(i + ". Keyword: " + CSVFileIO.keywordArray[i].name);
                         break;
                     }
                 }
@@ -56,7 +56,7 @@ public class CSVFileIO {
     }
 
     public static void main(String[] args) {
-        int testKeyword = 29980;
+        int testKeyword = 32003;
         CSVFileIO.setFilename("C:/Users/wang.daoping/Documents/Keyword_Graph.csv");
         String[] content;
         System.out.println("Loading CSV...");
@@ -72,18 +72,19 @@ public class CSVFileIO {
         for(int i = 0; i < CSVFileIO.keywordArray[testKeyword].parentNum; i++){
             for(int j = 0; j < CSVFileIO.keywordEntries;j++){
                 if(CSVFileIO.keywordArray[j].name.equals(CSVFileIO.keywordArray[testKeyword].parent[i])){
-                    System.out.print(j + ". keyword: ");
+                    System.out.print(j + ". keyword ");
                 }
             }
             System.out.print(CSVFileIO.keywordArray[testKeyword].parent[i]);
             System.out.println();
         }
         System.out.println();
-        System.out.println("And these lengths:");
+        System.out.println("And these lengths: ");
         DepthSearch.findDepthFor(CSVFileIO.keywordArray[testKeyword]);
         for(int i = 0; i < CSVFileIO.keywordArray[testKeyword].parentNum; i++){
             System.out.println(CSVFileIO.keywordArray[testKeyword].pathLength[i]);
         }
+
         /*
         for(int i = 0; i<100 ; i++) {
             try {
