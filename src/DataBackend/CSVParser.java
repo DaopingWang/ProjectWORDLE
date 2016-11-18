@@ -1,9 +1,10 @@
 package DataBackend;
 
 import com.opencsv.CSVReader;
-import org.omg.Messaging.SYNC_WITH_TRANSPORT;
+import com.opencsv.CSVWriter;
 
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 
 /**
@@ -20,6 +21,7 @@ public class CSVParser {
     public static ProductVertex[] productArray;
     public static int keywordEntries = 0;
     public static int productEntries = 0;
+    public static int maxLayer = 0;
 
     public static void createGraphFromCSV(String filename) throws IOException{
         CSVParser.keywordArray = new KeywordVertex[42000];
@@ -50,11 +52,34 @@ public class CSVParser {
         }
     }
 
+    public static void createCSVLayersFromGraph(String filepath) throws IOException{
+        String filename;
+        for(int i = 0; i < CSVParser.maxLayer; i++){
+            filename = filepath + "layer" + i + ".csv";
+            CSVWriter writer = new CSVWriter(new FileWriter(filename));
+            for(int j = 0; j < CSVParser.keywordEntries; j++){
+                if(CSVParser.keywordArray[j].layer == i){
+                    String lineBuffer = CSVParser.keywordArray[j].name + ",";
+                    for(int k = 0; k < CSVParser.keywordArray[j].dominantChildNum && i != CSVParser.maxLayer; k++){
+                        lineBuffer += CSVParser.keywordArray[j].dominantChild[k] + ",";
+                    }
+                    lineBuffer += "fin";
+                    String[] record = lineBuffer.split(",");
+                    writer.writeNext(record);
+                }
+            }
+            writer.close();
+        }
+
+    }
+
     public static void updateWeight(int vertex){
         for(int j = 0; j < CSVParser.keywordArray[vertex].parentNum; j++){
-            for(int k = 0; k < CSVParser.keywordArray[vertex].pathLength[j]; k++){
-                CSVParser.keywordArray[vertex].weight[j] += Math.pow(0.5, (double) k);
-            }
+            CSVParser.keywordArray[vertex].weight[j] = Math.pow(0.5, (double) CSVParser.keywordArray[vertex].pathLength[j]);
+
+            //for(int k = 0; k < CSVParser.keywordArray[vertex].pathLength[j]; k++){
+            //    CSVParser.keywordArray[vertex].weight[j] += Math.pow(0.5, (double) k);
+            //}
             CSVParser.keywordArray[vertex].weight[j] += 0.2 * (double) (CSVParser.keywordArray[vertex].pathLength[j] - 1);
         }
     }
@@ -74,8 +99,25 @@ public class CSVParser {
         }
     }
 
+    public static void assignDominantChildren(int vertex){
+        for(int i = 0; i < CSVParser.keywordArray[vertex].parentNum; i++){
+            if(CSVParser.keywordArray[vertex].pathLength[i] == CSVParser.keywordArray[vertex].layer && CSVParser.findVertexForName(CSVParser.keywordArray[vertex].parent[i]) != null){
+                CSVParser.findVertexForName(CSVParser.keywordArray[vertex].parent[i]).setDominantChild(CSVParser.keywordArray[vertex].name);
+            }
+        }
+    }
+
     public static void setFilename(String file) {
         CSVParser.filename = file;
+    }
+
+    public static KeywordVertex findVertexForName(String inputName){
+        for(int i = 0; i < CSVParser.keywordEntries; i++){
+            if(CSVParser.keywordArray[i].name.equals(inputName)){
+                return CSVParser.keywordArray[i];
+            }
+        }
+        return null;
     }
 
     public static int processPercentage(int i, int count){
@@ -87,7 +129,7 @@ public class CSVParser {
     }
 
     public static void main(String[] args) {
-        int testKeyword = 22940;
+        int testKeyword = 12940;
         CSVParser.setFilename("C:/Users/wang.daoping/Documents/Keyword_Graph.csv");
         String[] content;
         System.out.println("Loading CSV...");
@@ -134,6 +176,7 @@ public class CSVParser {
         // After CSV reading, depth calculation and weight updates, start finding out the root keywords and assign children.
         for(int i = 0; i < CSVParser.keywordEntries; i++){
             CSVParser.assignChildren(i);
+            CSVParser.assignDominantChildren(i);
             if((percentage = CSVParser.processPercentage(i, CSVParser.keywordEntries)) != 0){
                 System.out.println("Assigning children... " + percentage + "% done");
             }
@@ -149,8 +192,18 @@ public class CSVParser {
         System.out.println("Root keywords are :");
         for(int i= 0; i < CSVParser.keywordEntries; i++){
             if(CSVParser.keywordArray[i].isRootKeyword){
-                System.out.println(CSVParser.keywordArray[i].name + " in layer " + CSVParser.keywordArray[i].layer);
+                System.out.print(CSVParser.keywordArray[i].name + " in layer " + CSVParser.keywordArray[i].layer + " with dominant children : ");
+                for(int j = 0; j < CSVParser.keywordArray[i].dominantChildNum; j++){
+                    System.out.print(CSVParser.keywordArray[i].dominantChild[j] );
+                }
+                System.out.println();
             }
+        }
+
+        try{
+            CSVParser.createCSVLayersFromGraph("C:/Users/wang.daoping/Documents/layers/");
+        } catch(IOException e){
+            e.printStackTrace();
         }
     }
 

@@ -53,6 +53,9 @@ public abstract class Vertex {
 
     public void setLayer(int inputLayer){
         this.layer = inputLayer;
+        if(inputLayer > CSVParser.maxLayer){
+            CSVParser.maxLayer = inputLayer;
+        }
     }
 
     public boolean noLayerSet(){

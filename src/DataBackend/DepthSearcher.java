@@ -85,6 +85,7 @@ public class DepthSearcher {
 
             // Longest path found after all possible ways discovered.
             vertex.pathLength[i] = discoveredDepth + 1;
+            vertex.setLayer(vertex.pathLength[i]);
 
             // Update layer of current node's parent.
             if(CSVParser.keywordArray[currentKeyword].noLayerSet()){

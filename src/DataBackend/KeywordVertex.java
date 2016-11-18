@@ -16,7 +16,9 @@ public class KeywordVertex extends Vertex {
 
     public String[] loopCheckArray;
     public String[] child;
+    public String[] dominantChild;
     public int childNum;
+    public int dominantChildNum;
     public int loopCheckArrayNum;
     public boolean isRootKeyword;
 
@@ -25,9 +27,11 @@ public class KeywordVertex extends Vertex {
         this.parentNum = 0;
         this.parent = new String[20];
         this.loopCheckArray = new String[20];
-        this.child = new String[4000];
+        this.child = new String[3500];
+        this.dominantChild = new String[3000];
         this.loopCheckArrayNum = 0;
         this.childNum = 0;
+        this.dominantChildNum = 0;
         this.isRootKeyword = false;
         this.setName(inputName);
         this.setParent(inputParent);
@@ -50,6 +54,11 @@ public class KeywordVertex extends Vertex {
     public void setChild(String inputChild){
         this.child[childNum] = inputChild;
         this.childNum += 1;
+    }
+
+    public void setDominantChild(String inputDominantChild){
+        this.dominantChild[dominantChildNum] = inputDominantChild;
+        this.dominantChildNum += 1;
     }
 
     /**
