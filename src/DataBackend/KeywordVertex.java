@@ -18,16 +18,17 @@ public class KeywordVertex extends Vertex {
     public String[] child;
     public int childNum;
     public int loopCheckArrayNum;
-    public int level;
+    public boolean isRootKeyword;
 
     public KeywordVertex(String inputName, String inputParent){
         super();
         this.parentNum = 0;
         this.parent = new String[20];
         this.loopCheckArray = new String[20];
-        this.child = new String[1000];
+        this.child = new String[4000];
         this.loopCheckArrayNum = 0;
         this.childNum = 0;
+        this.isRootKeyword = false;
         this.setName(inputName);
         this.setParent(inputParent);
     }
@@ -49,10 +50,6 @@ public class KeywordVertex extends Vertex {
     public void setChild(String inputChild){
         this.child[childNum] = inputChild;
         this.childNum += 1;
-    }
-
-    public void setLevel(int inputLevel){
-        this.level = inputLevel;
     }
 
     /**

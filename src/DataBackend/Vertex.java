@@ -30,11 +30,17 @@ public abstract class Vertex {
     public int tempLayer;
 
     /**
+     * in which a vertex is located in the graph.
+     */
+    public int layer;
+
+    /**
      * The default constructor initiate attributes in order to avoid null pointer exceptions.
      */
     public Vertex(){
         this.weight = new double[20];
         this.tempLayer = 0;
+        this.layer = -1;
     }
 
     /**
@@ -43,5 +49,16 @@ public abstract class Vertex {
      */
     protected void setName(String inputName){
         this.name = inputName;
+    }
+
+    public void setLayer(int inputLayer){
+        this.layer = inputLayer;
+    }
+
+    public boolean noLayerSet(){
+        if(this.layer == -1){
+            return true;
+        }
+        return false;
     }
 }

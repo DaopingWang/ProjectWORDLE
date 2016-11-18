@@ -16,20 +16,17 @@ import java.io.IOException;
  */
 public class CSVParser {
     private static String filename;
-    public static RootKeywordVertex[] rootKeywordArray;
     public static KeywordVertex[] keywordArray;
     public static ProductVertex[] productArray;
-    public static int rootKeywordEntries = 0;
     public static int keywordEntries = 0;
     public static int productEntries = 0;
 
     public static void createGraphFromCSV(String filename) throws IOException{
-        CSVParser.rootKeywordArray = new RootKeywordVertex[100];
-        CSVParser.keywordArray = new KeywordVertex[50000];
-        CSVParser.productArray = new ProductVertex[50000];
+        CSVParser.keywordArray = new KeywordVertex[42000];
+        CSVParser.productArray = new ProductVertex[10000];
         String[] lineBuffer;
         CSVReader reader = new CSVReader(new FileReader(CSVParser.filename), ',', '\"', 1);
-        while((lineBuffer = reader.readNext()) != null && CSVParser.keywordEntries < 50000){
+        while((lineBuffer = reader.readNext()) != null && CSVParser.keywordEntries < 42000){
             if(CSVParser.keywordEntries == 0){
                 CSVParser.keywordArray[CSVParser.keywordEntries] = new KeywordVertex(lineBuffer[0], lineBuffer[1]);
                 CSVParser.keywordEntries += 1;
@@ -65,18 +62,14 @@ public class CSVParser {
     public static void assignChildren(int vertex){
         for(int i = 0; i < CSVParser.keywordArray[vertex].parentNum; i++){
             for(int j = 0; j < CSVParser.keywordEntries; j++){
+                if(CSVParser.keywordArray[vertex].parent[i].equals("Mercateo")){
+                    CSVParser.keywordArray[vertex].isRootKeyword = true;
+                    break;
+                }
                 if(CSVParser.keywordArray[vertex].parent[i].equals(CSVParser.keywordArray[j].name) && !CSVParser.keywordArray[j].childExists(CSVParser.keywordArray[vertex].name)){
                     CSVParser.keywordArray[j].setChild(CSVParser.keywordArray[vertex].name);
                     break;
                 }
-                for(int k = 0; k < CSVParser.rootKeywordEntries; k++){
-                    if(CSVParser.rootKeywordArray[k].name.equals(CSVParser.keywordArray[vertex].parent[i])){
-                        CSVParser.rootKeywordArray[k].setChild(CSVParser.keywordArray[vertex].name);
-                        break;
-                    }
-                }
-                CSVParser.rootKeywordArray[rootKeywordEntries] = new RootKeywordVertex(CSVParser.keywordArray[vertex].parent[i], CSVParser.keywordArray[vertex].name);
-                CSVParser.rootKeywordEntries += 1;
             }
         }
     }
@@ -98,6 +91,8 @@ public class CSVParser {
         CSVParser.setFilename("C:/Users/wang.daoping/Documents/Keyword_Graph.csv");
         String[] content;
         System.out.println("Loading CSV...");
+
+        // Pass the .csv file to createGraphFromCSV
         try{
             CSVParser.createGraphFromCSV(CSVParser.filename);
         } catch (IOException e) {
@@ -123,6 +118,7 @@ public class CSVParser {
         System.out.println("Start graph parsing...");
         int percentage;
 
+        // For each iteration, find a vertex's depth and update it's weight.
         for(int i = 0; i < CSVParser.keywordEntries; i++){
             DepthSearcher.findDepthFor(CSVParser.keywordArray[i]);
             CSVParser.updateWeight(i);
@@ -130,7 +126,12 @@ public class CSVParser {
                 System.out.println("Calculating depth... " + percentage + "% done... Be patient");
             }
         }
+        System.out.println("====================================================");
+        System.out.println("Depth calculation done");
+        System.out.println("====================================================");
+        System.out.println();
 
+        // After CSV reading, depth calculation and weight updates, start finding out the root keywords and assign children.
         for(int i = 0; i < CSVParser.keywordEntries; i++){
             CSVParser.assignChildren(i);
             if((percentage = CSVParser.processPercentage(i, CSVParser.keywordEntries)) != 0){
@@ -146,27 +147,11 @@ public class CSVParser {
         }
 
         System.out.println("Root keywords are :");
-        for(int i= 0; i < CSVParser.rootKeywordEntries; i++){
-            System.out.println(CSVParser.rootKeywordArray[i].name);
-        }
-        /*
-        for(int i = 0; i<100 ; i++) {
-            try {
-                content = CSVParser.getLineFromCSV(i);
-                if(content == null) {
-                    break;
-                } else {
-                    for(int j = 0; j < content.length; j++){
-                        System.out.print(content[j] + ",");
-                    }
-                    System.out.println();
-                }
-            } catch (IOException e){
-                e.getStackTrace();
+        for(int i= 0; i < CSVParser.keywordEntries; i++){
+            if(CSVParser.keywordArray[i].isRootKeyword){
+                System.out.println(CSVParser.keywordArray[i].name + " in layer " + CSVParser.keywordArray[i].layer);
             }
         }
-        */
-
     }
 
 }

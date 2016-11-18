@@ -15,19 +15,33 @@ public class DepthSearcher {
     public static void findDepthFor(KeywordVertex vertex){
         Queue<KeywordVertex> queue = new LinkedList<>();
         int discoveredDepth;
+        int currentKeyword;
+        boolean skipIteration;
 
         KeywordVertex v = vertex;
 
         // For each iteration, pick one of vertex's parents, find it's depth with modified breadth first search.
         for(int i = 0; i < vertex.parentNum; i++){
             discoveredDepth = 0;
+            currentKeyword = 0;
+            skipIteration = false;
 
             // Find the Vertex object that matches vertex.parent[i], refer it with v.
+            // If no match found (meaning current parent is a root keyword), tag discoveredDepth and currentKeyword with -1.
             for(int j = 0; j < CSVParser.keywordEntries; j++){
                 if(vertex.parent[i].equals(CSVParser.keywordArray[j].name)){    // This is a must!
                     v = CSVParser.keywordArray[j];
+                    currentKeyword = j;                                         // This is a must too!
                     break;
                 }
+                if(j == CSVParser.keywordEntries - 1){
+                    skipIteration = true;
+                }
+            }
+
+            // If tagged, skip this iteration.
+            if(skipIteration){
+                continue;
             }
 
             // Initialize/reset tempLayer attribute of vertices.
@@ -71,11 +85,16 @@ public class DepthSearcher {
 
             // Longest path found after all possible ways discovered.
             vertex.pathLength[i] = discoveredDepth + 1;
+
+            // Update layer of current node's parent.
+            if(CSVParser.keywordArray[currentKeyword].noLayerSet()){
+                CSVParser.keywordArray[currentKeyword].setLayer(vertex.pathLength[i] - 1);
+            }
         }
     }
 
     /**
-     * checks if an edge has already been traversed by comparing given loopCheckArray vertex with parent's loopCheckArray array
+     * checks if an edge has already been traversed by comparing given child vertex with parent's loopCheckArray.
      * @param child given child vertex
      * @param parent has a loopCheckArray which holds all children who have already visited him.
      * @return true if child already visited (parent won't be enqueued again, looping avoided); returns false and adds the child into loopCheckArray if no duplicate found.
