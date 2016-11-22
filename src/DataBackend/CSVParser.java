@@ -2,6 +2,7 @@ package DataBackend;
 
 import com.opencsv.CSVReader;
 import com.opencsv.CSVWriter;
+import com.sun.xml.internal.ws.policy.privateutil.PolicyUtils;
 
 import java.io.FileReader;
 import java.io.FileWriter;
@@ -63,14 +64,34 @@ public class CSVParser {
                     for(int k = 0; k < CSVParser.keywordArray[j].dominantChildNum && i != CSVParser.maxLayer; k++){
                         lineBuffer += CSVParser.keywordArray[j].dominantChild[k] + ",";
                     }
-                    lineBuffer += "fin";
+                    lineBuffer += "EOL";
                     String[] record = lineBuffer.split(",");
                     writer.writeNext(record);
                 }
             }
             writer.close();
         }
+    }
 
+    public static void createCSVAllFromGraph(String filepath) throws IOException{
+        String filename = filepath + "CSVOutput.csv";
+        CSVWriter writer = new CSVWriter(new FileWriter(filename));
+        String buffer = Integer.toString(CSVParser.keywordEntries) + "," + Integer.toString(CSVParser.maxLayer) + ",EOL";
+        String[] rc = buffer.split(",");
+        writer.writeNext(rc);
+        for(int i = 0; i < CSVParser.keywordEntries;i++){
+            String linebuffer = CSVParser.keywordArray[i] + "," + Integer.toString(CSVParser.keywordArray[i].layer) + "," + Integer.toString(CSVParser.keywordArray[i].parentNum) + ",";
+            for(int j = 0; j < CSVParser.keywordArray[i].parentNum; j++){
+                linebuffer += CSVParser.keywordArray[i].parent[j] + ",";
+            }
+            for(int j = 0; j < CSVParser.keywordArray[i].parentNum; j++){
+                linebuffer += Integer.toString(CSVParser.keywordArray[i].pathLength[j]) + ",";
+            }
+            linebuffer += "EOL";
+            String[] record = linebuffer.split(",");
+            writer.writeNext(record);
+        }
+        writer.close();
     }
 
     public static void updateWeight(int vertex){
@@ -201,7 +222,7 @@ public class CSVParser {
         }
 
         try{
-            CSVParser.createCSVLayersFromGraph("C:/Users/wang.daoping/Documents/layers/");
+            CSVParser.createCSVAllFromGraph("C:/Users/wang.daoping/Documents/");
         } catch(IOException e){
             e.printStackTrace();
         }
