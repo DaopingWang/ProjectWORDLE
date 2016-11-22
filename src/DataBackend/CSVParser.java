@@ -31,6 +31,7 @@ public class CSVParser {
         CSVParser.keywordArray = new KeywordVertex[42000];
         CSVParser.productArray = new ProductVertex[10000];
         String[] lineBuffer;
+        int percentage;
         CSVReader reader = new CSVReader(new InputStreamReader(new FileInputStream(CSVParser.filename), "Cp1252"), ',', '\"', 1);
         while((lineBuffer = reader.readNext()) != null && CSVParser.keywordEntries < 42000){
             if(CSVParser.keywordEntries == 0){
@@ -54,6 +55,19 @@ public class CSVParser {
         for(int q = 0; q < CSVParser.keywordEntries; q++){
             CSVParser.keywordArray[q].pathLength = new int[CSVParser.keywordArray[q].parentNum];
         }
+
+        System.out.println("Start graph parsing...");
+        // For each iteration, find a vertex's depth and update it's weight.
+        for(int i = 0; i < CSVParser.keywordEntries; i++){
+            DepthSearcher.findDepthFor(CSVParser.keywordArray[i]);
+            CSVParser.updateWeight(i);
+            if((percentage = CSVParser.processPercentage(i, CSVParser.keywordEntries)) != 0){
+                System.out.println("Calculating depth... " + percentage + "% done... Be patient");
+            }
+        }
+        System.out.println("====================================================");
+        System.out.println("Depth calculation done");
+        System.out.println("====================================================");
     }
 
     /**
@@ -114,7 +128,7 @@ public class CSVParser {
      * @param filepath is the saving path.
      * @throws IOException if path cannot be found.
      */
-    public static void createCSVAllFromGraph(String filepath) throws IOException{
+    public static void createParentCSVFromGraph(String filepath) throws IOException{
         Scanner scanner = new Scanner(System.in);
         System.out.println("Give the .csv file a name: ");
         String userInput = scanner.next();
@@ -215,41 +229,22 @@ public class CSVParser {
     public static void main(String[] args) {
         int testKeyword = 22465;
         CSVParser.setFilename("C:/Users/wang.daoping/Documents/Keyword_Graph.csv");
-        String[] content;
         System.out.println("Loading CSV...");
         int percentage;
 
         // Pass the .csv file to createGraphFromCSV
-/*
-        try{
-            CSVParser.createGraphFromCSV(CSVParser.filename);
+        /*try{
+            CSVParser.createGraphFromCSV("C:/Users/wang.daoping/Documents/Keyword_Graph.csv");
         } catch (IOException e) {
             e.printStackTrace();
         }
 
-        System.out.println("Start graph parsing...");
-
-        // For each iteration, find a vertex's depth and update it's weight.
-        for(int i = 0; i < CSVParser.keywordEntries; i++){
-            DepthSearcher.findDepthFor(CSVParser.keywordArray[i]);
-            CSVParser.updateWeight(i);
-            if((percentage = CSVParser.processPercentage(i, CSVParser.keywordEntries)) != 0){
-                System.out.println("Calculating depth... " + percentage + "% done... Be patient");
-            }
-        }
-        System.out.println("====================================================");
-        System.out.println("Depth calculation done");
-        System.out.println("====================================================");
-        System.out.println();
-        System.out.println("We have " + CSVParser.keywordEntries + " keywords.");
         */
-
         try{
-            CSVParser.createGraphFromCSVAll("C:/Users/wang.daoping/Documents/CSVALL.csv");
+            CSVParser.createGraphFromCSVAll("C:/Users/wang.daoping/Documents/layers/CSVALL.csv");
         } catch (IOException e){
             e.printStackTrace();
         }
-
 
         System.out.println(testKeyword + ". keyword " + CSVParser.keywordArray[testKeyword].name + " has these parents: ");
         System.out.println();
@@ -278,24 +273,25 @@ public class CSVParser {
             }
         }
 
-
         System.out.println("Root keywords are :");
         for(int i= 0; i < CSVParser.keywordEntries; i++){
             if(CSVParser.keywordArray[i].isRootKeyword){
                 System.out.print(CSVParser.keywordArray[i].name + " in layer " + CSVParser.keywordArray[i].layer + " with dominant children : ");
                 System.out.println();
                 for(int j = 0; j < CSVParser.keywordArray[i].dominantChildNum; j++){
-                    System.out.print(CSVParser.keywordArray[i].dominantChild[j] );
+                    System.out.print(CSVParser.keywordArray[i].dominantChild[j] + "; ");
                 }
                 System.out.println();
             }
         }
 
+        /*
         try{
             CSVParser.createCSVLayersFromGraph("C:/Users/wang.daoping/Documents/layers/");
         } catch(IOException e){
             e.printStackTrace();
         }
+        */
 
     }
 
