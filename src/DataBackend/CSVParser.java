@@ -2,11 +2,8 @@ package DataBackend;
 
 import com.opencsv.CSVReader;
 import com.opencsv.CSVWriter;
-import com.sun.xml.internal.ws.policy.privateutil.PolicyUtils;
 
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
 
 /**
  * Created by wang.daoping on 11.11.2016.
@@ -28,7 +25,7 @@ public class CSVParser {
         CSVParser.keywordArray = new KeywordVertex[42000];
         CSVParser.productArray = new ProductVertex[10000];
         String[] lineBuffer;
-        CSVReader reader = new CSVReader(new FileReader(CSVParser.filename), ',', '\"', 1);
+        CSVReader reader = new CSVReader(new InputStreamReader(new FileInputStream(CSVParser.filename), "Cp1252"), ',', '\"', 1);
         while((lineBuffer = reader.readNext()) != null && CSVParser.keywordEntries < 42000){
             if(CSVParser.keywordEntries == 0){
                 CSVParser.keywordArray[CSVParser.keywordEntries] = new KeywordVertex(lineBuffer[0], lineBuffer[1]);
@@ -53,11 +50,39 @@ public class CSVParser {
         }
     }
 
+    public static void createGraphFromCSVAll(String filename) throws IOException{
+        String[] lineBuffer;
+        CSVParser.keywordArray = new KeywordVertex[42000];
+        CSVReader reader = new CSVReader(new InputStreamReader(new FileInputStream(filename), "Cp1252"), ',', '\"', 0);
+        lineBuffer = reader.readNext();
+        CSVParser.keywordEntries = Integer.parseInt(lineBuffer[0]);
+        CSVParser.maxLayer = Integer.parseInt(lineBuffer[1]);
+        CSVParser.keywordArray = new KeywordVertex[CSVParser.keywordEntries];
+        int i = 0;
+
+        System.out.println("Start reading from CSVAll...");
+        while((lineBuffer = reader.readNext()) != null){
+            CSVParser.keywordArray[i] = new KeywordVertex();
+            CSVParser.keywordArray[i].setName(lineBuffer[0]);
+            CSVParser.keywordArray[i].setLayer(Integer.parseInt(lineBuffer[1]));
+            CSVParser.keywordArray[i].parentNum = Integer.parseInt(lineBuffer[2]);
+            CSVParser.keywordArray[i].pathLength = new int[CSVParser.keywordArray[i].parentNum];
+            for(int j = 3; j < CSVParser.keywordArray[i].parentNum + 3; j++){
+                CSVParser.keywordArray[i].parent[j - 3] = lineBuffer[j];
+            }
+            for(int j = 3 + CSVParser.keywordArray[i].parentNum; j < 3 + (CSVParser.keywordArray[i].parentNum * 2); j++){
+                CSVParser.keywordArray[i].pathLength[j - 3 - CSVParser.keywordArray[i].parentNum] = Integer.parseInt(lineBuffer[j]);
+            }
+            i += 1;
+        }
+
+    }
+
     public static void createCSVLayersFromGraph(String filepath) throws IOException{
         String filename;
         for(int i = 0; i < CSVParser.maxLayer; i++){
             filename = filepath + "layer" + i + ".csv";
-            CSVWriter writer = new CSVWriter(new FileWriter(filename));
+            CSVWriter writer = new CSVWriter(new OutputStreamWriter(new FileOutputStream(filename), "Cp1252"));
             for(int j = 0; j < CSVParser.keywordEntries; j++){
                 if(CSVParser.keywordArray[j].layer == i){
                     String lineBuffer = CSVParser.keywordArray[j].name + ",";
@@ -75,12 +100,12 @@ public class CSVParser {
 
     public static void createCSVAllFromGraph(String filepath) throws IOException{
         String filename = filepath + "CSVOutput.csv";
-        CSVWriter writer = new CSVWriter(new FileWriter(filename));
+        CSVWriter writer = new CSVWriter(new OutputStreamWriter(new FileOutputStream(filename), "Cp1252"));
         String buffer = Integer.toString(CSVParser.keywordEntries) + "," + Integer.toString(CSVParser.maxLayer) + ",EOL";
         String[] rc = buffer.split(",");
         writer.writeNext(rc);
-        for(int i = 0; i < CSVParser.keywordEntries;i++){
-            String linebuffer = CSVParser.keywordArray[i] + "," + Integer.toString(CSVParser.keywordArray[i].layer) + "," + Integer.toString(CSVParser.keywordArray[i].parentNum) + ",";
+        for(int i = 0; i < CSVParser.keywordEntries; i++){
+            String linebuffer = "\"" +  CSVParser.keywordArray[i].name + "\"," + Integer.toString(CSVParser.keywordArray[i].layer) + "," + Integer.toString(CSVParser.keywordArray[i].parentNum) + ",";
             for(int j = 0; j < CSVParser.keywordArray[i].parentNum; j++){
                 linebuffer += CSVParser.keywordArray[i].parent[j] + ",";
             }
@@ -88,7 +113,7 @@ public class CSVParser {
                 linebuffer += Integer.toString(CSVParser.keywordArray[i].pathLength[j]) + ",";
             }
             linebuffer += "EOL";
-            String[] record = linebuffer.split(",");
+            String[] record = linebuffer.split("\",\"");
             writer.writeNext(record);
         }
         writer.close();
@@ -150,36 +175,21 @@ public class CSVParser {
     }
 
     public static void main(String[] args) {
-        int testKeyword = 12940;
+        int testKeyword = 22465;
         CSVParser.setFilename("C:/Users/wang.daoping/Documents/Keyword_Graph.csv");
         String[] content;
         System.out.println("Loading CSV...");
+        int percentage;
 
         // Pass the .csv file to createGraphFromCSV
+
         try{
             CSVParser.createGraphFromCSV(CSVParser.filename);
         } catch (IOException e) {
             e.printStackTrace();
         }
-        System.out.println("====================================================");
-        System.out.println("We have " + CSVParser.keywordEntries + " keywords.");
 
-
-        System.out.println(testKeyword + ". keyword " + CSVParser.keywordArray[testKeyword].name + " has these parents: ");
-        System.out.println();
-        for(int i = 0; i < CSVParser.keywordArray[testKeyword].parentNum; i++){
-            for(int j = 0; j < CSVParser.keywordEntries; j++){
-                if(CSVParser.keywordArray[j].name.equals(CSVParser.keywordArray[testKeyword].parent[i])){
-                    System.out.print(j + ". keyword ");
-                }
-            }
-            System.out.print(CSVParser.keywordArray[testKeyword].parent[i]);
-            System.out.println();
-        }
-        System.out.println("====================================================");
-        System.out.println();
         System.out.println("Start graph parsing...");
-        int percentage;
 
         // For each iteration, find a vertex's depth and update it's weight.
         for(int i = 0; i < CSVParser.keywordEntries; i++){
@@ -193,6 +203,34 @@ public class CSVParser {
         System.out.println("Depth calculation done");
         System.out.println("====================================================");
         System.out.println();
+        System.out.println("We have " + CSVParser.keywordEntries + " keywords.");
+        /*
+
+        try{
+            CSVParser.createGraphFromCSVAll("C:/Users/wang.daoping/Documents/CSVOutput.csv");
+        } catch (IOException e){
+            e.printStackTrace();
+        }*/
+
+
+        System.out.println(testKeyword + ". keyword " + CSVParser.keywordArray[testKeyword].name + " has these parents: ");
+        System.out.println();
+        for(int i = 0; i < CSVParser.keywordArray[testKeyword].parentNum; i++){
+            for(int j = 0; j < CSVParser.keywordEntries; j++){
+                if(CSVParser.keywordArray[j].name.equals(CSVParser.keywordArray[testKeyword].parent[i])){
+                    System.out.print(j + ". keyword ");
+                }
+            }
+            System.out.print(CSVParser.keywordArray[testKeyword].parent[i]);
+            System.out.println();
+        }
+
+        System.out.println("And these lengths: ");
+        for(int i = 0; i < CSVParser.keywordArray[testKeyword].parentNum; i++){
+            System.out.print(CSVParser.keywordArray[testKeyword].pathLength[i] + " with weight == ");
+            System.out.print(CSVParser.keywordArray[testKeyword].weight[i]);
+            System.out.println();
+        }
 
         // After CSV reading, depth calculation and weight updates, start finding out the root keywords and assign children.
         for(int i = 0; i < CSVParser.keywordEntries; i++){
@@ -203,17 +241,12 @@ public class CSVParser {
             }
         }
 
-        System.out.println("And these lengths: ");
-        for(int i = 0; i < CSVParser.keywordArray[testKeyword].parentNum; i++){
-            System.out.print(CSVParser.keywordArray[testKeyword].pathLength[i] + " with weight == ");
-            System.out.print(CSVParser.keywordArray[testKeyword].weight[i]);
-            System.out.println();
-        }
 
         System.out.println("Root keywords are :");
         for(int i= 0; i < CSVParser.keywordEntries; i++){
             if(CSVParser.keywordArray[i].isRootKeyword){
                 System.out.print(CSVParser.keywordArray[i].name + " in layer " + CSVParser.keywordArray[i].layer + " with dominant children : ");
+                System.out.println();
                 for(int j = 0; j < CSVParser.keywordArray[i].dominantChildNum; j++){
                     System.out.print(CSVParser.keywordArray[i].dominantChild[j] );
                 }
