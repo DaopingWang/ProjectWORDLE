@@ -4,6 +4,7 @@ import com.opencsv.CSVReader;
 import com.opencsv.CSVWriter;
 
 import java.io.*;
+import java.util.Scanner;
 
 /**
  * Created by wang.daoping on 11.11.2016.
@@ -21,6 +22,11 @@ public class CSVParser {
     public static int productEntries = 0;
     public static int maxLayer = 0;
 
+    /**
+     * reads data from a raw .csv file, parses them by creating Vertex objects which hold the parsed information.
+     * @param filename is the file path.
+     * @throws IOException If file cannot be created.
+     */
     public static void createGraphFromCSV(String filename) throws IOException{
         CSVParser.keywordArray = new KeywordVertex[42000];
         CSVParser.productArray = new ProductVertex[10000];
@@ -50,10 +56,15 @@ public class CSVParser {
         }
     }
 
+    /**
+     * reads data from a .csv file parsed by CreateCSVAllFromGraph method and creates objects.
+     * @param filename is the file path.
+     * @throws IOException if file not found.
+     */
     public static void createGraphFromCSVAll(String filename) throws IOException{
         String[] lineBuffer;
         CSVParser.keywordArray = new KeywordVertex[42000];
-        CSVReader reader = new CSVReader(new InputStreamReader(new FileInputStream(filename), "Cp1252"), ',', '\"', 0);
+        CSVReader reader = new CSVReader(new InputStreamReader(new FileInputStream(filename), "Cp1252"), ';', '\"', 0);
         lineBuffer = reader.readNext();
         CSVParser.keywordEntries = Integer.parseInt(lineBuffer[0]);
         CSVParser.maxLayer = Integer.parseInt(lineBuffer[1]);
@@ -82,7 +93,7 @@ public class CSVParser {
         String filename;
         for(int i = 0; i < CSVParser.maxLayer; i++){
             filename = filepath + "layer" + i + ".csv";
-            CSVWriter writer = new CSVWriter(new OutputStreamWriter(new FileOutputStream(filename), "Cp1252"));
+            CSVWriter writer = new CSVWriter(new OutputStreamWriter(new FileOutputStream(filename), "Cp1252"),';');
             for(int j = 0; j < CSVParser.keywordEntries; j++){
                 if(CSVParser.keywordArray[j].layer == i){
                     String lineBuffer = CSVParser.keywordArray[j].name + ",";
@@ -98,38 +109,60 @@ public class CSVParser {
         }
     }
 
+    /**
+     * creates a .csv file that saves data of the Vertex objects (name, layer, parentNum, parents, pathLength).
+     * @param filepath is the saving path.
+     * @throws IOException if path cannot be found.
+     */
     public static void createCSVAllFromGraph(String filepath) throws IOException{
-        String filename = filepath + "CSVOutput.csv";
-        CSVWriter writer = new CSVWriter(new OutputStreamWriter(new FileOutputStream(filename), "Cp1252"));
-        String buffer = Integer.toString(CSVParser.keywordEntries) + "," + Integer.toString(CSVParser.maxLayer) + ",EOL";
-        String[] rc = buffer.split(",");
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("Give the .csv file a name: ");
+        String userInput = scanner.next();
+        String filename = filepath + userInput + ".csv";
+
+        CSVWriter writer = new CSVWriter(new OutputStreamWriter(new FileOutputStream(filename), "Cp1252"), ';');
+        String buffer = Integer.toString(CSVParser.keywordEntries) + ";" + Integer.toString(CSVParser.maxLayer) + ";EOL";
+        String[] rc = buffer.split(";");
         writer.writeNext(rc);
         for(int i = 0; i < CSVParser.keywordEntries; i++){
-            String linebuffer = "\"" +  CSVParser.keywordArray[i].name + "\"," + Integer.toString(CSVParser.keywordArray[i].layer) + "," + Integer.toString(CSVParser.keywordArray[i].parentNum) + ",";
+            String linebuffer = CSVParser.keywordArray[i].name + ";" + Integer.toString(CSVParser.keywordArray[i].layer) + ";" + Integer.toString(CSVParser.keywordArray[i].parentNum) + ";";
             for(int j = 0; j < CSVParser.keywordArray[i].parentNum; j++){
-                linebuffer += CSVParser.keywordArray[i].parent[j] + ",";
+                linebuffer += CSVParser.keywordArray[i].parent[j] + ";";
             }
             for(int j = 0; j < CSVParser.keywordArray[i].parentNum; j++){
-                linebuffer += Integer.toString(CSVParser.keywordArray[i].pathLength[j]) + ",";
+                linebuffer += Integer.toString(CSVParser.keywordArray[i].pathLength[j]) + ";";
             }
             linebuffer += "EOL";
-            String[] record = linebuffer.split("\",\"");
+            String[] record = linebuffer.split(";");
             writer.writeNext(record);
         }
         writer.close();
     }
 
+    /**
+     * calculates weights of the edges by considering their lengths.
+     * @param vertex
+     */
     public static void updateWeight(int vertex){
         for(int j = 0; j < CSVParser.keywordArray[vertex].parentNum; j++){
+
+            // The longer the path, the more little it's weight scales.
             CSVParser.keywordArray[vertex].weight[j] = Math.pow(0.5, (double) CSVParser.keywordArray[vertex].pathLength[j]);
 
             //for(int k = 0; k < CSVParser.keywordArray[vertex].pathLength[j]; k++){
             //    CSVParser.keywordArray[vertex].weight[j] += Math.pow(0.5, (double) k);
             //}
+
+            // But it will receive a constant bonus(0.2 * pathLength - 1)
             CSVParser.keywordArray[vertex].weight[j] += 0.2 * (double) (CSVParser.keywordArray[vertex].pathLength[j] - 1);
         }
     }
 
+    /**
+     * Just like the parent array of all Vertex objects, we also want them to know their children.
+     * This method searches one's parents and add him into their children array.
+     * @param vertex is a child node.
+     */
     public static void assignChildren(int vertex){
         for(int i = 0; i < CSVParser.keywordArray[vertex].parentNum; i++){
             for(int j = 0; j < CSVParser.keywordEntries; j++){
@@ -145,6 +178,11 @@ public class CSVParser {
         }
     }
 
+    /**
+     * finds out a vertex's parents with the longest paths toward the top of the graph by
+     * comparing it's pathLengths with it's layer.
+     * @param vertex a child node.
+     */
     public static void assignDominantChildren(int vertex){
         for(int i = 0; i < CSVParser.keywordArray[vertex].parentNum; i++){
             if(CSVParser.keywordArray[vertex].pathLength[i] == CSVParser.keywordArray[vertex].layer && CSVParser.findVertexForName(CSVParser.keywordArray[vertex].parent[i]) != null){
@@ -182,7 +220,7 @@ public class CSVParser {
         int percentage;
 
         // Pass the .csv file to createGraphFromCSV
-
+/*
         try{
             CSVParser.createGraphFromCSV(CSVParser.filename);
         } catch (IOException e) {
@@ -204,13 +242,13 @@ public class CSVParser {
         System.out.println("====================================================");
         System.out.println();
         System.out.println("We have " + CSVParser.keywordEntries + " keywords.");
-        /*
+        */
 
         try{
-            CSVParser.createGraphFromCSVAll("C:/Users/wang.daoping/Documents/CSVOutput.csv");
+            CSVParser.createGraphFromCSVAll("C:/Users/wang.daoping/Documents/CSVALL.csv");
         } catch (IOException e){
             e.printStackTrace();
-        }*/
+        }
 
 
         System.out.println(testKeyword + ". keyword " + CSVParser.keywordArray[testKeyword].name + " has these parents: ");
@@ -227,8 +265,7 @@ public class CSVParser {
 
         System.out.println("And these lengths: ");
         for(int i = 0; i < CSVParser.keywordArray[testKeyword].parentNum; i++){
-            System.out.print(CSVParser.keywordArray[testKeyword].pathLength[i] + " with weight == ");
-            System.out.print(CSVParser.keywordArray[testKeyword].weight[i]);
+            System.out.print(CSVParser.keywordArray[testKeyword].pathLength[i]);
             System.out.println();
         }
 
@@ -255,10 +292,11 @@ public class CSVParser {
         }
 
         try{
-            CSVParser.createCSVAllFromGraph("C:/Users/wang.daoping/Documents/");
+            CSVParser.createCSVLayersFromGraph("C:/Users/wang.daoping/Documents/layers/");
         } catch(IOException e){
             e.printStackTrace();
         }
+
     }
 
 }
