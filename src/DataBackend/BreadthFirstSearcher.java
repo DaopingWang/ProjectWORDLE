@@ -6,7 +6,7 @@ import java.util.Queue;
 /**
  * Created by Wang.Daoping on 16.11.2016.
  */
-public class DepthSearcher {
+public class BreadthFirstSearcher {
 
     /**
      * is based on breadth first search. It discovers the tempLayer structure of the input vertex object.
@@ -68,7 +68,7 @@ public class DepthSearcher {
                         // with v.tempLayer == possible longest path of vertex.parent[i], so compare it with discoveredDepth,
                         // if discoveredDepth smaller -> discoveredDepth = v.tempLayer.
                         if(v.parent[k].equals(CSVParser.keywordArray[l].name)){
-                            if(!DepthSearcher.isLooping(v, CSVParser.keywordArray[l])){
+                            if(!BreadthFirstSearcher.isLooping(v, CSVParser.keywordArray[l])){
                                 queue.offer(CSVParser.keywordArray[l]);
                                 if(CSVParser.keywordArray[l].tempLayer <= v.tempLayer){
                                     CSVParser.keywordArray[l].tempLayer = v.tempLayer + 1;
@@ -86,11 +86,6 @@ public class DepthSearcher {
             // Longest path found after all possible ways discovered.
             vertex.pathLength[i] = discoveredDepth + 1;
             vertex.setLayer(vertex.pathLength[i]);
-
-            // Update layer of current node's parent.
-            if(CSVParser.keywordArray[currentKeyword].noLayerSet()){
-                CSVParser.keywordArray[currentKeyword].setLayer(vertex.pathLength[i] - 1);
-            }
         }
     }
 

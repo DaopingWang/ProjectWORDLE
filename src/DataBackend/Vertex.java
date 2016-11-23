@@ -25,7 +25,7 @@ public abstract class Vertex {
     public String name;
 
     /**
-     * helps DepthSearcher to find out the depth.
+     * helps BreadthFirstSearcher to find out the depth.
      */
     public int tempLayer;
 
@@ -34,13 +34,17 @@ public abstract class Vertex {
      */
     public int layer;
 
+    public boolean alreadyCalculated;
+
     /**
      * The default constructor initiate attributes in order to avoid null pointer exceptions.
      */
+
     public Vertex(){
         this.weight = new double[20];
         this.tempLayer = 0;
         this.layer = -1;
+        this.alreadyCalculated = false;
     }
 
     /**

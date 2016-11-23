@@ -59,7 +59,8 @@ public class CSVParser {
         System.out.println("Start graph parsing...");
         // For each iteration, find a vertex's depth and update it's weight.
         for(int i = 0; i < CSVParser.keywordEntries; i++){
-            DepthSearcher.findDepthFor(CSVParser.keywordArray[i]);
+            //BreadthFirstSearcher.findDepthFor(CSVParser.keywordArray[i]);
+            DepthFirstSearcher.performDFS(CSVParser.keywordArray[i]);
             CSVParser.updateWeight(i);
             if((percentage = CSVParser.processPercentage(i, CSVParser.keywordEntries)) != 0){
                 System.out.println("Calculating depth... " + percentage + "% done... Be patient");
@@ -233,19 +234,19 @@ public class CSVParser {
         int percentage;
 
         // Pass the .csv file to createGraphFromCSV
-        /*try{
+        try{
             CSVParser.createGraphFromCSV("C:/Users/wang.daoping/Documents/Keyword_Graph.csv");
         } catch (IOException e) {
             e.printStackTrace();
         }
 
-        */
+        /*
         try{
             CSVParser.createGraphFromCSVAll("C:/Users/wang.daoping/Documents/layers/CSVALL.csv");
         } catch (IOException e){
             e.printStackTrace();
         }
-
+*/
         System.out.println(testKeyword + ". keyword " + CSVParser.keywordArray[testKeyword].name + " has these parents: ");
         System.out.println();
         for(int i = 0; i < CSVParser.keywordArray[testKeyword].parentNum; i++){
@@ -285,13 +286,13 @@ public class CSVParser {
             }
         }
 
-        /*
+
         try{
-            CSVParser.createCSVLayersFromGraph("C:/Users/wang.daoping/Documents/layers/");
+            CSVParser.createParentCSVFromGraph("C:/Users/wang.daoping/Documents/layersDFS/");
         } catch(IOException e){
             e.printStackTrace();
         }
-        */
+
 
     }
 
