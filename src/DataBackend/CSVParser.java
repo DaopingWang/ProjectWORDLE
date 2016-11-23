@@ -59,8 +59,8 @@ public class CSVParser {
         System.out.println("Start graph parsing...");
         // For each iteration, find a vertex's depth and update it's weight.
         for(int i = 0; i < CSVParser.keywordEntries; i++){
-            //BreadthFirstSearcher.findDepthFor(CSVParser.keywordArray[i]);
-            DepthFirstSearcher.performDFS(CSVParser.keywordArray[i]);
+            //BreadthFirstSearcher.findDepthFor(CSVParser.keywordArray[i]);                 //BFS
+            DepthFirstSearcher.performDFS(CSVParser.keywordArray[i]);                       //DFS
             CSVParser.updateWeight(i);
             if((percentage = CSVParser.processPercentage(i, CSVParser.keywordEntries)) != 0){
                 System.out.println("Calculating depth... " + percentage + "% done... Be patient");
@@ -71,12 +71,55 @@ public class CSVParser {
         System.out.println("====================================================");
     }
 
+    public static void debugKeywordFromCSV(String filename, String vertexName, String debugMode) throws IOException{
+        CSVParser.keywordArray = new KeywordVertex[42000];
+        CSVParser.productArray = new ProductVertex[10000];
+        String[] lineBuffer;
+        CSVReader reader = new CSVReader(new InputStreamReader(new FileInputStream(filename), "Cp1252"), ',', '\"', 1);
+        while((lineBuffer = reader.readNext()) != null && CSVParser.keywordEntries < 42000){
+            if(CSVParser.keywordEntries == 0){
+                CSVParser.keywordArray[CSVParser.keywordEntries] = new KeywordVertex(lineBuffer[0], lineBuffer[1]);
+                CSVParser.keywordEntries += 1;
+            } else {
+                for(int i = 0; i < CSVParser.keywordEntries; i++){
+                    if(CSVParser.keywordArray[i].name.equals(lineBuffer[0])){
+                        CSVParser.keywordArray[i].setParent(lineBuffer[1]);
+                        break;
+                    }
+                    if(i == CSVParser.keywordEntries - 1){
+                        CSVParser.keywordArray[CSVParser.keywordEntries] = new KeywordVertex(lineBuffer[0], lineBuffer[1]);
+                        CSVParser.keywordEntries += 1;
+                        //System.out.println(i + ". Keyword: " + CSVParser.keywordArray[i].name);
+                        break;
+                    }
+                }
+            }
+        }
+        for(int q = 0; q < CSVParser.keywordEntries; q++){
+            CSVParser.keywordArray[q].pathLength = new int[CSVParser.keywordArray[q].parentNum];
+        }
+
+        for(int i = 0; i < CSVParser.keywordEntries; i++){
+            if(vertexName.equals(CSVParser.keywordArray[i].name)){
+                switch (debugMode){
+                    case "BFS":
+                        BreadthFirstSearcher.findDepthFor(CSVParser.keywordArray[i]);
+
+                        break;
+                    case "DFS":
+                        DepthFirstSearcher.performDFS(CSVParser.keywordArray[i]);
+                        break;
+                }
+            }
+        }
+    }
+
     /**
      * reads data from a .csv file parsed by CreateCSVAllFromGraph method and creates objects.
      * @param filename is the file path.
      * @throws IOException if file not found.
      */
-    public static void createGraphFromCSVAll(String filename) throws IOException{
+    public static void createGraphFromParsedCSV(String filename) throws IOException{
         String[] lineBuffer;
         CSVParser.keywordArray = new KeywordVertex[42000];
         CSVReader reader = new CSVReader(new InputStreamReader(new FileInputStream(filename), "Cp1252"), ';', '\"', 0);
@@ -140,15 +183,15 @@ public class CSVParser {
         String[] rc = buffer.split(";");
         writer.writeNext(rc);
         for(int i = 0; i < CSVParser.keywordEntries; i++){
-            String linebuffer = CSVParser.keywordArray[i].name + ";" + Integer.toString(CSVParser.keywordArray[i].layer) + ";" + Integer.toString(CSVParser.keywordArray[i].parentNum) + ";";
+            String lineBuffer = CSVParser.keywordArray[i].name + ";" + Integer.toString(CSVParser.keywordArray[i].layer) + ";" + Integer.toString(CSVParser.keywordArray[i].parentNum) + ";";
             for(int j = 0; j < CSVParser.keywordArray[i].parentNum; j++){
-                linebuffer += CSVParser.keywordArray[i].parent[j] + ";";
+                lineBuffer += CSVParser.keywordArray[i].parent[j] + ";";
             }
             for(int j = 0; j < CSVParser.keywordArray[i].parentNum; j++){
-                linebuffer += Integer.toString(CSVParser.keywordArray[i].pathLength[j]) + ";";
+                lineBuffer += Integer.toString(CSVParser.keywordArray[i].pathLength[j]) + ";";
             }
-            linebuffer += "EOL";
-            String[] record = linebuffer.split(";");
+            lineBuffer += "EOL";
+            String[] record = lineBuffer.split(";");
             writer.writeNext(record);
         }
         writer.close();
@@ -235,18 +278,18 @@ public class CSVParser {
 
         // Pass the .csv file to createGraphFromCSV
         try{
-            CSVParser.createGraphFromCSV("C:/Users/wang.daoping/Documents/Keyword_Graph.csv");
+            CSVParser.debugKeywordFromCSV("C:/Users/wang.daoping/Documents/Keyword_Graph.csv", "Acronis Recovery", "DFS");
         } catch (IOException e) {
             e.printStackTrace();
         }
 
-        /*
+/*
         try{
-            CSVParser.createGraphFromCSVAll("C:/Users/wang.daoping/Documents/layers/CSVALL.csv");
+            CSVParser.createGraphFromCSV("C:/Users/wang.daoping/Documents/Keyword_Graph.csv");
         } catch (IOException e){
             e.printStackTrace();
         }
-*/
+
         System.out.println(testKeyword + ". keyword " + CSVParser.keywordArray[testKeyword].name + " has these parents: ");
         System.out.println();
         for(int i = 0; i < CSVParser.keywordArray[testKeyword].parentNum; i++){
@@ -288,12 +331,9 @@ public class CSVParser {
 
 
         try{
-            CSVParser.createParentCSVFromGraph("C:/Users/wang.daoping/Documents/layersDFS/");
+            CSVParser.createParentCSVFromGraph("C:/Users/wang.daoping/Documents/DFS_Keywords_layers_2311/");
         } catch(IOException e){
             e.printStackTrace();
-        }
-
-
+        }*/
     }
-
 }

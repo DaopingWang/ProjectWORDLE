@@ -8,12 +8,12 @@ import java.util.Stack;
 
 /**
  * is implemented after finding out BreadthFirstSearcher's fatal problems with cycle detection and
- * calculation inaccuracy. DepthFirstSearcher is basically based on recursive DFS (hence it's name).
+ * computation inaccuracy. DepthFirstSearcher is basically based on recursive DFS (hence it's name).
  * It traverses through the graph prioritising the latest discovered nodes and avoids running in circle
  * by comparing the next node with the stack which holds all the lately visited nodes. After all parents
  * of a node have been visited, it will be removed from the stack.
  *
- * The performance of this algorithm is horrible. It needs around 45 minutes for the computation of all the paths.
+ * The performance of this algorithm is horrible. It takes around 45 minutes for the computation of all the paths.
  */
 public class DepthFirstSearcher {
     public static Stack<KeywordVertex> stack = new Stack<>();
@@ -38,9 +38,9 @@ public class DepthFirstSearcher {
                 if(vertex.parent[i].equals(CSVParser.keywordArray[j].name) && !vertex.parent[i].equals("Mercateo")){
                     DepthFirstSearcher.stack.push(CSVParser.keywordArray[j]);
                     DepthFirstSearcher.dfs(DepthFirstSearcher.stack);
-                    vertex.pathLength[i] = DepthFirstSearcher.discoveredLength + 1;
-                    if(maxLength < DepthFirstSearcher.discoveredLength + 1){
-                        maxLength = DepthFirstSearcher.discoveredLength + 1;
+                    vertex.pathLength[i] = DepthFirstSearcher.discoveredLength;
+                    if(maxLength < DepthFirstSearcher.discoveredLength){
+                        maxLength = DepthFirstSearcher.discoveredLength;
                     }
                     DepthFirstSearcher.stack.removeAllElements();
                     DepthFirstSearcher.discoveredLength = 0;
@@ -66,6 +66,8 @@ public class DepthFirstSearcher {
             for(int j = 0; j < CSVParser.keywordEntries; j++){
                 if(v.parent[i].equals(CSVParser.keywordArray[j].name) && !v.parent[i].equals("Mercateo")){
                     if(!isOnStack(CSVParser.keywordArray[j], DepthFirstSearcher.stack)){
+                        System.out.println("Discovered layers til now " + Integer.toString(DepthFirstSearcher.discoveredLength));
+                        System.out.println("In layer " + Integer.toString(v.tempLayer) + " " + v.name + "'s parent " + v.parent[i]);
                         DepthFirstSearcher.stack.push(CSVParser.keywordArray[j]);
                         CSVParser.keywordArray[j].tempLayer = v.tempLayer + 1;
                         if(DepthFirstSearcher.discoveredLength < CSVParser.keywordArray[j].tempLayer){
@@ -73,8 +75,6 @@ public class DepthFirstSearcher {
                         }
                         DepthFirstSearcher.dfs(DepthFirstSearcher.stack);
                     }
-                    break;
-                } else if(v.parent[i].equals(CSVParser.keywordArray[j].name) && v.parent[i].equals("Mercateo")){
                     break;
                 }
             }
