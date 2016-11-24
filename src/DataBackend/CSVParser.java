@@ -277,13 +277,14 @@ public class CSVParser {
         int percentage;
 
         // Pass the .csv file to createGraphFromCSV
+        /*
         try{
             CSVParser.debugKeywordFromCSV("C:/Users/wang.daoping/Documents/Keyword_Graph.csv", "Acronis Recovery", "DFS");
         } catch (IOException e) {
             e.printStackTrace();
         }
 
-/*
+*/
         try{
             CSVParser.createGraphFromCSV("C:/Users/wang.daoping/Documents/Keyword_Graph.csv");
         } catch (IOException e){
@@ -334,6 +335,6 @@ public class CSVParser {
             CSVParser.createParentCSVFromGraph("C:/Users/wang.daoping/Documents/DFS_Keywords_layers_2311/");
         } catch(IOException e){
             e.printStackTrace();
-        }*/
+        }
     }
 }

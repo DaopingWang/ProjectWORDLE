@@ -38,17 +38,19 @@ public class DepthFirstSearcher {
                 if(vertex.parent[i].equals(CSVParser.keywordArray[j].name) && !vertex.parent[i].equals("Mercateo")){
                     DepthFirstSearcher.stack.push(CSVParser.keywordArray[j]);
                     DepthFirstSearcher.dfs(DepthFirstSearcher.stack);
-                    vertex.pathLength[i] = DepthFirstSearcher.discoveredLength;
-                    if(maxLength < DepthFirstSearcher.discoveredLength){
-                        maxLength = DepthFirstSearcher.discoveredLength;
+                    vertex.pathLength[i] = DepthFirstSearcher.discoveredLength + 1;
+                    if(maxLength < DepthFirstSearcher.discoveredLength + 1){
+                        maxLength = DepthFirstSearcher.discoveredLength + 1;
                     }
                     DepthFirstSearcher.stack.removeAllElements();
                     DepthFirstSearcher.discoveredLength = 0;
                     break;
                 }
             }
+            for(int q = 0; q < CSVParser.keywordEntries; q++){
+                CSVParser.keywordArray[q].tempLayer = 0;
+            }
         }
-
         if(vertex.noLayerSet() && !vertex.alreadyCalculated){
             vertex.setLayer(maxLength);
         }
@@ -66,8 +68,8 @@ public class DepthFirstSearcher {
             for(int j = 0; j < CSVParser.keywordEntries; j++){
                 if(v.parent[i].equals(CSVParser.keywordArray[j].name) && !v.parent[i].equals("Mercateo")){
                     if(!isOnStack(CSVParser.keywordArray[j], DepthFirstSearcher.stack)){
-                        System.out.println("Discovered layers til now " + Integer.toString(DepthFirstSearcher.discoveredLength));
-                        System.out.println("In layer " + Integer.toString(v.tempLayer) + " " + v.name + "'s parent " + v.parent[i]);
+                        //System.out.println("Discovered layers til now " + Integer.toString(DepthFirstSearcher.discoveredLength));
+                        //System.out.println("In layer " + Integer.toString(v.tempLayer) + " " + v.name + "'s parent " + v.parent[i]);
                         DepthFirstSearcher.stack.push(CSVParser.keywordArray[j]);
                         CSVParser.keywordArray[j].tempLayer = v.tempLayer + 1;
                         if(DepthFirstSearcher.discoveredLength < CSVParser.keywordArray[j].tempLayer){
@@ -79,7 +81,7 @@ public class DepthFirstSearcher {
                 }
             }
         }
-        v = DepthFirstSearcher.stack.pop();
+        DepthFirstSearcher.stack.pop();
     }
 
     private static boolean isOnStack(KeywordVertex vertex, Stack stack){
