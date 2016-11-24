@@ -324,7 +324,7 @@ public class CSVParser {
 
         Scanner scanner = new Scanner(System.in);
         System.out.println("Enter keyword: ");
-        String userInput = scanner.next();
+        String userInput = scanner.nextLine();
         KeywordVertex buffer = findMostSimilarKeywordOf(userInput);
         System.out.println("Most similar keyword found: " + buffer.name + " with similarity " + Double.toString(buffer.inputSimilarity));
 

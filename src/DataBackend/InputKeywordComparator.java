@@ -30,10 +30,9 @@ public class InputKeywordComparator {
         String[] words = str.split("\\s");
         for(int i = 0; i < words.length; i++){
             String[] pairsInWord = letterPairs(words[i], str);
-            if(pairsInWord != null){
-                for(int j = 0; j < pairsInWord.length; j++){
-                    allPairs.add(pairsInWord[j]);
-                }
+            if(pairsInWord == null) continue;
+            for(int j = 0; j < pairsInWord.length; j++){
+                allPairs.add(pairsInWord[j]);
             }
         }
         return allPairs;
