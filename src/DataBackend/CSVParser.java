@@ -249,6 +249,19 @@ public class CSVParser {
         }
     }
 
+    public static KeywordVertex findMostSimilarKeywordOf(String inputKeyword){
+        double maxSimilarity = 0;
+        KeywordVertex mostSimilarKeyword = null;
+        for(int i = 0; i < CSVParser.keywordEntries; i++){
+            keywordArray[i].inputSimilarity = InputKeywordComparator.compareStrings(CSVParser.keywordArray[i].name, inputKeyword);
+            if(maxSimilarity < keywordArray[i].inputSimilarity){
+                maxSimilarity = keywordArray[i].inputSimilarity;
+                mostSimilarKeyword = keywordArray[i];
+            }
+        }
+        return mostSimilarKeyword;
+    }
+
     public static void setFilename(String file) {
         CSVParser.filename = file;
     }
@@ -271,7 +284,7 @@ public class CSVParser {
     }
 
     public static void main(String[] args) {
-        int testKeyword = 22465;
+        int testKeyword = 2265;
         CSVParser.setFilename("C:/Users/wang.daoping/Documents/Keyword_Graph.csv");
         System.out.println("Loading CSV...");
         int percentage;
@@ -309,7 +322,14 @@ public class CSVParser {
             System.out.println();
         }
 
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("Enter keyword: ");
+        String userInput = scanner.next();
+        KeywordVertex buffer = findMostSimilarKeywordOf(userInput);
+        System.out.println("Most similar keyword found: " + buffer.name + " with similarity " + Double.toString(buffer.inputSimilarity));
+
         // After CSV reading, depth calculation and weight updates, start finding out the root keywords and assign children.
+        /*
         for(int i = 0; i < CSVParser.keywordEntries; i++){
             CSVParser.assignChildren(i);
             CSVParser.assignDominantChildren(i);
@@ -336,5 +356,6 @@ public class CSVParser {
         } catch(IOException e){
             e.printStackTrace();
         }
+        */
     }
 }

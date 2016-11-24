@@ -36,6 +36,8 @@ public abstract class Vertex {
 
     public boolean alreadyCalculated;
 
+    public double inputSimilarity;
+
     /**
      * The default constructor initiate attributes in order to avoid null pointer exceptions.
      */
@@ -45,6 +47,7 @@ public abstract class Vertex {
         this.tempLayer = 0;
         this.layer = -1;
         this.alreadyCalculated = false;
+        this.inputSimilarity = 0;
     }
 
     /**

@@ -13,7 +13,7 @@ import java.util.Stack;
  * by comparing the next node with the stack which holds all the lately visited nodes. After all parents
  * of a node have been visited, it will be removed from the stack.
  *
- * The performance of this algorithm is horrible. It takes around 45 minutes for the computation of all the paths.
+ * The performance of this algorithm is horrible. It takes around 45 minutes to complete the computation.
  */
 public class DepthFirstSearcher {
     public static Stack<KeywordVertex> stack = new Stack<>();
