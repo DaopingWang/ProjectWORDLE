@@ -154,12 +154,12 @@ public class CSVParser {
             CSVWriter writer = new CSVWriter(new OutputStreamWriter(new FileOutputStream(filename), "Cp1252"),';');
             for(int j = 0; j < CSVParser.keywordEntries; j++){
                 if(CSVParser.keywordArray[j].layer == i){
-                    String lineBuffer = CSVParser.keywordArray[j].name + ",";
+                    String lineBuffer = CSVParser.keywordArray[j].name + ";";
                     for(int k = 0; k < CSVParser.keywordArray[j].dominantChildNum && i != CSVParser.maxLayer; k++){
-                        lineBuffer += CSVParser.keywordArray[j].dominantChild[k] + ",";
+                        lineBuffer += CSVParser.keywordArray[j].dominantChild[k] + ";";
                     }
                     lineBuffer += "EOL";
-                    String[] record = lineBuffer.split(",");
+                    String[] record = lineBuffer.split(";");
                     writer.writeNext(record);
                 }
             }
@@ -277,20 +277,20 @@ public class CSVParser {
         int percentage;
 
         // Pass the .csv file to createGraphFromCSV
-        /*
+
         try{
-            CSVParser.debugKeywordFromCSV("C:/Users/wang.daoping/Documents/Keyword_Graph.csv", "Acronis Recovery", "DFS");
+            CSVParser.createGraphFromParsedCSV("C:/Users/wang.daoping/Documents/DFS_2411.csv");
         } catch (IOException e) {
             e.printStackTrace();
         }
 
-*/
+/*
         try{
             CSVParser.createGraphFromCSV("C:/Users/wang.daoping/Documents/Keyword_Graph.csv");
         } catch (IOException e){
             e.printStackTrace();
         }
-
+*/
         System.out.println(testKeyword + ". keyword " + CSVParser.keywordArray[testKeyword].name + " has these parents: ");
         System.out.println();
         for(int i = 0; i < CSVParser.keywordArray[testKeyword].parentNum; i++){
@@ -332,7 +332,7 @@ public class CSVParser {
 
 
         try{
-            CSVParser.createParentCSVFromGraph("C:/Users/wang.daoping/Documents/DFS_Keywords_layers_2311/");
+            CSVParser.createCSVLayersFromGraph("C:/Users/wang.daoping/Documents/DFS_Keywords_layers_2411/");
         } catch(IOException e){
             e.printStackTrace();
         }
