@@ -29,14 +29,14 @@ public class DepthFirstSearcher {
         DepthFirstSearcher.stack.push(vertex);
         DepthFirstSearcher.discoveredLength = 0;
         vertex.tempLayer = 0;
-        for(int i = 0; i < CSVParser.keywordEntries; i++){
-            CSVParser.keywordArray[i].tempLayer = 0;
+        for(int i = 0; i < GraphFactory.keywordEntries; i++){
+            GraphFactory.keywordArray[i].tempLayer = 0;
         }
 
         for(int i = 0; i < vertex.parentNum && !vertex.alreadyCalculated; i++){
-            for(int j = 0; j < CSVParser.keywordEntries; j++){
-                if(vertex.parent[i].equals(CSVParser.keywordArray[j].name) && !vertex.parent[i].equals("Mercateo")){
-                    DepthFirstSearcher.stack.push(CSVParser.keywordArray[j]);
+            for(int j = 0; j < GraphFactory.keywordEntries; j++){
+                if(vertex.parent[i].equals(GraphFactory.keywordArray[j].name) && !vertex.parent[i].equals("Mercateo")){
+                    DepthFirstSearcher.stack.push(GraphFactory.keywordArray[j]);
                     DepthFirstSearcher.dfs(DepthFirstSearcher.stack);
                     vertex.pathLength[i] = DepthFirstSearcher.discoveredLength + 1;
                     if(maxLength < DepthFirstSearcher.discoveredLength + 1){
@@ -47,8 +47,8 @@ public class DepthFirstSearcher {
                     break;
                 }
             }
-            for(int q = 0; q < CSVParser.keywordEntries; q++){
-                CSVParser.keywordArray[q].tempLayer = 0;
+            for(int q = 0; q < GraphFactory.keywordEntries; q++){
+                GraphFactory.keywordArray[q].tempLayer = 0;
             }
         }
         if(vertex.noLayerSet() && !vertex.alreadyCalculated){
@@ -65,15 +65,13 @@ public class DepthFirstSearcher {
     private static void dfs(Stack<KeywordVertex> stack){
         KeywordVertex v = stack.peek();
         for(int i = 0; i < v.parentNum && !v.alreadyCalculated; i++){
-            for(int j = 0; j < CSVParser.keywordEntries; j++){
-                if(v.parent[i].equals(CSVParser.keywordArray[j].name) && !v.parent[i].equals("Mercateo")){
-                    if(!isOnStack(CSVParser.keywordArray[j], DepthFirstSearcher.stack)){
-                        //System.out.println("Discovered layers til now " + Integer.toString(DepthFirstSearcher.discoveredLength));
-                        //System.out.println("In layer " + Integer.toString(v.tempLayer) + " " + v.name + "'s parent " + v.parent[i]);
-                        DepthFirstSearcher.stack.push(CSVParser.keywordArray[j]);
-                        CSVParser.keywordArray[j].tempLayer = v.tempLayer + 1;
-                        if(DepthFirstSearcher.discoveredLength < CSVParser.keywordArray[j].tempLayer){
-                            DepthFirstSearcher.discoveredLength = CSVParser.keywordArray[j].tempLayer;
+            for(int j = 0; j < GraphFactory.keywordEntries; j++){
+                if(v.parent[i].equals(GraphFactory.keywordArray[j].name) && !v.parent[i].equals("Mercateo")){
+                    if(!isOnStack(GraphFactory.keywordArray[j], DepthFirstSearcher.stack)){
+                        DepthFirstSearcher.stack.push(GraphFactory.keywordArray[j]);
+                        GraphFactory.keywordArray[j].tempLayer = v.tempLayer + 1;
+                        if(DepthFirstSearcher.discoveredLength < GraphFactory.keywordArray[j].tempLayer){
+                            DepthFirstSearcher.discoveredLength = GraphFactory.keywordArray[j].tempLayer;
                         }
                         DepthFirstSearcher.dfs(DepthFirstSearcher.stack);
                     }

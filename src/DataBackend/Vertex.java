@@ -60,8 +60,8 @@ public abstract class Vertex {
 
     public void setLayer(int inputLayer){
         this.layer = inputLayer;
-        if(inputLayer > CSVParser.maxLayer){
-            CSVParser.maxLayer = inputLayer;
+        if(inputLayer > GraphFactory.maxLayer){
+            GraphFactory.maxLayer = inputLayer;
         }
     }
 

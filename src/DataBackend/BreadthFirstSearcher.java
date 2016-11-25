@@ -28,13 +28,13 @@ public class BreadthFirstSearcher {
 
             // Find the Vertex object that matches vertex.parent[i], refer it with v.
             // If no match found (meaning current parent is a root keyword), tag discoveredDepth and currentKeyword with -1.
-            for(int j = 0; j < CSVParser.keywordEntries; j++){
-                if(vertex.parent[i].equals(CSVParser.keywordArray[j].name)){    // This is a must!
-                    v = CSVParser.keywordArray[j];
+            for(int j = 0; j < GraphFactory.keywordEntries; j++){
+                if(vertex.parent[i].equals(GraphFactory.keywordArray[j].name)){    // This is a must!
+                    v = GraphFactory.keywordArray[j];
                     currentKeyword = j;                                         // This is a must too!
                     break;
                 }
-                if(j == CSVParser.keywordEntries - 1){
+                if(j == GraphFactory.keywordEntries - 1){
                     skipIteration = true;
                 }
             }
@@ -45,12 +45,12 @@ public class BreadthFirstSearcher {
             }
 
             // Initialize/reset tempLayer attribute of vertices.
-            for(int z = 0; z < CSVParser.keywordEntries; z++){
-                CSVParser.keywordArray[z].tempLayer = 0;
-                for(int x = 0; x < CSVParser.keywordArray[z].loopCheckArrayNum; x++){
-                    CSVParser.keywordArray[z].loopCheckArray[x] = null;
+            for(int z = 0; z < GraphFactory.keywordEntries; z++){
+                GraphFactory.keywordArray[z].tempLayer = 0;
+                for(int x = 0; x < GraphFactory.keywordArray[z].loopCheckArrayNum; x++){
+                    GraphFactory.keywordArray[z].loopCheckArray[x] = null;
                 }
-                CSVParser.keywordArray[z].loopCheckArrayNum = 0;
+                GraphFactory.keywordArray[z].loopCheckArrayNum = 0;
             }
 
             // Enqueue v.
@@ -61,17 +61,17 @@ public class BreadthFirstSearcher {
 
                 // During each iteration, compare one parent of v with all nodes, find the appropriate object
                 for(int k = 0; k < v.parentNum; k++){
-                    for(int l = 0; l < CSVParser.keywordEntries; l++){
+                    for(int l = 0; l < GraphFactory.keywordEntries; l++){
 
                         // Enqueue the right vertex , if it's tempLayer <= tempLayer of v, increase it by 1.
                         // If cannot find any vertex with .name == current parent of v -> End of a path reached
                         // with v.tempLayer == possible longest path of vertex.parent[i], so compare it with discoveredDepth,
                         // if discoveredDepth smaller -> discoveredDepth = v.tempLayer.
-                        if(v.parent[k].equals(CSVParser.keywordArray[l].name)){
-                            if(!BreadthFirstSearcher.isLooping(v, CSVParser.keywordArray[l])){
-                                queue.offer(CSVParser.keywordArray[l]);
-                                if(CSVParser.keywordArray[l].tempLayer <= v.tempLayer){
-                                    CSVParser.keywordArray[l].tempLayer = v.tempLayer + 1;
+                        if(v.parent[k].equals(GraphFactory.keywordArray[l].name)){
+                            if(!BreadthFirstSearcher.isLooping(v, GraphFactory.keywordArray[l])){
+                                queue.offer(GraphFactory.keywordArray[l]);
+                                if(GraphFactory.keywordArray[l].tempLayer <= v.tempLayer){
+                                    GraphFactory.keywordArray[l].tempLayer = v.tempLayer + 1;
                                 }
                             }
                             break;
