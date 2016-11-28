@@ -20,32 +20,32 @@ public class KeywordVertex extends Vertex {
     public int childNum;
     public int dominantChildNum;
     public int loopCheckArrayNum;
-    public boolean isRootKeyword;
+    public String keywordType;
 
     public KeywordVertex(){
         super();
         this.parentNum = 0;
         this.parent = new String[20];
-        this.loopCheckArray = new String[20];
+        //this.loopCheckArray = new String[20];
         this.child = new String[3500];
         this.dominantChild = new String[3000];
-        this.loopCheckArrayNum = 0;
+        //this.loopCheckArrayNum = 0;
         this.childNum = 0;
         this.dominantChildNum = 0;
-        this.isRootKeyword = false;
+        this.keywordType = null;
     }
 
     public KeywordVertex(String inputName, String inputParent){
         super();
         this.parentNum = 0;
         this.parent = new String[20];
-        this.loopCheckArray = new String[20];
+        //this.loopCheckArray = new String[20];
         this.child = new String[3500];
         this.dominantChild = new String[3000];
-        this.loopCheckArrayNum = 0;
+        //this.loopCheckArrayNum = 0;
         this.childNum = 0;
         this.dominantChildNum = 0;
-        this.isRootKeyword = false;
+        this.keywordType = null;
         this.setName(inputName);
         this.setParent(inputParent);
     }
@@ -72,6 +72,19 @@ public class KeywordVertex extends Vertex {
     public void setDominantChild(String inputDominantChild){
         this.dominantChild[dominantChildNum] = inputDominantChild;
         this.dominantChildNum += 1;
+    }
+
+    public void setKeywordType(){
+        if(this.keywordType.equals("ROOT")) return;
+        if(this.dominantChildNum == 0){
+            this.keywordType = "LEAF";
+        } else if(this.dominantChildNum < 6){
+            this.keywordType = "LOW";
+        } else if(this.dominantChildNum >= 6 && dominantChildNum < 11){
+            this.keywordType = "MIDDLE";
+        } else if(this.dominantChildNum >= 11){
+            this.keywordType = "HIGH";
+        }
     }
 
     /**

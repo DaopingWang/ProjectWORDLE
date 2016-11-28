@@ -4,6 +4,9 @@ import com.opencsv.CSVReader;
 import com.opencsv.CSVWriter;
 
 import java.io.*;
+import java.security.Key;
+import java.sql.SQLSyntaxErrorException;
+import java.util.ArrayList;
 import java.util.Scanner;
 
 /**
@@ -15,7 +18,8 @@ import java.util.Scanner;
  * If needed, .csv output should also be implemented in this class.
  */
 public class GraphFactory {
-    private static String filename;
+    private static String rawCSVFilename;
+    private static String parsedCSVFilename;
     public static KeywordVertex[] keywordArray;
     public static ProductVertex[] productArray;
     public static int keywordEntries = 0;
@@ -27,12 +31,12 @@ public class GraphFactory {
      * @param filename is the file path.
      * @throws IOException If file cannot be created.
      */
-    public static void createGraphFromCSV(String filename) throws IOException{
+    public static void createGraphFromRawCSV(String filename) throws IOException{
         GraphFactory.keywordArray = new KeywordVertex[42000];
         GraphFactory.productArray = new ProductVertex[10000];
         String[] lineBuffer;
         int percentage;
-        CSVReader reader = new CSVReader(new InputStreamReader(new FileInputStream(GraphFactory.filename), "Cp1252"), ',', '\"', 1);
+        CSVReader reader = new CSVReader(new InputStreamReader(new FileInputStream(filename), "Cp1252"), ',', '\"', 1);
         while((lineBuffer = reader.readNext()) != null && GraphFactory.keywordEntries < 42000){
             if(GraphFactory.keywordEntries == 0){
                 GraphFactory.keywordArray[GraphFactory.keywordEntries] = new KeywordVertex(lineBuffer[0], lineBuffer[1]);
@@ -147,6 +151,11 @@ public class GraphFactory {
 
     }
 
+    /**
+     * creates .csv files which equal the number of total layers, then writes in the corresponding keywords with their direct children.
+     * @param filepath Where the files should be created.
+     * @throws IOException
+     */
     public static void createCSVLayersFromGraph(String filepath) throws IOException{
         String filename;
         for(int i = 0; i < GraphFactory.maxLayer; i++){
@@ -201,7 +210,7 @@ public class GraphFactory {
      * calculates weights of the edges by considering their lengths.
      * @param vertex
      */
-    public static void updateWeight(int vertex){
+    private static void updateWeight(int vertex){
         for(int j = 0; j < GraphFactory.keywordArray[vertex].parentNum; j++){
 
             // The longer the path, the more little it's weight scales.
@@ -221,11 +230,11 @@ public class GraphFactory {
      * This method searches one's parents and add him into their children array.
      * @param vertex is the given node.
      */
-    public static void assignChildren(int vertex){
+    private static void assignChildren(int vertex){
         for(int i = 0; i < GraphFactory.keywordArray[vertex].parentNum; i++){
             for(int j = 0; j < GraphFactory.keywordEntries; j++){
                 if(GraphFactory.keywordArray[vertex].parent[i].equals("Mercateo")){
-                    GraphFactory.keywordArray[vertex].isRootKeyword = true;
+                    GraphFactory.keywordArray[vertex].keywordType = "ROOT";
                     break;
                 }
                 if(GraphFactory.keywordArray[vertex].parent[i].equals(GraphFactory.keywordArray[j].name) && !GraphFactory.keywordArray[j].childExists(GraphFactory.keywordArray[vertex].name)){
@@ -241,11 +250,59 @@ public class GraphFactory {
      * comparing it's pathLengths with it's layer.
      * @param vertex a child node.
      */
-    public static void assignDominantChildren(int vertex){
+    private static void assignDominantChildren(int vertex){
         for(int i = 0; i < GraphFactory.keywordArray[vertex].parentNum; i++){
             if(GraphFactory.keywordArray[vertex].pathLength[i] == GraphFactory.keywordArray[vertex].layer && GraphFactory.findVertexForName(GraphFactory.keywordArray[vertex].parent[i]) != null){
                 GraphFactory.findVertexForName(GraphFactory.keywordArray[vertex].parent[i]).setDominantChild(GraphFactory.keywordArray[vertex].name);
             }
+        }
+    }
+
+    public static ArrayList<KeywordVertex> findMostRelevantSubordinates(KeywordVertex inputKeyword){
+        ArrayList<KeywordVertex> subordinates = new ArrayList<>();
+        ArrayList<KeywordVertex> parsedSubordinates;
+
+        if(!inputKeyword.keywordType.equals("LEAF")){
+            for(int i = 0; i < inputKeyword.dominantChildNum; i++){
+                insertChild(subordinates, findVertexForName(inputKeyword.dominantChild[i]));
+            }
+        }
+
+        switch (inputKeyword.keywordType){
+            case "ROOT":
+                parsedSubordinates = new ArrayList<>(subordinates.subList(0, 10));
+                return parsedSubordinates;
+            case "HIGH":
+                parsedSubordinates = new ArrayList<>(subordinates.subList(0, 10));
+                return parsedSubordinates;
+            case "MIDDLE":
+                parsedSubordinates = new ArrayList<>(subordinates.subList(0, inputKeyword.dominantChildNum));
+                return parsedSubordinates;
+            case "LOW":
+                parsedSubordinates = new ArrayList<>(subordinates.subList(0, inputKeyword.dominantChildNum));
+                return parsedSubordinates;
+            case "LEAF":
+                System.out.println("THIS IS A LEAF");
+                return null;
+            default:
+                System.out.println("WARNING: UNKNOWN KEYWORD TYPE");
+                return null;
+        }
+    }
+
+    public static void insertChild(ArrayList<KeywordVertex> array, KeywordVertex child){
+        for(int i = 0; i < array.size() - 1; i++){
+            if(array.get(i).childNum >= child.childNum && array.get(i + 1).childNum <= child.childNum){
+                array.add(i + 1, child);
+                return;
+            }
+        }
+        if(array.size() == 0){
+            array.add(child);
+        } else if(array.get(0).childNum >= child.childNum){
+            array.add(child);
+        } else {
+            array.add(0, child);
         }
     }
 
@@ -262,8 +319,12 @@ public class GraphFactory {
         return mostSimilarKeyword;
     }
 
-    public static void setFilename(String file) {
-        GraphFactory.filename = file;
+    public static void setRawCSVFilename(String file) {
+        GraphFactory.rawCSVFilename = file;
+    }
+
+    public static void setParsedCSVFilename(String file) {
+        GraphFactory.parsedCSVFilename = file;
     }
 
     public static KeywordVertex findVertexForName(String inputName){
@@ -292,14 +353,15 @@ public class GraphFactory {
         boolean inputKeywordFLAG = true;
 
 
-        GraphFactory.setFilename("C:/Users/wang.daoping/Documents/Keyword_Graph.csv");
+        GraphFactory.setRawCSVFilename("C:/Users/wang.daoping/Documents/Keyword_Graph.csv");
+        GraphFactory.setParsedCSVFilename("C:/Users/wang.daoping/Documents/DFS_2411.csv");
         System.out.println("Loading CSV...");
 
-        // Pass the .csv file to createGraphFromCSV
+        // Pass the .csv file to createGraphFromRawCSV
 
         if(readFLAG){
             try{
-                GraphFactory.createGraphFromParsedCSV("C:/Users/wang.daoping/Documents/DFS_2411.csv");
+                GraphFactory.createGraphFromParsedCSV(GraphFactory.parsedCSVFilename);
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -307,9 +369,18 @@ public class GraphFactory {
 
         if(parseFLAG){
             try{
-                GraphFactory.createGraphFromCSV("C:/Users/wang.daoping/Documents/Keyword_Graph.csv");
+                GraphFactory.createGraphFromRawCSV(GraphFactory.rawCSVFilename);
             } catch (IOException e){
                 e.printStackTrace();
+            }
+        }
+
+        int percentage;
+        for(int i = 0; i < GraphFactory.keywordEntries; i++){
+            GraphFactory.assignChildren(i);
+            GraphFactory.assignDominantChildren(i);
+            if((percentage = GraphFactory.processPercentage(i, GraphFactory.keywordEntries)) != 0){
+                System.out.println("Assigning children... " + percentage + "% done");
             }
         }
 
@@ -338,6 +409,17 @@ public class GraphFactory {
             String userInput = scanner.nextLine();
             KeywordVertex buffer = findMostSimilarKeywordOf(userInput);
             System.out.println("Most similar keyword found: " + buffer.name + " with similarity " + Double.toString(buffer.inputSimilarity));
+
+            ArrayList<KeywordVertex> relevantSubordinates = findMostRelevantSubordinates(buffer);
+            System.out.println("Most relevant subordinates are: ");
+            if(relevantSubordinates != null){
+                for(int i = 0; i < relevantSubordinates.size(); i++){
+                    System.out.println(relevantSubordinates.get(i).name);
+                }
+            } else {
+                System.out.println("This is a leaf.");
+            }
+
         }
 
         if(writeParsedCSVFLAG){
@@ -350,13 +432,8 @@ public class GraphFactory {
 
         if(writeLayersFLAG){
             // After CSV reading, depth calculation and weight updates, start finding out the root keywords and assign children.
-            int percentage;
             for(int i = 0; i < GraphFactory.keywordEntries; i++){
-                GraphFactory.assignChildren(i);
-                GraphFactory.assignDominantChildren(i);
-                if((percentage = GraphFactory.processPercentage(i, GraphFactory.keywordEntries)) != 0){
-                    System.out.println("Assigning children... " + percentage + "% done");
-                }
+                GraphFactory.keywordArray[i].setKeywordType();
             }
 /*
             System.out.println("Root keywords are :");
