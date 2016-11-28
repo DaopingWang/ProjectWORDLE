@@ -4,8 +4,6 @@ import com.opencsv.CSVReader;
 import com.opencsv.CSVWriter;
 
 import java.io.*;
-import java.security.Key;
-import java.sql.SQLSyntaxErrorException;
 import java.util.ArrayList;
 import java.util.Scanner;
 
@@ -19,7 +17,7 @@ import java.util.Scanner;
  */
 public class GraphFactory {
     private static String rawCSVFilename;
-    private static String parsedCSVFilename;
+    private static String parsedCSVFilepath;
     public static KeywordVertex[] keywordArray;
     public static ProductVertex[] productArray;
     public static int keywordEntries = 0;
@@ -120,21 +118,24 @@ public class GraphFactory {
 
     /**
      * reads data from a .csv file parsed by CreateCSVAllFromGraph method and creates objects.
-     * @param filename is the file path.
+     * @param filepath is the file path.
      * @throws IOException if file not found.
      */
-    public static void createGraphFromParsedCSV(String filename) throws IOException{
+    public static void createGraphFromParsedCSV(String filepath) throws IOException{
         String[] lineBuffer;
+        String parentFile = filepath + "_parents.csv";
+        String childrenFile = filepath + "_children.csv";
         GraphFactory.keywordArray = new KeywordVertex[42000];
-        CSVReader reader = new CSVReader(new InputStreamReader(new FileInputStream(filename), "Cp1252"), ';', '\"', 0);
-        lineBuffer = reader.readNext();
+        CSVReader parentReader = new CSVReader(new InputStreamReader(new FileInputStream(parentFile), "Cp1252"), ';', '\"', 0);
+        CSVReader childrenReader = new CSVReader(new InputStreamReader(new FileInputStream(childrenFile), "Cp1252"), ';', '\"', 0);
+        lineBuffer = parentReader.readNext();
         GraphFactory.keywordEntries = Integer.parseInt(lineBuffer[0]);
         GraphFactory.maxLayer = Integer.parseInt(lineBuffer[1]);
         GraphFactory.keywordArray = new KeywordVertex[GraphFactory.keywordEntries];
         int i = 0;
 
         System.out.println("Start reading from CSVAll...");
-        while((lineBuffer = reader.readNext()) != null){
+        while((lineBuffer = parentReader.readNext()) != null){
             GraphFactory.keywordArray[i] = new KeywordVertex();
             GraphFactory.keywordArray[i].setName(lineBuffer[0]);
             GraphFactory.keywordArray[i].setLayer(Integer.parseInt(lineBuffer[1]));
@@ -148,6 +149,20 @@ public class GraphFactory {
             }
             i += 1;
         }
+
+        while((lineBuffer = childrenReader.readNext()) != null){
+            KeywordVertex currentVertex = findVertexForName(lineBuffer[0]);
+            currentVertex.dominantChildNum = Integer.parseInt(lineBuffer[1]);
+            for(int j = 0; j < currentVertex.dominantChildNum; j++){
+                currentVertex.dominantChild[j] = lineBuffer[j + 2];
+            }
+            currentVertex.childNum = Integer.parseInt(lineBuffer[2 + currentVertex.dominantChildNum]);
+            for(int j = 0; j < currentVertex.childNum; j++){
+                currentVertex.child[j] = lineBuffer[j + 2 + currentVertex.dominantChildNum + 1];
+            }
+        }
+
+
 
     }
 
@@ -185,12 +200,12 @@ public class GraphFactory {
         Scanner scanner = new Scanner(System.in);
         System.out.println("Give the .csv file a name: ");
         String userInput = scanner.next();
-        String filename = filepath + userInput + ".csv";
+        String filename = filepath + userInput + "_parents.csv";
 
-        CSVWriter writer = new CSVWriter(new OutputStreamWriter(new FileOutputStream(filename), "Cp1252"), ';');
+        CSVWriter parentWriter = new CSVWriter(new OutputStreamWriter(new FileOutputStream(filename), "Cp1252"), ';');
         String buffer = Integer.toString(GraphFactory.keywordEntries) + ";" + Integer.toString(GraphFactory.maxLayer) + ";EOL";
         String[] rc = buffer.split(";");
-        writer.writeNext(rc);
+        parentWriter.writeNext(rc);
         for(int i = 0; i < GraphFactory.keywordEntries; i++){
             String lineBuffer = GraphFactory.keywordArray[i].name + ";" + Integer.toString(GraphFactory.keywordArray[i].layer) + ";" + Integer.toString(GraphFactory.keywordArray[i].parentNum) + ";";
             for(int j = 0; j < GraphFactory.keywordArray[i].parentNum; j++){
@@ -201,9 +216,26 @@ public class GraphFactory {
             }
             lineBuffer += "EOL";
             String[] record = lineBuffer.split(";");
-            writer.writeNext(record);
+            parentWriter.writeNext(record);
         }
-        writer.close();
+        parentWriter.close();
+
+        filename = filepath + userInput + "_children.csv";
+        CSVWriter childrenWriter = new CSVWriter(new OutputStreamWriter(new FileOutputStream(filename), "Cp1252"), ';');
+        for(int i = 0; i < keywordEntries; i++){
+            String lineBuffer = keywordArray[i].name + ";" + Integer.toString(keywordArray[i].dominantChildNum) + ";";
+            for(int j = 0; j < keywordArray[i].dominantChildNum; j++){
+                lineBuffer += keywordArray[i].dominantChild[j] + ";";
+            }
+            lineBuffer += Integer.toString(keywordArray[i].childNum) + ";";
+            for(int j = 0; j < keywordArray[i].childNum; j++){
+                lineBuffer += keywordArray[i].child[j] + ";";
+            }
+            lineBuffer += "EOL";
+            String[] record = lineBuffer.split(";");
+            childrenWriter.writeNext(record);
+        }
+        childrenWriter.close();
     }
 
     /**
@@ -323,8 +355,8 @@ public class GraphFactory {
         GraphFactory.rawCSVFilename = file;
     }
 
-    public static void setParsedCSVFilename(String file) {
-        GraphFactory.parsedCSVFilename = file;
+    public static void setParsedCSVFilepath(String file) {
+        GraphFactory.parsedCSVFilepath = file;
     }
 
     public static KeywordVertex findVertexForName(String inputName){
@@ -354,14 +386,14 @@ public class GraphFactory {
 
 
         GraphFactory.setRawCSVFilename("C:/Users/wang.daoping/Documents/Keyword_Graph.csv");
-        GraphFactory.setParsedCSVFilename("C:/Users/wang.daoping/Documents/DFS_2411.csv");
+        GraphFactory.setParsedCSVFilepath("C:/Users/wang.daoping/Documents/");
         System.out.println("Loading CSV...");
 
         // Pass the .csv file to createGraphFromRawCSV
 
         if(readFLAG){
             try{
-                GraphFactory.createGraphFromParsedCSV(GraphFactory.parsedCSVFilename);
+                GraphFactory.createGraphFromParsedCSV("C:/Users/wang.daoping/Documents/DFSParsedGraph");
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -372,15 +404,6 @@ public class GraphFactory {
                 GraphFactory.createGraphFromRawCSV(GraphFactory.rawCSVFilename);
             } catch (IOException e){
                 e.printStackTrace();
-            }
-        }
-
-        int percentage;
-        for(int i = 0; i < GraphFactory.keywordEntries; i++){
-            GraphFactory.assignChildren(i);
-            GraphFactory.assignDominantChildren(i);
-            if((percentage = GraphFactory.processPercentage(i, GraphFactory.keywordEntries)) != 0){
-                System.out.println("Assigning children... " + percentage + "% done");
             }
         }
 
@@ -404,6 +427,10 @@ public class GraphFactory {
         }*/
 
         if(inputKeywordFLAG){
+            for(int i = 0; i < GraphFactory.keywordEntries; i++){
+                GraphFactory.keywordArray[i].setKeywordType();
+            }
+
             Scanner scanner = new Scanner(System.in);
             System.out.println("Enter keyword: ");
             String userInput = scanner.nextLine();
@@ -414,7 +441,7 @@ public class GraphFactory {
             System.out.println("Most relevant subordinates are: ");
             if(relevantSubordinates != null){
                 for(int i = 0; i < relevantSubordinates.size(); i++){
-                    System.out.println(relevantSubordinates.get(i).name);
+                    System.out.println(relevantSubordinates.get(i).name + " with " + Integer.toString(findVertexForName(relevantSubordinates.get(i).name).childNum) + " children.");
                 }
             } else {
                 System.out.println("This is a leaf.");
@@ -423,6 +450,15 @@ public class GraphFactory {
         }
 
         if(writeParsedCSVFLAG){
+            int percentage;
+            for(int i = 0; i < GraphFactory.keywordEntries; i++){
+                GraphFactory.assignChildren(i);
+                GraphFactory.assignDominantChildren(i);
+                if((percentage = GraphFactory.processPercentage(i, GraphFactory.keywordEntries)) != 0){
+                    System.out.println("Assigning children... " + percentage + "% done");
+                }
+            }
+
             try{
                 GraphFactory.createParsedCSVFromGraph("C:/Users/wang.daoping/Documents/");
             } catch (IOException e){

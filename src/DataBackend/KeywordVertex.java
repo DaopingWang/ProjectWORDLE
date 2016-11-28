@@ -75,15 +75,16 @@ public class KeywordVertex extends Vertex {
     }
 
     public void setKeywordType(){
-        if(this.keywordType.equals("ROOT")) return;
-        if(this.dominantChildNum == 0){
-            this.keywordType = "LEAF";
-        } else if(this.dominantChildNum < 6){
-            this.keywordType = "LOW";
-        } else if(this.dominantChildNum >= 6 && dominantChildNum < 11){
-            this.keywordType = "MIDDLE";
-        } else if(this.dominantChildNum >= 11){
-            this.keywordType = "HIGH";
+        if(this.keywordType == null){
+            if(this.dominantChildNum == 0){
+                this.keywordType = "LEAF";
+            } else if(this.dominantChildNum < 6){
+                this.keywordType = "LOW";
+            } else if(this.dominantChildNum >= 6 && dominantChildNum < 11){
+                this.keywordType = "MIDDLE";
+            } else if(this.dominantChildNum >= 11){
+                this.keywordType = "HIGH";
+            }
         }
     }
 
