@@ -4,6 +4,7 @@ import com.opencsv.CSVReader;
 import com.opencsv.CSVWriter;
 
 import java.io.*;
+import java.security.Key;
 import java.util.ArrayList;
 import java.util.Scanner;
 
@@ -292,30 +293,70 @@ public class GraphFactory {
 
     public static ArrayList<KeywordVertex> findMostRelevantSubordinates(KeywordVertex inputKeyword){
         ArrayList<KeywordVertex> subordinates = new ArrayList<>();
+        ArrayList<KeywordVertex> weakSubordinates = new ArrayList<>();
         ArrayList<KeywordVertex> parsedSubordinates;
-
-        if(!inputKeyword.keywordType.equals("LEAF")){
-            for(int i = 0; i < inputKeyword.dominantChildNum; i++){
-                insertChild(subordinates, findVertexForName(inputKeyword.dominantChild[i]));
-            }
-        }
+        ArrayList<KeywordVertex> parsedWeakSubordinates;
 
         switch (inputKeyword.keywordType){
             case "ROOT":
+                for(int i = 0; i < inputKeyword.dominantChildNum; i++){
+                    insertChild(subordinates, findVertexForName(inputKeyword.dominantChild[i]));
+                }
                 parsedSubordinates = new ArrayList<>(subordinates.subList(0, 10));
                 return parsedSubordinates;
+
             case "HIGH":
+                for(int i = 0; i < inputKeyword.dominantChildNum; i++){
+                    insertChild(subordinates, findVertexForName(inputKeyword.dominantChild[i]));
+                }
                 parsedSubordinates = new ArrayList<>(subordinates.subList(0, 10));
                 return parsedSubordinates;
+
             case "MIDDLE":
+                for(int i = 0; i < inputKeyword.dominantChildNum; i++){
+                    insertChild(subordinates, findVertexForName(inputKeyword.dominantChild[i]));
+                }
                 parsedSubordinates = new ArrayList<>(subordinates.subList(0, inputKeyword.dominantChildNum));
+                for(int i = 0; i < inputKeyword.childNum; i++){
+                    if(subordinates.contains(findVertexForName(inputKeyword.child[i]))) continue;
+                    insertChild(weakSubordinates, findVertexForName(inputKeyword.child[i]));
+                }
+                if(weakSubordinates.size() > 10 - inputKeyword.dominantChildNum){
+                    parsedWeakSubordinates = new ArrayList<>(weakSubordinates.subList(0, 10 - inputKeyword.dominantChildNum));
+                    parsedSubordinates.addAll(parsedWeakSubordinates);
+                } else {
+                    parsedSubordinates.addAll(weakSubordinates);
+                }
                 return parsedSubordinates;
+
             case "LOW":
+                for(int i = 0; i < inputKeyword.dominantChildNum; i++){
+                    insertChild(subordinates, findVertexForName(inputKeyword.dominantChild[i]));
+                }
                 parsedSubordinates = new ArrayList<>(subordinates.subList(0, inputKeyword.dominantChildNum));
+                for(int i = 0; i < inputKeyword.childNum; i++){
+                    if(subordinates.contains(findVertexForName(inputKeyword.child[i]))) continue;
+                    insertChild(weakSubordinates, findVertexForName(inputKeyword.child[i]));
+                }
+                if(weakSubordinates.size() > 10 - inputKeyword.dominantChildNum){
+                    parsedWeakSubordinates = new ArrayList<>(weakSubordinates.subList(0, 10 - inputKeyword.dominantChildNum));
+                    parsedSubordinates.addAll(parsedWeakSubordinates);
+                } else {
+                    parsedSubordinates.addAll(weakSubordinates);
+                }
                 return parsedSubordinates;
+
             case "LEAF":
-                System.out.println("THIS IS A LEAF");
-                return null;
+                for(int i = 0; i < inputKeyword.childNum; i++){
+                    insertChild(weakSubordinates, findVertexForName(inputKeyword.child[i]));
+                }
+                if(weakSubordinates.size() > 10){
+                    parsedWeakSubordinates = new ArrayList<>(weakSubordinates.subList(0, 10));
+                    return parsedWeakSubordinates;
+                } else {
+                    return weakSubordinates;
+                }
+
             default:
                 System.out.println("WARNING: UNKNOWN KEYWORD TYPE");
                 return null;
@@ -433,20 +474,23 @@ public class GraphFactory {
 
             Scanner scanner = new Scanner(System.in);
             System.out.println("Enter keyword: ");
-            String userInput = scanner.nextLine();
-            KeywordVertex buffer = findMostSimilarKeywordOf(userInput);
-            System.out.println("Most similar keyword found: " + buffer.name + " with similarity " + Double.toString(buffer.inputSimilarity));
+            String userInput;
+            while (!(userInput = scanner.nextLine()).equals("EXIT")){
+                KeywordVertex buffer = findMostSimilarKeywordOf(userInput);
+                System.out.println("Most similar keyword found: " + buffer.name + " with similarity " + Double.toString(buffer.inputSimilarity));
 
-            ArrayList<KeywordVertex> relevantSubordinates = findMostRelevantSubordinates(buffer);
-            System.out.println("Most relevant subordinates are: ");
-            if(relevantSubordinates != null){
-                for(int i = 0; i < relevantSubordinates.size(); i++){
-                    System.out.println(relevantSubordinates.get(i).name + " with " + Integer.toString(findVertexForName(relevantSubordinates.get(i).name).childNum) + " children.");
+                ArrayList<KeywordVertex> relevantSubordinates = findMostRelevantSubordinates(buffer);
+                System.out.println("Most relevant subordinates are: ");
+                if(relevantSubordinates != null && !relevantSubordinates.isEmpty()){
+                    for(int i = 0; i < relevantSubordinates.size(); i++){
+                        System.out.println(relevantSubordinates.get(i).name + " with " + Integer.toString(findVertexForName(relevantSubordinates.get(i).name).childNum) + " children.");
+                    }
+                } else {
+                    System.out.println("WARNING: RETURN VALUE EITHER EQUALS NULL OR EMPTY.");
                 }
-            } else {
-                System.out.println("This is a leaf.");
+                System.out.println();
+                System.out.println("Enter keyword:");
             }
-
         }
 
         if(writeParsedCSVFLAG){
