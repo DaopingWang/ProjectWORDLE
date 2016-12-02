@@ -39,9 +39,7 @@ public abstract class Vertex {
     }
 
     public void setLayer(int inputLayer){
-        if(this.layerIsUnset()){
-            this.layer = inputLayer;
-        }
+        this.layer = inputLayer;
     }
 
     public boolean layerIsUnset(){

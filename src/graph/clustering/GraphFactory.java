@@ -1,12 +1,11 @@
 package graph.clustering;
 
 import com.opencsv.CSVReader;
+import com.opencsv.CSVWriter;
 import graph.clustering.vertex.KeywordVertex;
 import graph.clustering.vertex.RootKeywordVertex;
 
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.util.ArrayList;
 
 /**
@@ -15,6 +14,7 @@ import java.util.ArrayList;
 public class GraphFactory {
     public static ArrayList<KeywordVertex> keywordVertices;
     public static ArrayList<RootKeywordVertex> rootKeywordVertices;
+    public static int layerNum = 0;
 
     public static void parseGraphFromRawCSV(String filename) throws IOException{
         keywordVertices = new ArrayList<>();
@@ -51,6 +51,42 @@ public class GraphFactory {
         }
         setDirectSubordinates();
         GraphParser.calculateLayers();
+        GraphParser.calculateEdgesWeights();
+    }
+
+    public static void createCSVLayersFromGraph(String filepath) throws IOException{
+        String filename;
+        String lineBuffer;
+
+        for(int i = 0; i < layerNum; i++){
+            filename = filepath + "layer_" + i + ".csv";
+            CSVWriter writer = new CSVWriter(new OutputStreamWriter(new FileOutputStream(filename), "Cp1252"),';');
+            switch (i){
+                case 0:
+                    for(int j = 0; j < rootKeywordVertices.size(); j++){
+                        lineBuffer = rootKeywordVertices.get(j).name;
+                        String[] record = lineBuffer.split(";");
+                        writer.writeNext(record);
+                    }
+                    writer.close();
+                    break;
+
+                default:
+                    for(int j = 0; j < keywordVertices.size(); j++){
+                        if(keywordVertices.get(j).layer == i){
+                            lineBuffer = keywordVertices.get(j).name + ";";
+                            for(int k = 0; k < keywordVertices.get(j).edgeList.size(); k++){
+                                lineBuffer += keywordVertices.get(j).edgeList.get(k).getTargetVertexName() + ";";
+                            }
+                            lineBuffer += "EOL;";
+                            String[] record = lineBuffer.split(";");
+                            writer.writeNext(record);
+                        }
+                    }
+                    writer.close();
+                    break;
+            }
+        }
     }
 
     public static KeywordVertex findVertexForName(String inputName, ArrayList<KeywordVertex> inputList){

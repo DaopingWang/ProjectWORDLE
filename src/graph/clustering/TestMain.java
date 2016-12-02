@@ -25,5 +25,12 @@ public class TestMain {
         for(int i = 0; i < GraphFactory.keywordVertices.get(testIndex).subordinateList.size(); i++){
             System.out.println(GraphFactory.keywordVertices.get(testIndex).subordinateList.get(i));
         }
+        System.out.println("Creating layer csvs...");
+        try {
+            GraphFactory.createCSVLayersFromGraph("C:/Users/wang.daoping/Documents/rework_layers/");
+        } catch (IOException e){
+            System.out.println("ERROR: CANNOT CREATE LAYERS");
+            e.printStackTrace();
+        }
     }
 }
