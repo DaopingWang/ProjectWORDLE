@@ -8,17 +8,17 @@ import java.io.IOException;
 public class TestMain {
 
     public static void main(String[] args){
-        int testIndex = 1000;
-
         try {
             GraphFactory.parseGraphFromRawCSV("C:/Users/wang.daoping/Documents/Keyword_Graph.csv");
         } catch (IOException e){
             System.out.println("ERROR: PARSE METHOD COULD NOT FIND RAW FILE");
             e.printStackTrace();
         }
-        System.out.println(GraphFactory.keywordVertices.get(testIndex).name + " has edges to ");
+
+        int testIndex = GraphFactory.findIndexForName("Multifunktionsfaxgerät", GraphFactory.keywordVertices);
+        System.out.println(GraphFactory.keywordVertices.get(testIndex).name + " in layer " + Integer.toString(GraphFactory.keywordVertices.get(testIndex).layer) + " has edges to ");
         for(int i = 0; i < GraphFactory.keywordVertices.get(testIndex).edgeList.size(); i++){
-            System.out.println(GraphFactory.keywordVertices.get(testIndex).edgeList.get(i).getTargetVertexName());
+            System.out.println(GraphFactory.keywordVertices.get(testIndex).edgeList.get(i).getTargetVertexName() + " " + Double.toString(GraphFactory.keywordVertices.get(testIndex).edgeList.get(i).getEdgeLength()));
         }
 
         System.out.println("and direct subordinates:");

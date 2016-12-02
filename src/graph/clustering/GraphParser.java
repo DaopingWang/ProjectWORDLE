@@ -18,7 +18,7 @@ public class GraphParser {
             for(int j = 0; j < GraphFactory.rootKeywordVertices.get(i).subordinateList.size(); j++){
                 for(int k = 0; k < GraphFactory.keywordVertices.size(); k++){
                     if(GraphFactory.keywordVertices.get(k).name.equals(GraphFactory.rootKeywordVertices.get(i).subordinateList.get(j))){
-                        bfsQueue.push(GraphFactory.keywordVertices.get(k));
+                        bfsQueue.offer(GraphFactory.keywordVertices.get(k));
                         GraphFactory.keywordVertices.get(k).setLayer(1);
                         GraphFactory.layerNum = 0;
                     }
@@ -28,14 +28,14 @@ public class GraphParser {
 
         System.out.println("Start layer computation...");
         while(!bfsQueue.isEmpty()){
-            v = bfsQueue.pop();
+            v = bfsQueue.poll();
             for(int i = 0; i < v.subordinateList.size(); i++){
                 if(GraphFactory.keywordVertices.get(GraphFactory.findIndexForName(v.subordinateList.get(i), GraphFactory.keywordVertices)).layerIsUnset()){
                     GraphFactory.keywordVertices.get(GraphFactory.findIndexForName(v.subordinateList.get(i), GraphFactory.keywordVertices)).setLayer(v.layer + 1);
                     if(GraphFactory.layerNum < v.layer + 1){
                         GraphFactory.layerNum = v.layer + 1;
                     }
-                    bfsQueue.push(GraphFactory.keywordVertices.get(GraphFactory.findIndexForName(v.subordinateList.get(i), GraphFactory.keywordVertices)));
+                    bfsQueue.offer(GraphFactory.keywordVertices.get(GraphFactory.findIndexForName(v.subordinateList.get(i), GraphFactory.keywordVertices)));
                 }
             }
         }
