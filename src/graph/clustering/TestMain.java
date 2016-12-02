@@ -20,5 +20,10 @@ public class TestMain {
         for(int i = 0; i < GraphFactory.keywordVertices.get(testIndex).edgeList.size(); i++){
             System.out.println(GraphFactory.keywordVertices.get(testIndex).edgeList.get(i).getTargetVertexName());
         }
+
+        System.out.println("and direct subordinates:");
+        for(int i = 0; i < GraphFactory.keywordVertices.get(testIndex).subordinateList.size(); i++){
+            System.out.println(GraphFactory.keywordVertices.get(testIndex).subordinateList.get(i));
+        }
     }
 }

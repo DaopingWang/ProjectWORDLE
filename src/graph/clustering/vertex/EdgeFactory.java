@@ -15,8 +15,11 @@ public class EdgeFactory {
         this.targetVertexName = inputName;
     }
 
-    public void setEdgeLength(double inputLayer){
-        this.edgeLength = Math.pow(0.5, (double) inputLayer) + 0.2;
+    public void setEdgeLength(int inputLayer){
+        this.edgeLength = Math.pow(0.5, (double) inputLayer);
+        if(inputLayer != 0){
+            this.edgeLength += 0.2;
+        }
     }
 
     public String getTargetVertexName(){

@@ -49,6 +49,8 @@ public class GraphFactory {
                     break;
             }
         }
+        setDirectSubordinates();
+        GraphParser.calculateLayers();
     }
 
     public static KeywordVertex findVertexForName(String inputName, ArrayList<KeywordVertex> inputList){
@@ -61,14 +63,52 @@ public class GraphFactory {
         return null;
     }
 
+    public static boolean isRootKeyword(String inputName){
+        for(int i = 0; i < rootKeywordVertices.size(); i++){
+            if(inputName.equals(rootKeywordVertices.get(i).name)){
+                return true;
+            }
+        }
+        return false;
+    }
+
     public static int findIndexForName(String inputName, ArrayList<KeywordVertex> inputList){
         for(int i = 0; i < inputList.size(); i++){
             if(inputList.get(i).name.equals(inputName)){
                 return i;
             }
         }
-        System.out.println("ERROR: INDEX NOT FOUND FOR " + inputName);
+        //System.out.println("ERROR: INDEX NOT FOUND FOR " + inputName);
         return -1;
+    }
+
+    public static int findIndexForName(String inputName){
+        for(int i = 0; i < rootKeywordVertices.size(); i++){
+            if(rootKeywordVertices.get(i).name.equals(inputName)){
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    public static void setDirectSubordinates(){
+        int index;
+        int percentage;
+
+        for(int i = 0; i < keywordVertices.size(); i++){
+            for(int j = 0; j < keywordVertices.get(i).edgeList.size(); j++){
+                if((index = findIndexForName(keywordVertices.get(i).edgeList.get(j).getTargetVertexName(), keywordVertices)) != -1  && !keywordVertices.get(index).subordinateList.contains(keywordVertices.get(i).name)){
+                    keywordVertices.get(findIndexForName(keywordVertices.get(i).edgeList.get(j).getTargetVertexName(), keywordVertices)).subordinateList.add(keywordVertices.get(i).name);
+                    break;
+                } else if((index = findIndexForName(keywordVertices.get(i).edgeList.get(j).getTargetVertexName())) != -1 && !rootKeywordVertices.get(index).subordinateList.contains(keywordVertices.get(i).name)){
+                    rootKeywordVertices.get(index).subordinateList.add(keywordVertices.get(i).name);
+                }
+            }
+            percentage = processPercentage(i, keywordVertices.size());
+            if(percentage != 0){
+                System.out.println("Assigning direct subordinates. " + Integer.toString(percentage) + "% done.");
+            }
+        }
     }
 
     private static boolean rootEntryExists(ArrayList<RootKeywordVertex> inputList, String inputName){
