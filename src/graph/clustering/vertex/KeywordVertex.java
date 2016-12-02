@@ -19,4 +19,13 @@ public class KeywordVertex extends Vertex{
         EdgeFactory edge = new EdgeFactory(inputName);
         this.edgeList.add(edge);
     }
+
+    public boolean edgeExist(String inputName){
+        for(int i = 0; i < this.edgeList.size(); i++){
+            if(this.edgeList.get(i).getTargetVertexName().equals(inputName)){
+                return true;
+            }
+        }
+        return false;
+    }
 }

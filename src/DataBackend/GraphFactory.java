@@ -416,7 +416,7 @@ public class GraphFactory {
         }
         return 0;
     }
-
+/*
     public static void main(String[] args) {
         //int testKeyword = 2265;
         boolean readFLAG = true;
@@ -448,7 +448,7 @@ public class GraphFactory {
             }
         }
 
-/*
+
         System.out.println(testKeyword + ". keyword " + GraphFactory.keywordArray[testKeyword].name + " has these parents: ");
         System.out.println();
         for(int i = 0; i < GraphFactory.keywordArray[testKeyword].parentNum; i++){
@@ -465,7 +465,7 @@ public class GraphFactory {
         for(int i = 0; i < GraphFactory.keywordArray[testKeyword].parentNum; i++){
             System.out.print(GraphFactory.keywordArray[testKeyword].pathLength[i]);
             System.out.println();
-        }*/
+        }
 
         if(inputKeywordFLAG){
             for(int i = 0; i < GraphFactory.keywordEntries; i++){
@@ -515,7 +515,7 @@ public class GraphFactory {
             for(int i = 0; i < GraphFactory.keywordEntries; i++){
                 GraphFactory.keywordArray[i].setKeywordType();
             }
-/*
+
             System.out.println("Root keywords are :");
             for(int i= 0; i < GraphFactory.keywordEntries; i++){
                 if(GraphFactory.keywordArray[i].isRootKeyword){
@@ -526,7 +526,7 @@ public class GraphFactory {
                     }
                     System.out.println();
                 }
-            }*/
+            }
             try{
                 GraphFactory.createCSVLayersFromGraph("C:/Users/wang.daoping/Documents/DFS_Keywords_layers_2411/");
             } catch(IOException e){
@@ -534,4 +534,5 @@ public class GraphFactory {
             }
         }
     }
+    */
 }

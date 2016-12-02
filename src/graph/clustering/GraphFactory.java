@@ -20,8 +20,11 @@ public class GraphFactory {
         keywordVertices = new ArrayList<>();
         rootKeywordVertices = new ArrayList<>();
         String[] lineBuffer;
+        int index;
+
         CSVReader reader = new CSVReader(new InputStreamReader(new FileInputStream(filename), "Cp1252"), ',', '\"', 1);
         while((lineBuffer = reader.readNext()) != null){
+            System.out.println(lineBuffer[0] + " " + lineBuffer[1]);
             switch (lineBuffer[1]){
                 case "Mercateo":
                     if(!rootEntryExists(rootKeywordVertices, lineBuffer[0])){
@@ -31,14 +34,15 @@ public class GraphFactory {
                     break;
 
                 default:
-                    if(!entryExists(keywordVertices, lineBuffer[0], 0)){
+                    if(entryExists(keywordVertices, lineBuffer[0]) == -1){
                         KeywordVertex kv = new KeywordVertex(lineBuffer[0]);
                         keywordVertices.add(kv);
                         keywordVertices.get(keywordVertices.size() - 1).createNewEdge(lineBuffer[1]);
-                    } else if(entryExists(keywordVertices, lineBuffer[0], 0) && !entryExists(keywordVertices, lineBuffer[1], 1)){
+                    } else if((index = entryExists(keywordVertices, lineBuffer[0])) != -1 && !keywordVertices.get(index).edgeExist(lineBuffer[1])){
                         try {
-                            keywordVertices.get(keywordVertices.indexOf(findVertexForName(lineBuffer[0], keywordVertices))).createNewEdge(lineBuffer[1]);
+                            keywordVertices.get(findIndexForName(lineBuffer[0], keywordVertices)).createNewEdge(lineBuffer[1]);
                         } catch (NullPointerException e){
+                            System.out.println("ERROR: INDEX OUT OF BOUND");
                             e.printStackTrace();
                         }
                     }
@@ -57,6 +61,16 @@ public class GraphFactory {
         return null;
     }
 
+    public static int findIndexForName(String inputName, ArrayList<KeywordVertex> inputList){
+        for(int i = 0; i < inputList.size(); i++){
+            if(inputList.get(i).name.equals(inputName)){
+                return i;
+            }
+        }
+        System.out.println("ERROR: INDEX NOT FOUND FOR " + inputName);
+        return -1;
+    }
+
     private static boolean rootEntryExists(ArrayList<RootKeywordVertex> inputList, String inputName){
         for(int i = 0; i < inputList.size(); i++){
             if(inputList.get(i).name.equals(inputName)){
@@ -66,29 +80,20 @@ public class GraphFactory {
         return false;
     }
 
-    private static boolean entryExists(ArrayList<KeywordVertex> inputList, String inputName, int mode){
-        switch (mode){
-            case 0:
-                for(int i = 0; i < inputList.size(); i++){
-                    if(inputList.get(i).name.equals(inputName)){
-                        return true;
-                    }
-                }
-                return false;
-
-            case 1:
-                for(int i = 0; i < inputList.size(); i++){
-                    for(int j = 0; j < inputList.get(i).edgeList.size(); j++){
-                        if(inputList.get(i).edgeList.get(j).getTargetVertexName().equals(inputName)){
-                            return true;
-                        }
-                    }
-                }
-                return false;
-
-            default:
-                System.out.println("ERROR: UNKNOWN MODE");
-                return false;
+    private static int entryExists(ArrayList<KeywordVertex> inputList, String inputName){
+        for(int i = 0; i < inputList.size(); i++){
+            if(inputList.get(i).name.equals(inputName)){
+                return i;
+            }
         }
+        return -1;
+    }
+
+    private static int processPercentage(int i, int count){
+        int fivePercent = count / 20;
+        if(i % fivePercent == 0){
+            return 5 * (i / fivePercent);
+        }
+        return 0;
     }
 }
