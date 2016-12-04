@@ -15,6 +15,12 @@ public class KeywordVertex extends Vertex{
         this.probabilityList = new ArrayList<>();
     }
 
+    public KeywordVertex(String inputName, int inputLayer){
+        super(inputName, inputLayer);
+        this.edgeList = new ArrayList<>();
+        this.probabilityList = new ArrayList<>();
+    }
+
     public void createNewEdge(String inputName){
         EdgeFactory edge = new EdgeFactory(inputName);
         this.edgeList.add(edge);

@@ -28,14 +28,14 @@ public class GraphParser {
 
         System.out.println("Start layer computation...");
         while(!bfsQueue.isEmpty()){
-            v = bfsQueue.poll();
+            v = bfsQueue.pollFirst();
             for(int i = 0; i < v.subordinateList.size(); i++){
                 if(GraphFactory.keywordVertices.get(GraphFactory.findIndexForName(v.subordinateList.get(i), GraphFactory.keywordVertices)).layerIsUnset()){
                     GraphFactory.keywordVertices.get(GraphFactory.findIndexForName(v.subordinateList.get(i), GraphFactory.keywordVertices)).setLayer(v.layer + 1);
                     if(GraphFactory.layerNum < v.layer + 1){
                         GraphFactory.layerNum = v.layer + 1;
                     }
-                    bfsQueue.offer(GraphFactory.keywordVertices.get(GraphFactory.findIndexForName(v.subordinateList.get(i), GraphFactory.keywordVertices)));
+                    bfsQueue.offerLast(GraphFactory.keywordVertices.get(GraphFactory.findIndexForName(v.subordinateList.get(i), GraphFactory.keywordVertices)));
                 }
             }
         }
@@ -52,9 +52,9 @@ public class GraphParser {
                 currentEdge = GraphFactory.keywordVertices.get(i).edgeList.get(j);
 
                 if(GraphFactory.isRootKeyword(currentEndVertexName)){
-                    currentEdge.setEdgeLength(0);
+                    currentEdge.setEdgeWeight(0);
                 } else {
-                    currentEdge.setEdgeLength(GraphFactory.findVertexForName(currentEndVertexName, GraphFactory.keywordVertices).layer);
+                    currentEdge.setEdgeWeight(GraphFactory.findVertexForName(currentEndVertexName, GraphFactory.keywordVertices).layer);
                 }
             }
         }

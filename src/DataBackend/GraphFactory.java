@@ -418,7 +418,7 @@ public class GraphFactory {
     }
 /*
     public static void main(String[] args) {
-        //int testKeyword = 2265;
+        int testKeyword = 2265;
         boolean readFLAG = true;
         boolean parseFLAG = false;
         boolean writeLayersFLAG = false;
@@ -533,6 +533,6 @@ public class GraphFactory {
                 e.printStackTrace();
             }
         }
-    }
-    */
+    }*/
+
 }
