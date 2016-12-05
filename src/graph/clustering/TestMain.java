@@ -18,7 +18,7 @@ public class TestMain {
             e.printStackTrace();
         }
 
-        int testIndex = GraphFactory.findIndexForName("Multifunktionsfaxgerät", GraphFactory.keywordVertices);
+        int testIndex = GraphFactory.findIndexForName("Alarmblitzleuchte", GraphFactory.keywordVertices);
         System.out.println(GraphFactory.keywordVertices.get(testIndex).name + " in layer " + Integer.toString(GraphFactory.keywordVertices.get(testIndex).layer) + " has edges to ");
         for(int i = 0; i < GraphFactory.keywordVertices.get(testIndex).edgeList.size(); i++){
             System.out.println(GraphFactory.keywordVertices.get(testIndex).edgeList.get(i).getTargetVertexName() + " " + Double.toString(GraphFactory.keywordVertices.get(testIndex).edgeList.get(i).getEdgeWeight()));

@@ -21,6 +21,10 @@ public class Probability {
     }
 
     public void setProbability(double probability) {
+        if(probability < 0.00001){
+            this.probability = 0;
+            return;
+        }
         this.probability = probability;
     }
 

@@ -23,6 +23,10 @@ public class DijkstraPathFinder {
             keywordVertices.get(i).distance = Double.MAX_VALUE;
             keywordVertices.get(i).previous = null;
         }
+        for(int i = 0; i < rootKeywordVertices.size(); i++){
+            rootKeywordVertices.get(i).distance = Double.MAX_VALUE;
+            rootKeywordVertices.get(i).previous = null;
+        }
         startVertex.distance = 0;
 
         unsettledVertices.offer(startVertex);
