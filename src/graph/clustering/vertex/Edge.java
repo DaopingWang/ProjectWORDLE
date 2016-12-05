@@ -3,20 +3,20 @@ package graph.clustering.vertex;
 /**
  * Created by Wang.Daoping on 01.12.2016.
  */
-public class EdgeFactory {
+public class Edge {
     private String targetVertexName;
     private double edgeWeight;
 
-    public EdgeFactory(String inputName){
+    public Edge(String inputName){
         this.setTargetVertexName(inputName);
     }
 
-    public EdgeFactory(String inputName, double inputWeight){
+    public Edge(String inputName, double inputWeight){
         this.setTargetVertexName(inputName);
         this.setEdgeWeight(inputWeight);
     }
 
-    public EdgeFactory(String inputName, int inputLayer){
+    public Edge(String inputName, int inputLayer){
         this.setTargetVertexName(inputName);
         this.setEdgeWeight(inputLayer);
     }

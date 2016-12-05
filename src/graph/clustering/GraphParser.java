@@ -1,8 +1,8 @@
 package graph.clustering;
 
-import graph.clustering.vertex.EdgeFactory;
+import graph.clustering.vertex.Edge;
 import graph.clustering.vertex.KeywordVertex;
-import graph.clustering.vertex.RootKeywordVertex;
+import graph.clustering.vertex.Probability;
 
 import java.util.LinkedList;
 import java.util.Stack;
@@ -11,7 +11,6 @@ import java.util.Stack;
  * Created by Wang.Daoping on 02.12.2016.
  */
 public class GraphParser {
-
     public static void calculateLayers(){
         KeywordVertex v;
         LinkedList<KeywordVertex> bfsQueue = new LinkedList<>();
@@ -45,7 +44,7 @@ public class GraphParser {
 
     public static void calculateEdgesWeights(){
         String currentEndVertexName;
-        EdgeFactory currentEdge;
+        Edge currentEdge;
 
         System.out.println("Start edges calculations...");
         for(int i = 0; i < GraphFactory.keywordVertices.size(); i++){
@@ -62,13 +61,38 @@ public class GraphParser {
         }
     }
 
-    public static void calculateProbability(){
-        for(int i = 0; i < GraphFactory.rootKeywordVertices.size(); i++){
-            performDFS(GraphFactory.rootKeywordVertices.get(i));
-        }
+
+
+    public static void calculateProbability(KeywordVertex inputStartKeyword, KeywordVertex inputTargetVertex){
+        Stack<KeywordVertex> stack = new Stack<>();
+        Probability p = new Probability(inputTargetVertex.name);
+        inputStartKeyword.probabilityList.add(p);
+
+        stack.push(inputStartKeyword);
     }
 
-    private static void performDFS(RootKeywordVertex inputRK){
-        Stack<KeywordVertex> stack = new Stack<>();
+    private static void performDFS(Stack<KeywordVertex> inputStack, KeywordVertex inputTargetVertex){
+        KeywordVertex kv;
+        KeywordVertex foundVertex;
+        double discoveredLength = 0;
+
+        while(!inputStack.isEmpty()){
+            kv = inputStack.peek();
+            for(int i = 0; i < kv.edgeList.size(); i++){
+                Edge currentEdge = kv.edgeList.get(i);
+
+                if(currentEdge.getTargetVertexName().equals(inputTargetVertex.name)){
+                    discoveredLength =  kv.edgeList.get(i).getEdgeWeight();
+                } else if((foundVertex = GraphFactory.findVertexForName(currentEdge.getTargetVertexName(), GraphFactory.keywordVertices)) != null){
+                    inputStack.push(foundVertex);
+                    discoveredLength += currentEdge.getEdgeWeight();
+                    performDFS(inputStack, inputTargetVertex);
+                } else {
+                    discoveredLength = 0;
+                    inputStack.pop();
+                }
+            }
+        }
+
     }
 }

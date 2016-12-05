@@ -1,13 +1,16 @@
 package graph.clustering.vertex;
 
+import cern.colt.matrix.impl.SparseDoubleMatrix1D;
+
 import java.util.ArrayList;
 
 /**
  * Created by Wang.Daoping on 01.12.2016.
  */
 public class KeywordVertex extends Vertex{
-    public ArrayList<EdgeFactory> edgeList;
-    public ArrayList<ProbabilityCalculator> probabilityList;
+    public ArrayList<Edge> edgeList;
+    public ArrayList<Probability> probabilityList;
+    public SparseDoubleMatrix1D pathLengthVector;
 
     public KeywordVertex(String inputName){
         super(inputName);
@@ -22,7 +25,7 @@ public class KeywordVertex extends Vertex{
     }
 
     public void createNewEdge(String inputName){
-        EdgeFactory edge = new EdgeFactory(inputName);
+        Edge edge = new Edge(inputName);
         this.edgeList.add(edge);
     }
 

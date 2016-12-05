@@ -3,11 +3,11 @@ package graph.clustering.vertex;
 /**
  * Created by Wang.Daoping on 01.12.2016.
  */
-public class ProbabilityCalculator {
+public class Probability {
     private String targetVertexName;
     private double probability;
 
-    public ProbabilityCalculator(String inputName){
+    public Probability(String inputName){
         this.setTargetVertexName(inputName);
     }
 

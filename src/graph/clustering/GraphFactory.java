@@ -1,14 +1,15 @@
 package graph.clustering;
 
+import cern.colt.matrix.impl.SparseDoubleMatrix1D;
+import cern.colt.matrix.impl.SparseDoubleMatrix2D;
 import com.opencsv.CSVReader;
 import com.opencsv.CSVWriter;
-import graph.clustering.vertex.EdgeFactory;
+import graph.clustering.vertex.Edge;
 import graph.clustering.vertex.KeywordVertex;
 import graph.clustering.vertex.RootKeywordVertex;
 
 import java.io.*;
 import java.util.ArrayList;
-import java.util.DoubleSummaryStatistics;
 
 /**
  * Created by Wang.Daoping on 01.12.2016.
@@ -38,7 +39,7 @@ public class GraphFactory {
                         keywordVertices.add(kv);
                         index = keywordVertices.size() - 1;
                         for (int i = 3; i < Integer.parseInt(lineBuffer[2]) + 3; i++) {
-                            EdgeFactory edge = new EdgeFactory(lineBuffer[i], Double.parseDouble(lineBuffer[i + Integer.parseInt(lineBuffer[2])]));
+                            Edge edge = new Edge(lineBuffer[i], Double.parseDouble(lineBuffer[i + Integer.parseInt(lineBuffer[2])]));
                             keywordVertices.get(index).edgeList.add(edge);
                         }
                         break;
@@ -47,7 +48,21 @@ public class GraphFactory {
         } catch (ArrayIndexOutOfBoundsException e){
             System.out.println("ERROR " + lineBuffer[0]);
         }
-        setDirectSubordinates();
+
+        for(int i = 0; i < keywordVertices.size(); i++){
+            keywordVertices.get(i).pathLengthVector = new SparseDoubleMatrix1D(keywordVertices.size() + rootKeywordVertices.size());
+        }
+        //setDirectSubordinates();
+
+        int percentage;
+        for(int i = 0; i < keywordVertices.size(); i++){
+            DijkstraPathFinder.findSingleSourceShortestPath(keywordVertices.get(i), keywordVertices, rootKeywordVertices);
+
+            percentage = processPercentage(i, keywordVertices.size());
+            if(percentage != 0){
+                System.out.println("Dididi dijkstraing... " + Integer.toString(percentage) + "% done.");
+            }
+        }
     }
 
     public static void parseGraphFromRawCSV(String filename) throws IOException{
@@ -82,6 +97,10 @@ public class GraphFactory {
                     }
                     break;
             }
+        }
+
+        for(int i = 0; i < keywordVertices.size(); i++){
+            keywordVertices.get(i).pathLengthVector = new SparseDoubleMatrix1D(keywordVertices.size() + rootKeywordVertices.size());
         }
         setDirectSubordinates();
         GraphParser.calculateLayers();
@@ -155,7 +174,7 @@ public class GraphFactory {
                 return inputList.get(i);
             }
         }
-        System.out.println("ERROR: VERTEX NOT FOUND FOR " + inputName);
+        //System.out.println("ERROR: VERTEX NOT FOUND FOR " + inputName);
         return null;
     }
 

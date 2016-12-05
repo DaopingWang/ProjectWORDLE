@@ -18,6 +18,9 @@ public abstract class Vertex {
 
     public ArrayList<String> subordinateList;
 
+    public double distance;
+    public String previous;
+
     public Vertex(String inputName){
         this.setLayer(-1);
         this.setName(inputName);
