@@ -1,6 +1,8 @@
 package graph.clustering;
 
+import cern.colt.matrix.impl.SparseDoubleMatrix1D;
 import graph.clustering.vertex.KeywordVertex;
+import graph.clustering.vertex.Probability;
 import graph.clustering.vertex.RootKeywordVertex;
 
 import java.util.ArrayList;
@@ -26,6 +28,40 @@ public class DijkstraPathFinder {
         unsettledVertices.offer(startVertex);
         dijkstra(unsettledVertices, settledVertices, keywordVertices, rootKeywordVertices);
 
+        for(int i = 0; i < keywordVertices.size(); i++){
+            if(keywordVertices.get(i).distance == Double.MAX_VALUE){
+                startVertex.pathLengthVector.set(i, 0);
+            } else {
+                startVertex.pathLengthVector.set(i, keywordVertices.get(i).distance);
+            }
+        }
+
+        for(int i = 0; i < rootKeywordVertices.size(); i++){
+            startVertex.pathLengthVector.set(i + keywordVertices.size(), rootKeywordVertices.get(i).distance);
+            Probability p = new Probability(rootKeywordVertices.get(i).name, rootKeywordVertices.get(i).distance);
+            startVertex.probabilityList.add(p);
+        }
+
+        setProbability(startVertex);
+    }
+
+    public static void initSparseVectors(ArrayList<KeywordVertex> keywordVertices,
+                                          ArrayList<RootKeywordVertex> rootKeywordVertices){
+
+        for(int i = 0; i < keywordVertices.size(); i++){
+            keywordVertices.get(i).pathLengthVector = new SparseDoubleMatrix1D(keywordVertices.size() + rootKeywordVertices.size());
+        }
+    }
+
+    private static void setProbability(KeywordVertex startVertex){
+        double sum = 0;
+        for(int i = 0; i < startVertex.probabilityList.size(); i++){
+            sum += 1 / startVertex.probabilityList.get(i).getProbability();
+        }
+        for(int i = 0; i < startVertex.probabilityList.size(); i++){
+            double probability = 1 / startVertex.probabilityList.get(i).getProbability();
+            startVertex.probabilityList.get(i).setProbability(probability / sum);
+        }
     }
 
     private static void dijkstra(LinkedList<KeywordVertex> unsettledVertices,

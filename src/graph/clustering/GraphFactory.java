@@ -25,6 +25,7 @@ public class GraphFactory {
         String[] lineBuffer = null;
         int index;
 
+        System.out.println("Loading parsed .csv...");
         CSVReader reader = new CSVReader(new InputStreamReader(new FileInputStream(filename), "Cp1252"), ';', '\"', 0);
         try {
             while ((lineBuffer = reader.readNext()) != null) {
@@ -54,7 +55,9 @@ public class GraphFactory {
         }
         //setDirectSubordinates();
 
+        DijkstraPathFinder.initSparseVectors(keywordVertices, rootKeywordVertices);
         int percentage;
+        System.out.println("Start dijkstra...");
         for(int i = 0; i < keywordVertices.size(); i++){
             DijkstraPathFinder.findSingleSourceShortestPath(keywordVertices.get(i), keywordVertices, rootKeywordVertices);
 
@@ -105,6 +108,18 @@ public class GraphFactory {
         setDirectSubordinates();
         GraphParser.calculateLayers();
         GraphParser.calculateEdgesWeights();
+
+        DijkstraPathFinder.initSparseVectors(keywordVertices, rootKeywordVertices);
+        int percentage;
+        System.out.println("Start dijkstra...");
+        for(int i = 0; i < keywordVertices.size(); i++){
+            DijkstraPathFinder.findSingleSourceShortestPath(keywordVertices.get(i), keywordVertices, rootKeywordVertices);
+
+            percentage = processPercentage(i, keywordVertices.size());
+            if(percentage != 0){
+                System.out.println("Dididi dijkstraing... " + Integer.toString(percentage) + "% done.");
+            }
+        }
     }
 
     public static void createParsedCSVFromGraph(String filepath) throws IOException{

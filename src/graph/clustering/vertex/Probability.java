@@ -11,6 +11,11 @@ public class Probability {
         this.setTargetVertexName(inputName);
     }
 
+    public Probability(String inputName, double probability){
+        this.setTargetVertexName(inputName);
+        this.setProbability(probability);
+    }
+
     public void setTargetVertexName(String targetVertexName) {
         this.targetVertexName = targetVertexName;
     }

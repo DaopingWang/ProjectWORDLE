@@ -1,5 +1,7 @@
 package graph.clustering;
 
+import com.sun.corba.se.impl.orbutil.graph.Graph;
+
 import java.io.IOException;
 
 /**
@@ -22,9 +24,10 @@ public class TestMain {
             System.out.println(GraphFactory.keywordVertices.get(testIndex).edgeList.get(i).getTargetVertexName() + " " + Double.toString(GraphFactory.keywordVertices.get(testIndex).edgeList.get(i).getEdgeWeight()));
         }
 
-        System.out.println("and direct subordinates:");
-        for(int i = 0; i < GraphFactory.keywordVertices.get(testIndex).subordinateList.size(); i++){
-            System.out.println(GraphFactory.keywordVertices.get(testIndex).subordinateList.get(i));
+        System.out.println();
+        System.out.println("Probabilities: ");
+        for(int i = 0; i < GraphFactory.keywordVertices.get(testIndex).probabilityList.size(); i++){
+            System.out.println(GraphFactory.keywordVertices.get(testIndex).probabilityList.get(i).getTargetVertexName() + " " + Double.toString(GraphFactory.keywordVertices.get(testIndex).probabilityList.get(i).getProbability()));
         }
 /*
         System.out.println("Creating layer csvs...");
