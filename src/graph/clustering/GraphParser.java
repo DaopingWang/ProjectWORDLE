@@ -2,8 +2,10 @@ package graph.clustering;
 
 import graph.clustering.vertex.EdgeFactory;
 import graph.clustering.vertex.KeywordVertex;
+import graph.clustering.vertex.RootKeywordVertex;
 
 import java.util.LinkedList;
+import java.util.Stack;
 
 /**
  * Created by Wang.Daoping on 02.12.2016.
@@ -58,5 +60,15 @@ public class GraphParser {
                 }
             }
         }
+    }
+
+    public static void calculateProbability(){
+        for(int i = 0; i < GraphFactory.rootKeywordVertices.size(); i++){
+            performDFS(GraphFactory.rootKeywordVertices.get(i));
+        }
+    }
+
+    private static void performDFS(RootKeywordVertex inputRK){
+        Stack<KeywordVertex> stack = new Stack<>();
     }
 }

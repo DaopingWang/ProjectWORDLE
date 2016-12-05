@@ -24,7 +24,7 @@ public class GraphFactory {
         String[] lineBuffer = null;
         int index;
 
-        CSVReader reader = new CSVReader(new InputStreamReader(new FileInputStream(filename), "Cp1252"), ';', '\"', 1);
+        CSVReader reader = new CSVReader(new InputStreamReader(new FileInputStream(filename), "Cp1252"), ';', '\"', 0);
         try {
             while ((lineBuffer = reader.readNext()) != null) {
                 switch (Integer.parseInt(lineBuffer[1])) {

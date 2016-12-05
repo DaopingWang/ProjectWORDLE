@@ -9,8 +9,8 @@ public class TestMain {
 
     public static void main(String[] args){
         try {
-            GraphFactory.parseGraphFromRawCSV("C:/Users/wang.daoping/Documents/Keyword_Graph.csv");
-            //GraphFactory.readGraphFromParsedCSV("C:/Users/wang.daoping/Documents/rework_layers/ParsedCSV.csv");
+            //GraphFactory.parseGraphFromRawCSV("C:/Users/wang.daoping/Documents/Keyword_Graph.csv");
+            GraphFactory.readGraphFromParsedCSV("C:/Users/wang.daoping/Documents/rework_layers/ParsedCSV.csv");
         } catch (IOException e){
             System.out.println("ERROR: PARSE METHOD COULD NOT FIND RAW FILE");
             e.printStackTrace();
@@ -26,13 +26,13 @@ public class TestMain {
         for(int i = 0; i < GraphFactory.keywordVertices.get(testIndex).subordinateList.size(); i++){
             System.out.println(GraphFactory.keywordVertices.get(testIndex).subordinateList.get(i));
         }
-
+/*
         System.out.println("Creating layer csvs...");
         try {
             GraphFactory.createParsedCSVFromGraph("C:/Users/wang.daoping/Documents/rework_layers/");
         } catch (IOException e){
             System.out.println("ERROR: CANNOT CREATE LAYERS");
             e.printStackTrace();
-        }
+        }*/
     }
 }
