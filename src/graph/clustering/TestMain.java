@@ -18,7 +18,7 @@ public class TestMain {
             e.printStackTrace();
         }
 
-        int testIndex = GraphFactory.findIndexForName("Alarmblitzleuchte", GraphFactory.keywordVertices);
+        int testIndex = GraphFactory.findIndexForName("Adapterrahmen", GraphFactory.keywordVertices);
         System.out.println(GraphFactory.keywordVertices.get(testIndex).name + " in layer " + Integer.toString(GraphFactory.keywordVertices.get(testIndex).layer) + " has edges to ");
         for(int i = 0; i < GraphFactory.keywordVertices.get(testIndex).edgeList.size(); i++){
             System.out.println(GraphFactory.keywordVertices.get(testIndex).edgeList.get(i).getTargetVertexName() + " " + Double.toString(GraphFactory.keywordVertices.get(testIndex).edgeList.get(i).getEdgeWeight()));
@@ -29,13 +29,14 @@ public class TestMain {
         for(int i = 0; i < GraphFactory.keywordVertices.get(testIndex).probabilityList.size(); i++){
             System.out.println(GraphFactory.keywordVertices.get(testIndex).probabilityList.get(i).getTargetVertexName() + " " + Double.toString(GraphFactory.keywordVertices.get(testIndex).probabilityList.get(i).getProbability()));
         }
-/*
+
         System.out.println("Creating layer csvs...");
         try {
-            GraphFactory.createParsedCSVFromGraph("C:/Users/wang.daoping/Documents/rework_layers/");
+            GraphFactory.createPathLengthMatrixFromGraph("C:/Users/wang.daoping/Documents/rework_layers/");
+            //GraphFactory.createParsedCSVFromGraph("C:/Users/wang.daoping/Documents/rework_layers/");
         } catch (IOException e){
             System.out.println("ERROR: CANNOT CREATE LAYERS");
             e.printStackTrace();
-        }*/
+        }
     }
 }

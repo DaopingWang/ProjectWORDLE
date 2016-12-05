@@ -9,7 +9,9 @@ import graph.clustering.vertex.KeywordVertex;
 import graph.clustering.vertex.RootKeywordVertex;
 
 import java.io.*;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.DoubleSummaryStatistics;
 
 /**
  * Created by Wang.Daoping on 01.12.2016.
@@ -181,6 +183,25 @@ public class GraphFactory {
                     break;
             }
         }
+    }
+
+    public static void createPathLengthMatrixFromGraph(String filepath)throws IOException{
+        DecimalFormat f = new DecimalFormat("#0.0000");
+
+        String filename = filepath + "path_length_matrix_v0.csv";
+        CSVWriter writer = new CSVWriter(new OutputStreamWriter(new FileOutputStream(filename), "Cp1252"),';');
+        String lineBuffer;
+
+        for(int i = 0; i < keywordVertices.size(); i++){
+            lineBuffer = null;
+            for(int j = 0; j < keywordVertices.get(i).pathLengthVector.size(); j++){
+                lineBuffer += f.format(keywordVertices.get(i).pathLengthVector.get(j)) + ";";
+            }
+            lineBuffer += "EOL";
+            String[] record = lineBuffer.split(";");
+            writer.writeNext(record);
+        }
+        writer.close();
     }
 
     public static KeywordVertex findVertexForName(String inputName, ArrayList<KeywordVertex> inputList){
