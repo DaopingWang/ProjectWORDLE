@@ -41,8 +41,7 @@ public class TestMain {
             System.out.println("Enter keyword:");
         }
 
-
-        System.out.println("Creating layer csvs...");
+/*
         try {
             GraphFactory.createProbabilityCSVFromGraph("C:/Users/wang.daoping/Documents/rework_layers/");
             //GraphFactory.createPathLengthMatrixFromGraph("C:/Users/wang.daoping/Documents/rework_layers/");
@@ -51,5 +50,6 @@ public class TestMain {
             System.out.println("ERROR: CANNOT CREATE LAYERS");
             e.printStackTrace();
         }
+        */
     }
 }

@@ -6,6 +6,7 @@ import com.opencsv.CSVReader;
 import com.opencsv.CSVWriter;
 import graph.clustering.vertex.Edge;
 import graph.clustering.vertex.KeywordVertex;
+import graph.clustering.vertex.Probability;
 import graph.clustering.vertex.RootKeywordVertex;
 
 import java.io.*;
@@ -53,8 +54,9 @@ public class GraphFactory {
 
         for(int i = 0; i < keywordVertices.size(); i++){
             keywordVertices.get(i).pathLengthVector = new SparseDoubleMatrix1D(keywordVertices.size() + rootKeywordVertices.size());
+            initializeProbabilityLists(keywordVertices.get(i));
         }
-        //setDirectSubordinates();
+        /*setDirectSubordinates();
 
         DijkstraPathFinder.initSparseVectors(keywordVertices, rootKeywordVertices);
         int percentage;
@@ -68,6 +70,24 @@ public class GraphFactory {
             }
         }
         calculateProbabilityList();
+        */
+
+        readProbabilityListFromCSV("C:/Users/wang.daoping/Documents/rework_layers/ProbabilityCSV.csv");
+    }
+
+    public static void readProbabilityListFromCSV(String filename) throws IOException{
+        String[] lineBuffer;
+        CSVReader reader = new CSVReader(new InputStreamReader(new FileInputStream(filename), "Cp1252"), ';', '\"', 0);
+        int index = 0;
+
+        System.out.println("Read ProbabilityList... ");
+        while((lineBuffer = reader.readNext()) != null && index < keywordVertices.size()){
+            for(int j = 0; j < keywordVertices.get(index).probabilityList.size(); j++){
+                keywordVertices.get(index).probabilityList.get(j).setProbability(Double.parseDouble(lineBuffer[j + 1]));
+            }
+            index++;
+        }
+        reader.close();
     }
 
     public static void parseGraphFromRawCSV(String filename) throws IOException{
@@ -106,6 +126,7 @@ public class GraphFactory {
 
         for(int i = 0; i < keywordVertices.size(); i++){
             keywordVertices.get(i).pathLengthVector = new SparseDoubleMatrix1D(keywordVertices.size() + rootKeywordVertices.size());
+            initializeProbabilityLists(keywordVertices.get(i));
         }
         setDirectSubordinates();
         GraphParser.calculateLayers();
@@ -122,17 +143,19 @@ public class GraphFactory {
                 System.out.println("Dididi dijkstraing... " + Integer.toString(percentage) + "% done.");
             }
         }
+        calculateProbabilityList();
     }
 
     public static void createProbabilityCSVFromGraph(String filepath) throws IOException{
-        String filename = filepath + "ProbabilityCSV.csv";
+        DecimalFormat f = new DecimalFormat("#0.0000");
+        String filename = filepath + "Probability_CSV.csv";
         String lineBuffer;
         CSVWriter writer = new CSVWriter(new OutputStreamWriter(new FileOutputStream(filename), "Cp1252"),';');
 
         for(int i = 0; i < keywordVertices.size(); i++){
             lineBuffer = keywordVertices.get(i).name;
-            for(int j = 0; i < keywordVertices.get(i).probabilityList.size(); j++){
-                lineBuffer += ";" + Double.toString(keywordVertices.get(i).probabilityList.get(j).getProbability());
+            for(int j = 0; j < keywordVertices.get(i).probabilityList.size(); j++){
+                lineBuffer += ";" + f.format(keywordVertices.get(i).probabilityList.get(j).getProbability());
             }
             String[] record = lineBuffer.split(";");
             writer.writeNext(record);
@@ -218,6 +241,13 @@ public class GraphFactory {
             writer.writeNext(record);
         }
         writer.close();
+    }
+
+    public static void initializeProbabilityLists(KeywordVertex keywordVertex){
+        for(int i = 0; i < rootKeywordVertices.size(); i++){
+            Probability p = new Probability(rootKeywordVertices.get(i).name, 0);
+            keywordVertex.probabilityList.add(p);
+        }
     }
 
     public static void calculateProbabilityList(){

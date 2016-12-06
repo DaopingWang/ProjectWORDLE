@@ -42,8 +42,6 @@ public class DijkstraPathFinder {
 
         for(int i = 0; i < rootKeywordVertices.size(); i++){
             startVertex.pathLengthVector.set(i + keywordVertices.size(), rootKeywordVertices.get(i).distance);
-            Probability p = new Probability(rootKeywordVertices.get(i).name, 0);
-            startVertex.probabilityList.add(p);
         }
     }
 
