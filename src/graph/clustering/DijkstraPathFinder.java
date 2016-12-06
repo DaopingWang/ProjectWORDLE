@@ -42,11 +42,17 @@ public class DijkstraPathFinder {
 
         for(int i = 0; i < rootKeywordVertices.size(); i++){
             startVertex.pathLengthVector.set(i + keywordVertices.size(), rootKeywordVertices.get(i).distance);
-            Probability p = new Probability(rootKeywordVertices.get(i).name, rootKeywordVertices.get(i).distance);
+            Probability p = new Probability(rootKeywordVertices.get(i).name);
             startVertex.probabilityList.add(p);
         }
 
-        setProbability(startVertex);
+        /*for(int i = 0; i < keywordVertices.size(); i++){
+            for(int j = 0; j < rootKeywordVertices.size(); j++){
+                GraphParser.calculateProbability(keywordVertices.get(i), rootKeywordVertices.get(j), keywordVertices);
+            }
+        }
+
+        setProbability(startVertex);*/
     }
 
     public static void initSparseVectors(ArrayList<KeywordVertex> keywordVertices,
@@ -57,7 +63,7 @@ public class DijkstraPathFinder {
         }
     }
 
-    private static void setProbability(KeywordVertex startVertex){
+    public static void setProbability(KeywordVertex startVertex){
         double sum = 0;
         for(int i = 0; i < startVertex.probabilityList.size(); i++){
             sum += 1 / startVertex.probabilityList.get(i).getProbability();

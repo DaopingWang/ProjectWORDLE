@@ -41,14 +41,15 @@ public class TestMain {
             System.out.println("Enter keyword:");
         }
 
-        /*
+
         System.out.println("Creating layer csvs...");
         try {
-            GraphFactory.createPathLengthMatrixFromGraph("C:/Users/wang.daoping/Documents/rework_layers/");
+            GraphFactory.createProbabilityCSVFromGraph("C:/Users/wang.daoping/Documents/rework_layers/");
+            //GraphFactory.createPathLengthMatrixFromGraph("C:/Users/wang.daoping/Documents/rework_layers/");
             //GraphFactory.createParsedCSVFromGraph("C:/Users/wang.daoping/Documents/rework_layers/");
         } catch (IOException e){
             System.out.println("ERROR: CANNOT CREATE LAYERS");
             e.printStackTrace();
-        }*/
+        }
     }
 }

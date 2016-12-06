@@ -3,7 +3,9 @@ package graph.clustering;
 import graph.clustering.vertex.Edge;
 import graph.clustering.vertex.KeywordVertex;
 import graph.clustering.vertex.Probability;
+import graph.clustering.vertex.RootKeywordVertex;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.Stack;
 
@@ -11,6 +13,9 @@ import java.util.Stack;
  * Created by Wang.Daoping on 02.12.2016.
  */
 public class GraphParser {
+    private static double currentPathLength = 0;
+    private static double previousPathLength = 0;
+
     public static void calculateLayers(){
         KeywordVertex v;
         LinkedList<KeywordVertex> bfsQueue = new LinkedList<>();
@@ -63,36 +68,44 @@ public class GraphParser {
 
 
 
-    public static void calculateProbability(KeywordVertex inputStartKeyword, KeywordVertex inputTargetVertex){
-        Stack<KeywordVertex> stack = new Stack<>();
-        Probability p = new Probability(inputTargetVertex.name);
-        inputStartKeyword.probabilityList.add(p);
+    public static void calculateProbability(KeywordVertex inputStartVertex,
+                                            RootKeywordVertex inputTargetVertex,
+                                            ArrayList<KeywordVertex> keywordVertices){
 
-        stack.push(inputStartKeyword);
+        currentPathLength = 0;
+        previousPathLength = 0;
+
+        Stack<KeywordVertex> stack = new Stack<>();
+        stack.push(inputStartVertex);
+        performDFS(stack, inputStartVertex, inputTargetVertex, keywordVertices);
     }
 
-    private static void performDFS(Stack<KeywordVertex> inputStack, KeywordVertex inputTargetVertex){
+    private static void performDFS(Stack<KeywordVertex> inputStack,
+                                   KeywordVertex inputStartVertex,
+                                   RootKeywordVertex inputTargetVertex,
+                                   ArrayList<KeywordVertex> keywordVertices){
+
         KeywordVertex kv;
-        KeywordVertex foundVertex;
-        double discoveredLength = 0;
+        KeywordVertex foundKeywordVertex;
+        int foundRootKeyVertexIndex;
+        double localPreviousPathLength = previousPathLength;
 
-        while(!inputStack.isEmpty()){
-            kv = inputStack.peek();
-            for(int i = 0; i < kv.edgeList.size(); i++){
-                Edge currentEdge = kv.edgeList.get(i);
+        kv = inputStack.peek();
+        for(int i = 0; i < kv.edgeList.size(); i++){
+            Edge currentEdge = kv.edgeList.get(i);
+            if((foundRootKeyVertexIndex = GraphFactory.findIndexForName(currentEdge.getTargetVertexName())) != -1){
+                currentPathLength += 1 / currentEdge.getEdgeWeight();
+                double previousValue = inputStartVertex.pathLengthVector.get(foundRootKeyVertexIndex + keywordVertices.size());
+                inputStartVertex.pathLengthVector.set(foundRootKeyVertexIndex + keywordVertices.size(), previousValue + currentPathLength);
 
-                if(currentEdge.getTargetVertexName().equals(inputTargetVertex.name)){
-                    discoveredLength =  kv.edgeList.get(i).getEdgeWeight();
-                } else if((foundVertex = GraphFactory.findVertexForName(currentEdge.getTargetVertexName(), GraphFactory.keywordVertices)) != null){
-                    inputStack.push(foundVertex);
-                    discoveredLength += currentEdge.getEdgeWeight();
-                    performDFS(inputStack, inputTargetVertex);
-                } else {
-                    discoveredLength = 0;
-                    inputStack.pop();
-                }
+            } else if((foundKeywordVertex = GraphFactory.findVertexForName(currentEdge.getTargetVertexName(), keywordVertices)) != null && !inputStack.contains(foundKeywordVertex)){
+                inputStack.push(foundKeywordVertex);
+                currentPathLength += 1 / currentEdge.getEdgeWeight();
+                previousPathLength = 1 / currentEdge.getEdgeWeight();
+                performDFS(inputStack, inputStartVertex, inputTargetVertex, keywordVertices);
             }
         }
-
+        currentPathLength -= localPreviousPathLength;
+        inputStack.pop();
     }
 }

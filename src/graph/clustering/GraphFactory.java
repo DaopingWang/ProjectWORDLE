@@ -11,7 +11,6 @@ import graph.clustering.vertex.RootKeywordVertex;
 import java.io.*;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
-import java.util.DoubleSummaryStatistics;
 
 /**
  * Created by Wang.Daoping on 01.12.2016.
@@ -68,6 +67,7 @@ public class GraphFactory {
                 System.out.println("Dididi dijkstraing... " + Integer.toString(percentage) + "% done.");
             }
         }
+        calculateProbabilityList();
     }
 
     public static void parseGraphFromRawCSV(String filename) throws IOException{
@@ -122,6 +122,22 @@ public class GraphFactory {
                 System.out.println("Dididi dijkstraing... " + Integer.toString(percentage) + "% done.");
             }
         }
+    }
+
+    public static void createProbabilityCSVFromGraph(String filepath) throws IOException{
+        String filename = filepath + "ProbabilityCSV.csv";
+        String lineBuffer;
+        CSVWriter writer = new CSVWriter(new OutputStreamWriter(new FileOutputStream(filename), "Cp1252"),';');
+
+        for(int i = 0; i < keywordVertices.size(); i++){
+            lineBuffer = keywordVertices.get(i).name;
+            for(int j = 0; i < keywordVertices.get(i).probabilityList.size(); j++){
+                lineBuffer += ";" + Double.toString(keywordVertices.get(i).probabilityList.get(j).getProbability());
+            }
+            String[] record = lineBuffer.split(";");
+            writer.writeNext(record);
+        }
+        writer.close();
     }
 
     public static void createParsedCSVFromGraph(String filepath) throws IOException{
@@ -204,10 +220,36 @@ public class GraphFactory {
         writer.close();
     }
 
+    public static void calculateProbabilityList(){
+        int percentage;
+
+        for(int i = 0; i < keywordVertices.size(); i++){
+            System.out.println("DFS " + Integer.toString(i));
+            for(int j = 0; j < rootKeywordVertices.size(); j++){
+                GraphParser.calculateProbability(keywordVertices.get(i), rootKeywordVertices.get(j), keywordVertices);
+            }
+            DijkstraPathFinder.setProbability(keywordVertices.get(i));
+            percentage = processPercentage(i, keywordVertices.size());
+            if(percentage != 0){
+                System.out.println("DFS " + Integer.toString(percentage) + "% done.");
+            }
+        }
+    }
+
     public static KeywordVertex findVertexForName(String inputName, ArrayList<KeywordVertex> inputList){
         for(int i = 0; i < inputList.size(); i++){
             if(inputList.get(i).name.equals(inputName)){
                 return inputList.get(i);
+            }
+        }
+        //System.out.println("ERROR: VERTEX NOT FOUND FOR " + inputName);
+        return null;
+    }
+
+    public static RootKeywordVertex findVertexForName(String inputName){
+        for(int i = 0; i < rootKeywordVertices.size(); i++){
+            if(rootKeywordVertices.get(i).name.equals(inputName)){
+                return rootKeywordVertices.get(i);
             }
         }
         //System.out.println("ERROR: VERTEX NOT FOUND FOR " + inputName);
