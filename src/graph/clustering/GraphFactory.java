@@ -224,11 +224,9 @@ public class GraphFactory {
         int percentage;
 
         for(int i = 0; i < keywordVertices.size(); i++){
-            System.out.println("DFS " + Integer.toString(i));
-            for(int j = 0; j < rootKeywordVertices.size(); j++){
-                GraphParser.calculateProbability(keywordVertices.get(i), rootKeywordVertices.get(j), keywordVertices);
-            }
-            DijkstraPathFinder.setProbability(keywordVertices.get(i));
+            GraphParser.calculateProbability(keywordVertices.get(i), keywordVertices);
+
+            GraphParser.setProbability(keywordVertices.get(i));
             percentage = processPercentage(i, keywordVertices.size());
             if(percentage != 0){
                 System.out.println("DFS " + Integer.toString(percentage) + "% done.");
