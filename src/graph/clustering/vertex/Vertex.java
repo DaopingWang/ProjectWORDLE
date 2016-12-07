@@ -1,6 +1,7 @@
 package graph.clustering.vertex;
 
 import java.util.ArrayList;
+import java.util.Vector;
 
 /**
  * Created by Wang.Daoping on 01.12.2016.
@@ -21,16 +22,20 @@ public abstract class Vertex {
     public double distance;
     public String previous;
 
+    public Vector<Double> similarityVector;
+
     public Vertex(String inputName){
         this.setLayer(-1);
         this.setName(inputName);
         this.subordinateList = new ArrayList<>();
+        this.similarityVector = new Vector<>();
     }
 
     public Vertex(String inputName, int inputLayer){
         this.setName(inputName);
         this.setLayer(inputLayer);
         this.subordinateList = new ArrayList<>();
+        this.similarityVector = new Vector<>();
     }
 
     /**
