@@ -42,7 +42,7 @@ public class TestMain {
             System.out.println("Enter keyword:");
         }
 
-        ClusterFactory.performSquareErrorClustering(Utility.randomInputGenerator(2,100), GraphFactory.rootKeywordVertices);
+        ClusterFactory.performSquareErrorClustering(Utility.randomInputGenerator(100,100), GraphFactory.rootKeywordVertices);
 /*
         try {
             GraphFactory.createProbabilityCSVFromGraph("C:/Users/wang.daoping/Documents/rework_layers/");

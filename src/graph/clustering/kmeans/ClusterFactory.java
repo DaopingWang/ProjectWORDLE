@@ -1,5 +1,6 @@
 package graph.clustering.kmeans;
 
+import graph.clustering.GraphFactory;
 import graph.clustering.vertex.KeywordVertex;
 import graph.clustering.vertex.RootKeywordVertex;
 
@@ -51,7 +52,7 @@ public class ClusterFactory {
         }
 
         for(int i = 0; i < clusters.size(); i++){
-            System.out.println(Integer.toString(i) + ". cluster:");
+            System.out.println(GraphFactory.rootKeywordVertices.get(i).name + ". cluster:");
             for(int j = 0; j < clusters.get(i).memberVertices.size(); j++){
                 System.out.println(clusters.get(i).memberVertices.get(j).name);
             }
