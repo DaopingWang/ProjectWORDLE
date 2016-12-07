@@ -13,6 +13,7 @@ import graph.clustering.vertex.RootKeywordVertex;
 import java.io.*;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.Vector;
 
 /**
  * Created by Wang.Daoping on 01.12.2016.
@@ -58,7 +59,7 @@ public class GraphFactory {
             initializeProbabilityLists(keywordVertices.get(i));
         }
         //setDirectSubordinates();
-
+/*
         DijkstraPathFinder.initSparseVectors(keywordVertices, rootKeywordVertices);
         int percentage;
         System.out.println("Start dijkstra...");
@@ -70,6 +71,7 @@ public class GraphFactory {
                 System.out.println("Dididi dijkstraing... " + Integer.toString(percentage) + "% done.");
             }
         }
+        */
         //calculateProbabilityList();
 
 
@@ -83,8 +85,10 @@ public class GraphFactory {
 
         System.out.println("Read ProbabilityList... ");
         while((lineBuffer = reader.readNext()) != null && index < keywordVertices.size()){
-            for(int j = 0; j < keywordVertices.get(index).probabilityList.size(); j++){
-                keywordVertices.get(index).probabilityList.get(j).setProbability(Double.parseDouble(lineBuffer[j + 1]));
+            keywordVertices.get(index).similarityVector = new Vector<>();
+            for(int i = 0; i < keywordVertices.get(index).probabilityList.size(); i++){
+                keywordVertices.get(index).probabilityList.get(i).setProbability(Double.parseDouble(lineBuffer[i + 1]));
+                keywordVertices.get(index).similarityVector.add(Double.parseDouble(lineBuffer[i + 1]));
             }
             index++;
         }

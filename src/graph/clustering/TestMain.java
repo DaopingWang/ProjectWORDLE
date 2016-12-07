@@ -33,8 +33,8 @@ public class TestMain {
 
             System.out.println();
             System.out.println("Probabilities: ");
-            for(int i = 0; i < buffer.probabilityList.size(); i++){
-                System.out.println(buffer.probabilityList.get(i).getTargetVertexName() + " " + Double.toString(buffer.probabilityList.get(i).getProbability()));
+            for(int i = 0; i < buffer.similarityVector.size(); i++){
+                System.out.println(buffer.probabilityList.get(i).getTargetVertexName() + " " + Double.toString(buffer.similarityVector.get(i)));
             }
 
             System.out.println("Enter keyword:");

@@ -8,6 +8,7 @@ import graph.clustering.vertex.KeywordVertex;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.Stack;
+import java.util.Vector;
 
 /**
  * Created by Wang.Daoping on 02.12.2016.
@@ -103,12 +104,14 @@ public class GraphParser {
 
     public static void setProbability(KeywordVertex startVertex){
         double sum = 0;
+        startVertex.similarityVector = new Vector<>();
         for(int i = 0; i < startVertex.probabilityList.size(); i++){
             sum += startVertex.probabilityList.get(i).getProbability();
         }
         for(int i = 0; i < startVertex.probabilityList.size(); i++){
             double probability = startVertex.probabilityList.get(i).getProbability();
             startVertex.probabilityList.get(i).setProbability(probability / sum);
+            startVertex.similarityVector.add(probability / sum);
         }
     }
 }

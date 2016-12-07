@@ -14,8 +14,9 @@ public class Cluster {
     public Vector<Double> centroid;
 
 
-    public Cluster(){
+    public Cluster(Vector<Double> similarityVector){
         this.centroid = new Vector<>();
+        this.centroid.addAll(similarityVector);
         this.withinClusterVariation = new Vector<>();
         this.memberVertices = new ArrayList<>();
     }
