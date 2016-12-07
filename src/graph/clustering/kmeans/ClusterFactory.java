@@ -20,6 +20,7 @@ public class ClusterFactory {
     public static void performSquareErrorClustering(ArrayList<KeywordVertex> inputKeywords,
                                                     ArrayList<RootKeywordVertex> rootKeywordVertices){
 
+        clusters = new ArrayList<>();
         int iteration = 0;
         int reallocCount = Integer.MAX_VALUE;
 
@@ -47,6 +48,14 @@ public class ClusterFactory {
                 }
             }
             iteration++;
+        }
+
+        for(int i = 0; i < clusters.size(); i++){
+            System.out.println(Integer.toString(i) + ". cluster:");
+            for(int j = 0; j < clusters.get(i).memberVertices.size(); j++){
+                System.out.println(clusters.get(i).memberVertices.get(j).name);
+            }
+            System.out.println();
         }
     }
 

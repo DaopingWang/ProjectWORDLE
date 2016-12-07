@@ -76,6 +76,16 @@ public class GraphFactory {
 
 
         readProbabilityListFromCSV("C:/Users/wang.daoping/Documents/rework_layers/ProbabilityCSV.csv");
+
+        for(int i = 0; i < rootKeywordVertices.size(); i++){
+            //System.out.print(rootKeywordVertices.get(i).name + ": " );
+            for(int j = 0; j < rootKeywordVertices.size(); j++){
+                rootKeywordVertices.get(i).similarityVector.add((double) 0);
+            }
+            rootKeywordVertices.get(i).similarityVector.set(i, (double) 1);
+            //System.out.print(Integer.toString(i));
+            //System.out.println();
+        }
     }
 
     public static void readProbabilityListFromCSV(String filename) throws IOException{
@@ -266,6 +276,13 @@ public class GraphFactory {
             if(percentage != 0){
                 System.out.println("DFS " + Integer.toString(percentage) + "% done.");
             }
+        }
+
+        for(int i = 0; i < rootKeywordVertices.size(); i++){
+            for(int j = 0; j < rootKeywordVertices.size(); j++){
+                rootKeywordVertices.get(i).similarityVector.add((double) 0);
+            }
+            rootKeywordVertices.get(i).similarityVector.set(i, (double) 1);
         }
     }
 

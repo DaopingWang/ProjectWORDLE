@@ -64,4 +64,15 @@ public class Utility {
         }
         return 0;
     }
+
+    public static ArrayList<KeywordVertex> randomInputGenerator(int rand, int num){
+        ArrayList<KeywordVertex> vertices = new ArrayList<>();
+        for(int i = 0; i < GraphFactory.keywordVertices.size(); i++){
+            if(i % rand == 0){
+                vertices.add(GraphFactory.keywordVertices.get(i));
+            }
+            if(vertices.size() >= num) break;
+        }
+        return vertices;
+    }
 }
