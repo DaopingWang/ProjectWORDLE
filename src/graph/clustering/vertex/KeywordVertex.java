@@ -1,6 +1,7 @@
 package graph.clustering.vertex;
 
 import cern.colt.matrix.impl.SparseDoubleMatrix1D;
+import graph.clustering.kmeans.Cluster;
 
 import java.util.ArrayList;
 
@@ -12,6 +13,7 @@ public class KeywordVertex extends Vertex{
     public ArrayList<Probability> probabilityList;
     public SparseDoubleMatrix1D pathLengthVector;
     public double averageDistance;
+    public Cluster originCluster;
 
     public KeywordVertex(String inputName){
         super(inputName);

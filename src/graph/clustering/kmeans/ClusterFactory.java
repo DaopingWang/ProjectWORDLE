@@ -1,6 +1,7 @@
 package graph.clustering.kmeans;
 
 import graph.clustering.vertex.KeywordVertex;
+import graph.clustering.vertex.RootKeywordVertex;
 
 import java.util.ArrayList;
 import java.util.Vector;
@@ -10,11 +11,86 @@ import java.util.Vector;
  */
 public class ClusterFactory {
     public static ArrayList<Cluster> clusters;
+    public static int categoryNumber;
 
-    public static void performSquareErrorClustering(){
-        
+    public static final int MAX_ITERATION = 3000;
+    public static final int MAX_ERROR = 20;
+    public static final int MAX_REALLOC_COUNT = 2;
+
+    public static void performSquareErrorClustering(ArrayList<KeywordVertex> inputKeywords,
+                                                    ArrayList<RootKeywordVertex> rootKeywordVertices){
+
+        int iteration = 0;
+        int reallocCount = Integer.MAX_VALUE;
+
+        // Initialize k clusters, k currently equals the number of categories.
+        ClusteringInitializer.categoriesBasedInitializer(rootKeywordVertices);
+        categoryNumber = rootKeywordVertices.size();
+
+        // Assign vertices to nearest cluster the first time.
+        for(int i = 0; i < inputKeywords.size(); i++){
+            Cluster nearestCluster = nearestCentroid(inputKeywords.get(i));
+            nearestCluster.memberVertices.add(inputKeywords.get(i));
+            inputKeywords.get(i).originCluster = nearestCluster;
+        }
+
+        // Calculate new position of the centroids of the existing clusters and reallocate vertices iteratively.
+        while(iteration < MAX_ITERATION && reallocCount > MAX_REALLOC_COUNT){
+            recentralizeCentroids(rootKeywordVertices.size());
+            for(int i = 0; i < inputKeywords.size(); i++){
+                Cluster nearestCluster = nearestCentroid(inputKeywords.get(i));
+                if(!nearestCluster.memberVertices.contains(inputKeywords.get(i))){
+                    nearestCluster.memberVertices.add(inputKeywords.get(i));
+                    inputKeywords.get(i).originCluster.memberVertices.remove(inputKeywords.get(i));
+                    inputKeywords.get(i).originCluster = nearestCluster;
+                    reallocCount++;
+                }
+            }
+            iteration++;
+        }
     }
 
+    // Calculates the sum of errors, returns the nearest cluster for given keyword.
+    private static Cluster nearestCentroid(KeywordVertex inputVertex){
+        double minError = Double.MAX_VALUE;
+        Cluster nearestCluster = null;
+        for(int i = 0; i < clusters.size(); i++){
+            double e = calculateError(inputVertex, clusters.get(i).centroid);
+            if(minError > e){
+                minError = e;
+                nearestCluster = clusters.get(i);
+            }
+        }
+        return nearestCluster;
+    }
+
+    private static void recentralizeCentroids(int dimension){
+        if(dimension == categoryNumber){
+            for(int j = 0; j < dimension; j++){
+                for(int k = 0; k < clusters.size(); k++){
+                    double entry = 0;
+                    for(int i = 0; i < clusters.get(k).memberVertices.size(); i++){
+                        entry += clusters.get(k).memberVertices.get(i).similarityVector.get(j);
+                    }
+                    entry = entry / clusters.get(k).memberVertices.size();
+                    clusters.get(k).centroid.set(j, entry);
+                }
+            }
+        } else {
+            for(int j = 0; j < dimension; j++){
+                for(int k = 0; k < clusters.size(); k++){
+                    double entry = 0;
+                    for(int i = 0; i < clusters.get(k).memberVertices.size(); i++){
+                        entry += clusters.get(k).memberVertices.get(i).pathLengthVector.get(j);
+                    }
+                    entry = entry / clusters.get(k).memberVertices.size();
+                    clusters.get(k).centroid.set(j, entry);
+                }
+            }
+        }
+    }
+
+    // Calculates the error between given vertex and given cluster.
     public static double calculateError(KeywordVertex inputVertex, Vector<Double> inputCentroid){
         double error = 0;
         if(inputCentroid.size() == inputVertex.similarityVector.size()){
@@ -29,6 +105,7 @@ public class ClusterFactory {
         return error;
     }
 
+    // Returns the Euclidean distance between a and b.
     public static double euclideanDistance(double a, double b){
         return Math.sqrt(Math.pow((a - b), 2));
     }
