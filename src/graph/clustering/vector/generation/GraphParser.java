@@ -1,6 +1,7 @@
 package graph.clustering.vector.generation;
 
 import graph.clustering.GraphFactory;
+import graph.clustering.Utility;
 import graph.clustering.vertex.Edge;
 import graph.clustering.vertex.KeywordVertex;
 
@@ -32,12 +33,12 @@ public class GraphParser {
         while(!bfsQueue.isEmpty()){
             v = bfsQueue.pollFirst();
             for(int i = 0; i < v.subordinateList.size(); i++){
-                if(GraphFactory.keywordVertices.get(GraphFactory.findIndexForName(v.subordinateList.get(i), GraphFactory.keywordVertices)).layerIsUnset()){
-                    GraphFactory.keywordVertices.get(GraphFactory.findIndexForName(v.subordinateList.get(i), GraphFactory.keywordVertices)).setLayer(v.layer + 1);
+                if(GraphFactory.keywordVertices.get(Utility.findIndexForName(v.subordinateList.get(i), GraphFactory.keywordVertices)).layerIsUnset()){
+                    GraphFactory.keywordVertices.get(Utility.findIndexForName(v.subordinateList.get(i), GraphFactory.keywordVertices)).setLayer(v.layer + 1);
                     if(GraphFactory.layerNum < v.layer + 1){
                         GraphFactory.layerNum = v.layer + 1;
                     }
-                    bfsQueue.offerLast(GraphFactory.keywordVertices.get(GraphFactory.findIndexForName(v.subordinateList.get(i), GraphFactory.keywordVertices)));
+                    bfsQueue.offerLast(GraphFactory.keywordVertices.get(Utility.findIndexForName(v.subordinateList.get(i), GraphFactory.keywordVertices)));
                 }
             }
         }
@@ -53,10 +54,10 @@ public class GraphParser {
                 currentEndVertexName = GraphFactory.keywordVertices.get(i).edgeList.get(j).getTargetVertexName();
                 currentEdge = GraphFactory.keywordVertices.get(i).edgeList.get(j);
 
-                if(GraphFactory.isRootKeyword(currentEndVertexName)){
+                if(Utility.isRootKeyword(currentEndVertexName)){
                     currentEdge.setEdgeWeight(0);
                 } else {
-                    currentEdge.setEdgeWeight(GraphFactory.findVertexForName(currentEndVertexName, GraphFactory.keywordVertices).layer);
+                    currentEdge.setEdgeWeight(Utility.findVertexForName(currentEndVertexName, GraphFactory.keywordVertices).layer);
                 }
             }
         }
@@ -87,11 +88,11 @@ public class GraphParser {
         kv = inputStack.peek();
         for(int i = 0; i < kv.edgeList.size(); i++){
             Edge currentEdge = kv.edgeList.get(i);
-            if((foundRootKeyVertexIndex = GraphFactory.findIndexForName(currentEdge.getTargetVertexName())) != -1){
+            if((foundRootKeyVertexIndex = Utility.findIndexForName(currentEdge.getTargetVertexName())) != -1){
                 double previousValue = inputStartVertex.probabilityList.get(foundRootKeyVertexIndex).getProbability();
                 inputStartVertex.probabilityList.get(foundRootKeyVertexIndex).setProbability(previousValue + 1 / (kv.distance + currentEdge.getEdgeWeight()));
 
-            } else if((foundKeywordVertex = GraphFactory.findVertexForName(currentEdge.getTargetVertexName(), keywordVertices)) != null && !inputStack.contains(foundKeywordVertex)){
+            } else if((foundKeywordVertex = Utility.findVertexForName(currentEdge.getTargetVertexName(), keywordVertices)) != null && !inputStack.contains(foundKeywordVertex)){
                 inputStack.push(foundKeywordVertex);
                 foundKeywordVertex.distance = currentEdge.getEdgeWeight() + kv.distance;
                 performDFS(inputStack, inputStartVertex, keywordVertices);

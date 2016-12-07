@@ -65,7 +65,7 @@ public class GraphFactory {
         for(int i = 0; i < keywordVertices.size(); i++){
             DijkstraPathFinder.findSingleSourceShortestPath(keywordVertices.get(i), keywordVertices, rootKeywordVertices);
 
-            percentage = processPercentage(i, keywordVertices.size());
+            percentage = Utility.processPercentage(i, keywordVertices.size());
             if(percentage != 0){
                 System.out.println("Dididi dijkstraing... " + Integer.toString(percentage) + "% done.");
             }
@@ -115,7 +115,7 @@ public class GraphFactory {
                         keywordVertices.get(keywordVertices.size() - 1).createNewEdge(lineBuffer[1]);
                     } else if((index = entryExists(keywordVertices, lineBuffer[0])) != -1 && !keywordVertices.get(index).edgeExist(lineBuffer[1])){
                         try {
-                            keywordVertices.get(findIndexForName(lineBuffer[0], keywordVertices)).createNewEdge(lineBuffer[1]);
+                            keywordVertices.get(Utility.findIndexForName(lineBuffer[0], keywordVertices)).createNewEdge(lineBuffer[1]);
                         } catch (NullPointerException e){
                             System.out.println("ERROR: INDEX OUT OF BOUND");
                             e.printStackTrace();
@@ -139,7 +139,7 @@ public class GraphFactory {
         for(int i = 0; i < keywordVertices.size(); i++){
             DijkstraPathFinder.findSingleSourceShortestPath(keywordVertices.get(i), keywordVertices, rootKeywordVertices);
 
-            percentage = processPercentage(i, keywordVertices.size());
+            percentage = Utility.processPercentage(i, keywordVertices.size());
             if(percentage != 0){
                 System.out.println("Dididi dijkstraing... " + Integer.toString(percentage) + "% done.");
             }
@@ -258,59 +258,11 @@ public class GraphFactory {
             GraphParser.calculateProbability(keywordVertices.get(i), keywordVertices);
 
             GraphParser.setProbability(keywordVertices.get(i));
-            percentage = processPercentage(i, keywordVertices.size());
+            percentage = Utility.processPercentage(i, keywordVertices.size());
             if(percentage != 0){
                 System.out.println("DFS " + Integer.toString(percentage) + "% done.");
             }
         }
-    }
-
-    public static KeywordVertex findVertexForName(String inputName, ArrayList<KeywordVertex> inputList){
-        for(int i = 0; i < inputList.size(); i++){
-            if(inputList.get(i).name.equals(inputName)){
-                return inputList.get(i);
-            }
-        }
-        //System.out.println("ERROR: VERTEX NOT FOUND FOR " + inputName);
-        return null;
-    }
-
-    public static RootKeywordVertex findVertexForName(String inputName){
-        for(int i = 0; i < rootKeywordVertices.size(); i++){
-            if(rootKeywordVertices.get(i).name.equals(inputName)){
-                return rootKeywordVertices.get(i);
-            }
-        }
-        //System.out.println("ERROR: VERTEX NOT FOUND FOR " + inputName);
-        return null;
-    }
-
-    public static boolean isRootKeyword(String inputName){
-        for(int i = 0; i < rootKeywordVertices.size(); i++){
-            if(inputName.equals(rootKeywordVertices.get(i).name)){
-                return true;
-            }
-        }
-        return false;
-    }
-
-    public static int findIndexForName(String inputName, ArrayList<KeywordVertex> inputList){
-        for(int i = 0; i < inputList.size(); i++){
-            if(inputList.get(i).name.equals(inputName)){
-                return i;
-            }
-        }
-        //System.out.println("ERROR: INDEX NOT FOUND FOR " + inputName);
-        return -1;
-    }
-
-    public static int findIndexForName(String inputName){
-        for(int i = 0; i < rootKeywordVertices.size(); i++){
-            if(rootKeywordVertices.get(i).name.equals(inputName)){
-                return i;
-            }
-        }
-        return -1;
     }
 
     public static void setDirectSubordinates(){
@@ -319,13 +271,13 @@ public class GraphFactory {
 
         for(int i = 0; i < keywordVertices.size(); i++){
             for(int j = 0; j < keywordVertices.get(i).edgeList.size(); j++){
-                if((index = findIndexForName(keywordVertices.get(i).edgeList.get(j).getTargetVertexName(), keywordVertices)) != -1  && !keywordVertices.get(index).subordinateList.contains(keywordVertices.get(i).name)){
-                    keywordVertices.get(findIndexForName(keywordVertices.get(i).edgeList.get(j).getTargetVertexName(), keywordVertices)).subordinateList.add(keywordVertices.get(i).name);
-                } else if((index = findIndexForName(keywordVertices.get(i).edgeList.get(j).getTargetVertexName())) != -1 && !rootKeywordVertices.get(index).subordinateList.contains(keywordVertices.get(i).name)){
+                if((index = Utility.findIndexForName(keywordVertices.get(i).edgeList.get(j).getTargetVertexName(), keywordVertices)) != -1  && !keywordVertices.get(index).subordinateList.contains(keywordVertices.get(i).name)){
+                    keywordVertices.get(Utility.findIndexForName(keywordVertices.get(i).edgeList.get(j).getTargetVertexName(), keywordVertices)).subordinateList.add(keywordVertices.get(i).name);
+                } else if((index = Utility.findIndexForName(keywordVertices.get(i).edgeList.get(j).getTargetVertexName())) != -1 && !rootKeywordVertices.get(index).subordinateList.contains(keywordVertices.get(i).name)){
                     rootKeywordVertices.get(index).subordinateList.add(keywordVertices.get(i).name);
                 }
             }
-            percentage = processPercentage(i, keywordVertices.size());
+            percentage = Utility.processPercentage(i, keywordVertices.size());
             if(percentage != 0){
                 System.out.println("Assigning direct subordinates. " + Integer.toString(percentage) + "% done.");
             }
@@ -350,11 +302,4 @@ public class GraphFactory {
         return -1;
     }
 
-    private static int processPercentage(int i, int count){
-        int fivePercent = count / 20;
-        if(i % fivePercent == 0){
-            return 5 * (i / fivePercent);
-        }
-        return 0;
-    }
 }

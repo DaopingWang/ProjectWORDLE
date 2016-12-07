@@ -1,7 +1,7 @@
 package graph.clustering.vector.generation;
 
 import cern.colt.matrix.impl.SparseDoubleMatrix1D;
-import graph.clustering.GraphFactory;
+import graph.clustering.Utility;
 import graph.clustering.vertex.KeywordVertex;
 import graph.clustering.vertex.RootKeywordVertex;
 
@@ -88,14 +88,14 @@ public class DijkstraPathFinder {
                                            ArrayList<RootKeywordVertex> rootKeywordVertices){
 
         for(int i = 0; i < evaluateVertex.edgeList.size(); i++){
-            KeywordVertex destinationVertex = GraphFactory.findVertexForName(evaluateVertex.edgeList.get(i).getTargetVertexName(), keywordVertices);
+            KeywordVertex destinationVertex = Utility.findVertexForName(evaluateVertex.edgeList.get(i).getTargetVertexName(), keywordVertices);
             if(destinationVertex != null && !settledVertices.contains(destinationVertex)){
                 if(destinationVertex.distance > evaluateVertex.edgeList.get(i).getEdgeWeight() + evaluateVertex.distance){
                     destinationVertex.distance = evaluateVertex.edgeList.get(i).getEdgeWeight() + evaluateVertex.distance;
                     unsettledVertices.offer(destinationVertex);
                 }
             } else if(destinationVertex == null){
-                int rootKeyIndex = GraphFactory.findIndexForName(evaluateVertex.edgeList.get(i).getTargetVertexName());
+                int rootKeyIndex = Utility.findIndexForName(evaluateVertex.edgeList.get(i).getTargetVertexName());
                 rootKeywordVertices.get(rootKeyIndex).distance = evaluateVertex.distance + evaluateVertex.edgeList.get(i).getEdgeWeight();
                 rootKeywordVertices.get(rootKeyIndex).previous = evaluateVertex.name;
             }
