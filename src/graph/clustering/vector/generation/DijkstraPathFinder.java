@@ -1,8 +1,8 @@
-package graph.clustering;
+package graph.clustering.vector.generation;
 
 import cern.colt.matrix.impl.SparseDoubleMatrix1D;
+import graph.clustering.GraphFactory;
 import graph.clustering.vertex.KeywordVertex;
-import graph.clustering.vertex.Probability;
 import graph.clustering.vertex.RootKeywordVertex;
 
 import java.util.ArrayList;

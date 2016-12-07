@@ -1,9 +1,8 @@
-package graph.clustering;
+package graph.clustering.vector.generation;
 
+import graph.clustering.GraphFactory;
 import graph.clustering.vertex.Edge;
 import graph.clustering.vertex.KeywordVertex;
-import graph.clustering.vertex.Probability;
-import graph.clustering.vertex.RootKeywordVertex;
 
 import java.util.ArrayList;
 import java.util.LinkedList;

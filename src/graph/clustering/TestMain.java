@@ -1,6 +1,5 @@
 package graph.clustering;
 
-import com.sun.corba.se.impl.orbutil.graph.Graph;
 import graph.clustering.vertex.KeywordVertex;
 
 import java.io.IOException;

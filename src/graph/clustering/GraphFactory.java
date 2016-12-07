@@ -1,9 +1,10 @@
 package graph.clustering;
 
 import cern.colt.matrix.impl.SparseDoubleMatrix1D;
-import cern.colt.matrix.impl.SparseDoubleMatrix2D;
 import com.opencsv.CSVReader;
 import com.opencsv.CSVWriter;
+import graph.clustering.vector.generation.DijkstraPathFinder;
+import graph.clustering.vector.generation.GraphParser;
 import graph.clustering.vertex.Edge;
 import graph.clustering.vertex.KeywordVertex;
 import graph.clustering.vertex.Probability;
@@ -56,7 +57,7 @@ public class GraphFactory {
             keywordVertices.get(i).pathLengthVector = new SparseDoubleMatrix1D(keywordVertices.size() + rootKeywordVertices.size());
             initializeProbabilityLists(keywordVertices.get(i));
         }
-        /*setDirectSubordinates();
+        //setDirectSubordinates();
 
         DijkstraPathFinder.initSparseVectors(keywordVertices, rootKeywordVertices);
         int percentage;
@@ -69,8 +70,8 @@ public class GraphFactory {
                 System.out.println("Dididi dijkstraing... " + Integer.toString(percentage) + "% done.");
             }
         }
-        calculateProbabilityList();
-        */
+        //calculateProbabilityList();
+
 
         readProbabilityListFromCSV("C:/Users/wang.daoping/Documents/rework_layers/ProbabilityCSV.csv");
     }
