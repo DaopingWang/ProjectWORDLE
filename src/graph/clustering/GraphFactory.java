@@ -59,7 +59,7 @@ public class GraphFactory {
             initializeProbabilityLists(keywordVertices.get(i));
         }
         //setDirectSubordinates();
-/*
+
         DijkstraPathFinder.initSparseVectors(keywordVertices, rootKeywordVertices);
         int percentage;
         System.out.println("Start dijkstra...");
@@ -71,7 +71,7 @@ public class GraphFactory {
                 System.out.println("Dididi dijkstraing... " + Integer.toString(percentage) + "% done.");
             }
         }
-        */
+
         //calculateProbabilityList();
 
 

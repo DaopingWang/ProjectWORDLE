@@ -29,6 +29,7 @@ public class ClusteringInitializer {
         int inputVerticesCount = inputVertices.size();
         int createdCentroid = 1;
 
+        System.out.println("=== Start K-Means++ initialization ===");
         // Firstly initialize the first categoryBasedCentroid randomly.
         Cluster first = new Cluster();
         first.centroid = inputVertices.get(inputVerticesCount / 2).pathLengthVector;
@@ -36,18 +37,39 @@ public class ClusteringInitializer {
 
         while(createdCentroid < k){
             double maxProbability = 0;
-            SparseDoubleMatrix1D farestVertex;
-            double distance = 0;
+            SparseDoubleMatrix1D farestVertex = null;
             double distanceSum = 0;
-            double probability = 0;
 
             for(int i = 0; i < inputVerticesCount; i++){
-                for(int j = 0; j < createdCentroid; j++){
-                    distance = ClusterFactory.calculateError(inputVertices.get(i), clusters.get(j).centroid);
-                    distanceSum += ClusterFactory.calculateError(inputVertices.get(i), clusters.get(j).centroid);
+                inputVertices.get(i).shortestDistance = Math.pow(shortestDistanceToClosestCentroid(inputVertices.get(i).pathLengthVector, clusters), 2);
+                distanceSum += inputVertices.get(i).shortestDistance;
+            }
+            for(int i = 0; i < inputVerticesCount; i++){
+                double probability = inputVertices.get(i).shortestDistance / distanceSum;
+                if(maxProbability < probability){
+                    maxProbability = probability;
+                    farestVertex = inputVertices.get(i).pathLengthVector;
                 }
             }
+            Cluster next = new Cluster();
+            next.centroid = farestVertex;
+            clusters.add(next);
+            createdCentroid++;
         }
+        System.out.println("=== Initialization done ===");
+    }
+
+    private static double shortestDistanceToClosestCentroid(SparseDoubleMatrix1D inputVertex,
+                                                            ArrayList<Cluster> clusters){
+
+        double shortestDistance = Double.MAX_VALUE;
+        for(int i = 0; i < clusters.size(); i++){
+            double distance = ClusterFactory.euclideanDistance(inputVertex, clusters.get(i).centroid);
+            if(shortestDistance > distance){
+                shortestDistance = distance;
+            }
+        }
+        return shortestDistance;
     }
 
 }

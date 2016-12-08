@@ -28,8 +28,12 @@ public class ClusterFactory {
         int reallocCount = Integer.MAX_VALUE;
 
         // Initialize k clusters, k currently equals the number of categories.
-        ClusteringInitializer.categoriesBasedInitializer(rootKeywordVertices);
-        categoryNumber = rootKeywordVertices.size();
+        //ClusteringInitializer.categoriesBasedInitializer(rootKeywordVertices);
+        //categoryNumber = rootKeywordVertices.size();
+
+        // Initialize k clusters using K-Means++
+        ClusteringInitializer.kmeansPPInitializer(10, inputKeywords, clusters);
+        categoryNumber = inputKeywords.get(0).pathLengthVector.size();
 
         // Assign vertices to nearest cluster the first time.
         for(int i = 0; i < inputKeywords.size(); i++){
@@ -62,7 +66,7 @@ public class ClusterFactory {
 
         // Print
         for(int k = 0; k < clusters.size(); k++){
-            System.out.println(GraphFactory.rootKeywordVertices.get(k).name + ". cluster, ASD " + Double.toString(clusters.get(k).averageSquaredDistance));
+            System.out.println(Integer.toString(k) + ". cluster, ASD " + Double.toString(clusters.get(k).averageSquaredDistance));
             for(int i = 0; i < clusters.get(k).memberVertices.size(); i++){
                 System.out.println(clusters.get(k).memberVertices.get(i).name);
             }
