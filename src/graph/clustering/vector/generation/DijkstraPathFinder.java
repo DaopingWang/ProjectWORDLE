@@ -41,7 +41,11 @@ public class DijkstraPathFinder {
         }
 
         for(int i = 0; i < rootKeywordVertices.size(); i++){
-            startVertex.pathLengthVector.set(i + keywordVertices.size(), rootKeywordVertices.get(i).distance);
+            if(rootKeywordVertices.get(i).distance == Double.MAX_VALUE){
+                startVertex.pathLengthVector.set(i + keywordVertices.size(), 0);
+            } else {
+                startVertex.pathLengthVector.set(i + keywordVertices.size(), rootKeywordVertices.get(i).distance);
+            }
         }
     }
 

@@ -37,7 +37,8 @@ public class ClusterFactory {
 
         // Assign vertices to nearest cluster the first time.
         for(int i = 0; i < inputKeywords.size(); i++){
-            Cluster nearestCluster = nearestCentroid(inputKeywords.get(i).similarityVector, clusters);
+            //Cluster nearestCluster = nearestCentroid(inputKeywords.get(i).similarityVector, clusters);
+            Cluster nearestCluster = nearestCentroid(inputKeywords.get(i).pathLengthVector, clusters);
             nearestCluster.memberVertices.add(inputKeywords.get(i));
             inputKeywords.get(i).originCluster = nearestCluster;
         }
@@ -45,7 +46,7 @@ public class ClusterFactory {
         // Calculate new position of the centroids of the existing clusters and reallocate vertices iteratively.
         while(iteration < MAX_ITERATION && reallocCount > MAX_REALLOC_COUNT){
             reallocCount = 0;
-            recentralizeCentroids(rootKeywordVertices.size());
+            recentralizeCentroids(categoryNumber);
             for(int i = 0; i < inputKeywords.size(); i++){
                 Cluster nearestCluster = nearestCentroid(inputKeywords.get(i).similarityVector, clusters);
                 if(!nearestCluster.memberVertices.contains(inputKeywords.get(i))){
@@ -127,7 +128,7 @@ public class ClusterFactory {
     }
 
     private static void recentralizeCentroids(int dimension){
-        if(dimension == categoryNumber){
+        if(dimension == GraphFactory.rootKeywordVertices.size()){
             for(int j = 0; j < dimension; j++){
                 for(int k = 0; k < clusters.size(); k++){
                     double entry = 0;
@@ -146,7 +147,7 @@ public class ClusterFactory {
                         entry += clusters.get(k).memberVertices.get(i).pathLengthVector.get(j);
                     }
                     entry = entry / clusters.get(k).memberVertices.size();
-                    clusters.get(k).categoryBasedCentroid.set(j, entry);
+                    clusters.get(k).centroid.set(j, entry);
                 }
             }
         }
@@ -174,6 +175,9 @@ public class ClusterFactory {
         for(int i = 0; i < a.size(); i++){
             distance += Math.pow((a.get(i) - b.get(i)), 2);
         }
+        if(distance == 0){
+            return 0;
+        }
         return Math.sqrt(distance);
     }
 
@@ -181,7 +185,7 @@ public class ClusterFactory {
         double variance = 0;
         for(int i = 0; i < k.memberVertices.size(); i++){
             double xij = k.memberVertices.get(i).similarityVector.get(j);
-            double mj = k.categoryBasedCentroid.get(j);
+            double mj = k.centroid.get(j);
             variance += Math.pow((xij - mj), 2);
         }
         return variance;
