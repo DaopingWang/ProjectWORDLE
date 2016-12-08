@@ -21,6 +21,8 @@ public class TestMain {
             e.printStackTrace();
         }
 
+        ClusterFactory.performSquareErrorClustering(Utility.randomInputGenerator(120,100), GraphFactory.rootKeywordVertices);
+
         Scanner scanner = new Scanner(System.in);
         System.out.println("Enter keyword: ");
         String userInput;
@@ -42,8 +44,7 @@ public class TestMain {
             System.out.println("Enter keyword:");
         }
 
-        ClusterFactory.performSquareErrorClustering(Utility.randomInputGenerator(100,100), GraphFactory.rootKeywordVertices);
-/*
+        /*
         try {
             GraphFactory.createProbabilityCSVFromGraph("C:/Users/wang.daoping/Documents/rework_layers/");
             //GraphFactory.createPathLengthMatrixFromGraph("C:/Users/wang.daoping/Documents/rework_layers/");

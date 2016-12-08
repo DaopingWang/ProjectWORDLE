@@ -5,6 +5,7 @@ import graph.clustering.vertex.KeywordVertex;
 import graph.clustering.vertex.RootKeywordVertex;
 
 import java.util.ArrayList;
+import java.util.DoubleSummaryStatistics;
 import java.util.Vector;
 
 /**
@@ -13,8 +14,9 @@ import java.util.Vector;
 public class ClusterFactory {
     public static ArrayList<Cluster> clusters;
     public static int categoryNumber;
+    public static double squareError;
 
-    public static final int MAX_ITERATION = 3000;
+    public static final int MAX_ITERATION = 5000;
     public static final int MAX_ERROR = 20;
     public static final int MAX_REALLOC_COUNT = 2;
 
@@ -51,6 +53,10 @@ public class ClusterFactory {
             iteration++;
         }
 
+        squareError = calculateSquareErrorFORGYStyle(categoryNumber);
+
+
+        // Print
         for(int i = 0; i < clusters.size(); i++){
             System.out.println(GraphFactory.rootKeywordVertices.get(i).name + ". cluster:");
             for(int j = 0; j < clusters.get(i).memberVertices.size(); j++){
@@ -58,6 +64,8 @@ public class ClusterFactory {
             }
             System.out.println();
         }
+
+        System.out.println("Square Error: " + Double.toString(squareError));
     }
 
     // Calculates the sum of errors, returns the nearest cluster for given keyword.
@@ -72,6 +80,16 @@ public class ClusterFactory {
             }
         }
         return nearestCluster;
+    }
+
+    private static double calculateSquareErrorFORGYStyle(int dimension){
+        double withinClusterVariation = 0;
+        for(int k = 0; k < clusters.size(); k++){
+            for(int j = 0; j < dimension; j++){
+                withinClusterVariation += calculateWithinClusterVariation(j, clusters.get(k));
+            }
+        }
+        return withinClusterVariation;
     }
 
     private static void recentralizeCentroids(int dimension){
@@ -112,12 +130,12 @@ public class ClusterFactory {
                 error += euclideanDistance(inputVertex.pathLengthVector.get(i), inputCentroid.get(i));
             }
         }
-        return error;
+        return Math.sqrt(error);
     }
 
     // Returns the Euclidean distance between a and b.
     public static double euclideanDistance(double a, double b){
-        return Math.sqrt(Math.pow((a - b), 2));
+        return Math.pow((a - b), 2);
     }
 
     public static double calculateWithinClusterVariation(int j, Cluster k){
@@ -127,6 +145,6 @@ public class ClusterFactory {
             double mj = k.centroid.get(j);
             variance += Math.pow((xij - mj), 2);
         }
-        return Math.sqrt(variance);
+        return variance;
     }
 }
