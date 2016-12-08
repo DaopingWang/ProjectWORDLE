@@ -21,7 +21,7 @@ public class TestMain {
             e.printStackTrace();
         }
 
-        ClusterFactory.performSquareErrorClustering(Utility.randomInputGenerator(120,100), GraphFactory.rootKeywordVertices);
+        ClusterFactory.performSquareErrorClustering(Utility.randomInputGenerator(60,200), GraphFactory.rootKeywordVertices);
 
         Scanner scanner = new Scanner(System.in);
         System.out.println("Enter keyword: ");

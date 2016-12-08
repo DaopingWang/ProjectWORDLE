@@ -12,7 +12,6 @@ public class KeywordVertex extends Vertex{
     public ArrayList<Edge> edgeList;
     public ArrayList<Probability> probabilityList;
     public SparseDoubleMatrix1D pathLengthVector;
-    public double averageDistance;
     public Cluster originCluster;
 
     public KeywordVertex(String inputName){

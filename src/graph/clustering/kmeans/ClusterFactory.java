@@ -1,11 +1,11 @@
 package graph.clustering.kmeans;
 
+import cern.colt.matrix.impl.SparseDoubleMatrix1D;
 import graph.clustering.GraphFactory;
 import graph.clustering.vertex.KeywordVertex;
 import graph.clustering.vertex.RootKeywordVertex;
 
 import java.util.ArrayList;
-import java.util.DoubleSummaryStatistics;
 import java.util.Vector;
 
 /**
@@ -16,9 +16,9 @@ public class ClusterFactory {
     public static int categoryNumber;
     public static double squareError;
 
-    public static final int MAX_ITERATION = 5000;
+    public static final int MAX_ITERATION = 10000;
     public static final int MAX_ERROR = 20;
-    public static final int MAX_REALLOC_COUNT = 2;
+    public static final int MAX_REALLOC_COUNT = 1;
 
     public static void performSquareErrorClustering(ArrayList<KeywordVertex> inputKeywords,
                                                     ArrayList<RootKeywordVertex> rootKeywordVertices){
@@ -33,16 +33,17 @@ public class ClusterFactory {
 
         // Assign vertices to nearest cluster the first time.
         for(int i = 0; i < inputKeywords.size(); i++){
-            Cluster nearestCluster = nearestCentroid(inputKeywords.get(i));
+            Cluster nearestCluster = nearestCentroid(inputKeywords.get(i).similarityVector, clusters);
             nearestCluster.memberVertices.add(inputKeywords.get(i));
             inputKeywords.get(i).originCluster = nearestCluster;
         }
 
         // Calculate new position of the centroids of the existing clusters and reallocate vertices iteratively.
         while(iteration < MAX_ITERATION && reallocCount > MAX_REALLOC_COUNT){
+            reallocCount = 0;
             recentralizeCentroids(rootKeywordVertices.size());
             for(int i = 0; i < inputKeywords.size(); i++){
-                Cluster nearestCluster = nearestCentroid(inputKeywords.get(i));
+                Cluster nearestCluster = nearestCentroid(inputKeywords.get(i).similarityVector, clusters);
                 if(!nearestCluster.memberVertices.contains(inputKeywords.get(i))){
                     nearestCluster.memberVertices.add(inputKeywords.get(i));
                     inputKeywords.get(i).originCluster.memberVertices.remove(inputKeywords.get(i));
@@ -53,27 +54,47 @@ public class ClusterFactory {
             iteration++;
         }
 
+        for(int i = 0; i < clusters.size(); i++){
+            clusters.get(i).averageSquaredDistance = calculateAverageSquareDistance(categoryNumber, clusters.get(i));
+        }
         squareError = calculateSquareErrorFORGYStyle(categoryNumber);
 
 
         // Print
-        for(int i = 0; i < clusters.size(); i++){
-            System.out.println(GraphFactory.rootKeywordVertices.get(i).name + ". cluster:");
-            for(int j = 0; j < clusters.get(i).memberVertices.size(); j++){
-                System.out.println(clusters.get(i).memberVertices.get(j).name);
+        for(int k = 0; k < clusters.size(); k++){
+            System.out.println(GraphFactory.rootKeywordVertices.get(k).name + ". cluster, ASD " + Double.toString(clusters.get(k).averageSquaredDistance));
+            for(int i = 0; i < clusters.get(k).memberVertices.size(); i++){
+                System.out.println(clusters.get(k).memberVertices.get(i).name);
             }
             System.out.println();
         }
 
-        System.out.println("Square Error: " + Double.toString(squareError));
+        System.out.println("FORGY Square Error: " + Double.toString(squareError));
+        System.out.println("Iterations: " + Integer.toString(iteration));
     }
 
     // Calculates the sum of errors, returns the nearest cluster for given keyword.
-    private static Cluster nearestCentroid(KeywordVertex inputVertex){
+    private static Cluster nearestCentroid(Vector<Double> inputVertex,
+                                           ArrayList<Cluster> clusters){
         double minError = Double.MAX_VALUE;
         Cluster nearestCluster = null;
         for(int i = 0; i < clusters.size(); i++){
-            double e = calculateError(inputVertex, clusters.get(i).centroid);
+            double e = euclideanDistance(inputVertex, clusters.get(i).categoryBasedCentroid);
+            if(minError > e){
+                minError = e;
+                nearestCluster = clusters.get(i);
+            }
+        }
+        return nearestCluster;
+    }
+
+    public static Cluster nearestCentroid(SparseDoubleMatrix1D inputVertex,
+                                          ArrayList<Cluster> clusters){
+
+        double minError = Double.MAX_VALUE;
+        Cluster nearestCluster = null;
+        for(int i = 0; i < clusters.size(); i++){
+            double e = euclideanDistance(inputVertex, clusters.get(i).centroid);
             if(minError > e){
                 minError = e;
                 nearestCluster = clusters.get(i);
@@ -92,6 +113,15 @@ public class ClusterFactory {
         return withinClusterVariation;
     }
 
+    private static double calculateAverageSquareDistance(int dimension, Cluster k){
+        int memberCount = k.memberVertices.size();
+        double averageSquareDistance = 0;
+        for(int j = 0; j < dimension; j++){
+            averageSquareDistance += calculateWithinClusterVariation(j, k) / (double) memberCount;
+        }
+        return Math.sqrt(averageSquareDistance) / dimension;
+    }
+
     private static void recentralizeCentroids(int dimension){
         if(dimension == categoryNumber){
             for(int j = 0; j < dimension; j++){
@@ -101,7 +131,7 @@ public class ClusterFactory {
                         entry += clusters.get(k).memberVertices.get(i).similarityVector.get(j);
                     }
                     entry = entry / clusters.get(k).memberVertices.size();
-                    clusters.get(k).centroid.set(j, entry);
+                    clusters.get(k).categoryBasedCentroid.set(j, entry);
                 }
             }
         } else {
@@ -112,7 +142,7 @@ public class ClusterFactory {
                         entry += clusters.get(k).memberVertices.get(i).pathLengthVector.get(j);
                     }
                     entry = entry / clusters.get(k).memberVertices.size();
-                    clusters.get(k).centroid.set(j, entry);
+                    clusters.get(k).categoryBasedCentroid.set(j, entry);
                 }
             }
         }
@@ -120,29 +150,34 @@ public class ClusterFactory {
 
     // Calculates the error between given vertex and given cluster.
     public static double calculateError(KeywordVertex inputVertex, Vector<Double> inputCentroid){
-        double error = 0;
-        if(inputCentroid.size() == inputVertex.similarityVector.size()){
-            for(int i = 0; i < inputVertex.similarityVector.size(); i++){
-                error += euclideanDistance(inputVertex.similarityVector.get(i), inputCentroid.get(i));
-            }
-        } else {
-            for(int i = 0; i < inputVertex.pathLengthVector.size(); i++){
-                error += euclideanDistance(inputVertex.pathLengthVector.get(i), inputCentroid.get(i));
-            }
-        }
-        return Math.sqrt(error);
+        return euclideanDistance(inputVertex.similarityVector, inputCentroid);
     }
 
-    // Returns the Euclidean distance between a and b.
-    public static double euclideanDistance(double a, double b){
-        return Math.pow((a - b), 2);
+    public static double calculateError(KeywordVertex inputVertex, SparseDoubleMatrix1D inputCentroid){
+        return euclideanDistance(inputVertex.pathLengthVector, inputCentroid);
+    }
+
+    public static double euclideanDistance(Vector<Double> a, Vector<Double> b){
+        double distance = 0;
+        for(int i = 0; i < a.size(); i++){
+            distance += Math.pow((a.get(i) - b.get(i)), 2);
+        }
+        return Math.sqrt(distance);
+    }
+
+    public static double euclideanDistance(SparseDoubleMatrix1D a, SparseDoubleMatrix1D b){
+        double distance = 0;
+        for(int i = 0; i < a.size(); i++){
+            distance += Math.pow((a.get(i) - b.get(i)), 2);
+        }
+        return Math.sqrt(distance);
     }
 
     public static double calculateWithinClusterVariation(int j, Cluster k){
         double variance = 0;
         for(int i = 0; i < k.memberVertices.size(); i++){
             double xij = k.memberVertices.get(i).similarityVector.get(j);
-            double mj = k.centroid.get(j);
+            double mj = k.categoryBasedCentroid.get(j);
             variance += Math.pow((xij - mj), 2);
         }
         return variance;
