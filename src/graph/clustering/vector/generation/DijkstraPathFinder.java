@@ -33,10 +33,11 @@ public class DijkstraPathFinder {
         dijkstra(unsettledVertices, settledVertices, keywordVertices, rootKeywordVertices);
 
         for(int i = 0; i < keywordVertices.size(); i++){
-            if(keywordVertices.get(i).distance == Double.MAX_VALUE){
+            if(keywordVertices.get(i).distance == Double.MAX_VALUE && (startVertex.pathLengthVector.get(i) == 0)){ // second argument for undirected
                 startVertex.pathLengthVector.set(i, 0);
-            } else {
+            } else if(keywordVertices.get(i).distance != Double.MAX_VALUE){
                 startVertex.pathLengthVector.set(i, keywordVertices.get(i).distance);
+                keywordVertices.get(i).pathLengthVector.set(Utility.findIndexForName(startVertex.name, keywordVertices), keywordVertices.get(i).distance); // Undirected
             }
         }
 

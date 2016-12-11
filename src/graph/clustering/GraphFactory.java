@@ -59,7 +59,7 @@ public class GraphFactory {
             initializeProbabilityLists(keywordVertices.get(i));
         }
         //setDirectSubordinates();
-
+/*
         DijkstraPathFinder.initSparseVectors(keywordVertices, rootKeywordVertices);
         int percentage;
         System.out.println("Start dijkstra...");
@@ -71,7 +71,7 @@ public class GraphFactory {
                 System.out.println("Dididi dijkstraing... " + Integer.toString(percentage) + "% done.");
             }
         }
-
+*/
         //calculateProbabilityList();
 
 
@@ -103,6 +103,13 @@ public class GraphFactory {
             index++;
         }
         reader.close();
+
+        for(int i = 0; i < keywordVertices.size(); i++){
+            keywordVertices.get(i).setDominantCategory();
+        }
+        for(int i = 0; i < rootKeywordVertices.size(); i++){
+            rootKeywordVertices.get(i).setDominantCategory();
+        }
     }
 
     public static void parseGraphFromRawCSV(String filename) throws IOException{
@@ -240,7 +247,7 @@ public class GraphFactory {
     }
 
     public static void createPathLengthMatrixFromGraph(String filepath)throws IOException{
-        DecimalFormat f = new DecimalFormat("#0.0000");
+        //DecimalFormat f = new DecimalFormat("#0.0000");
 
         String filename = filepath + "path_length_matrix_v0.csv";
         CSVWriter writer = new CSVWriter(new OutputStreamWriter(new FileOutputStream(filename), "Cp1252"),';');
@@ -249,7 +256,7 @@ public class GraphFactory {
         for(int i = 0; i < keywordVertices.size(); i++){
             lineBuffer = null;
             for(int j = 0; j < keywordVertices.get(i).pathLengthVector.size(); j++){
-                lineBuffer += f.format(keywordVertices.get(i).pathLengthVector.get(j)) + ";";
+                lineBuffer += Double.toString(keywordVertices.get(i).pathLengthVector.get(j)) + ";";
             }
             lineBuffer += "EOL";
             String[] record = lineBuffer.split(";");

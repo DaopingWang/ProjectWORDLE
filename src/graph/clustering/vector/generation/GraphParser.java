@@ -113,5 +113,6 @@ public class GraphParser {
             startVertex.probabilityList.get(i).setProbability(probability / sum);
             startVertex.similarityVector.add(probability / sum);
         }
+
     }
 }

@@ -23,6 +23,7 @@ public abstract class Vertex {
     public String previous;
 
     public Vector<Double> similarityVector;
+    public int dominantCategory;
 
     public Vertex(String inputName){
         this.setLayer(-1);
@@ -48,6 +49,18 @@ public abstract class Vertex {
 
     public void setLayer(int inputLayer){
         this.layer = inputLayer;
+    }
+
+    public void setDominantCategory(){
+        double maxProbability = 0;
+        int index = 0;
+        for(int i = 0; i < this.similarityVector.size(); i++){
+            if(this.similarityVector.get(i)> maxProbability){
+                maxProbability = this.similarityVector.get(i);
+                index = i;
+            }
+        }
+        this.dominantCategory = index;
     }
 
     public boolean layerIsUnset(){

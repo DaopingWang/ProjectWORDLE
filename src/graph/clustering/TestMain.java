@@ -1,6 +1,5 @@
 package graph.clustering;
 
-import graph.clustering.kmeans.Cluster;
 import graph.clustering.kmeans.ClusterFactory;
 import graph.clustering.vertex.KeywordVertex;
 
@@ -44,15 +43,15 @@ public class TestMain {
             System.out.println("Enter keyword:");
         }
 
-        /*
+/*
         try {
-            GraphFactory.createProbabilityCSVFromGraph("C:/Users/wang.daoping/Documents/rework_layers/");
-            //GraphFactory.createPathLengthMatrixFromGraph("C:/Users/wang.daoping/Documents/rework_layers/");
+            //GraphFactory.createProbabilityCSVFromGraph("C:/Users/wang.daoping/Documents/rework_layers/");
+            GraphFactory.createPathLengthMatrixFromGraph("C:/Users/wang.daoping/Documents/rework_layers/");
             //GraphFactory.createParsedCSVFromGraph("C:/Users/wang.daoping/Documents/rework_layers/");
         } catch (IOException e){
             System.out.println("ERROR: CANNOT CREATE LAYERS");
             e.printStackTrace();
-        }
-        */
+        }*/
+
     }
 }
