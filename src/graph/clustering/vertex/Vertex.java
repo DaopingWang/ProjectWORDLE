@@ -22,21 +22,24 @@ public abstract class Vertex {
     public double distance;
     public String previous;
 
-    public Vector<Double> similarityVector;
+    public Vector<Double> categorySimilarityVector;
+    public Vector<Double> masterSimilarityVector;
     public int dominantCategory;
 
     public Vertex(String inputName){
         this.setLayer(-1);
         this.setName(inputName);
         this.subordinateList = new ArrayList<>();
-        this.similarityVector = new Vector<>();
+        this.categorySimilarityVector = new Vector<>();
+        this.masterSimilarityVector = new Vector<>();
     }
 
     public Vertex(String inputName, int inputLayer){
         this.setName(inputName);
         this.setLayer(inputLayer);
         this.subordinateList = new ArrayList<>();
-        this.similarityVector = new Vector<>();
+        this.categorySimilarityVector = new Vector<>();
+        this.masterSimilarityVector = new Vector<>();
     }
 
     /**
@@ -54,9 +57,9 @@ public abstract class Vertex {
     public void setDominantCategory(){
         double maxProbability = 0;
         int index = 0;
-        for(int i = 0; i < this.similarityVector.size(); i++){
-            if(this.similarityVector.get(i)> maxProbability){
-                maxProbability = this.similarityVector.get(i);
+        for(int i = 0; i < this.categorySimilarityVector.size(); i++){
+            if(this.categorySimilarityVector.get(i)> maxProbability){
+                maxProbability = this.categorySimilarityVector.get(i);
                 index = i;
             }
         }

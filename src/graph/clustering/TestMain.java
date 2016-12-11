@@ -1,5 +1,6 @@
 package graph.clustering;
 
+import graph.clustering.kmeans.Cluster;
 import graph.clustering.kmeans.ClusterFactory;
 import graph.clustering.vertex.KeywordVertex;
 
@@ -20,7 +21,8 @@ public class TestMain {
             e.printStackTrace();
         }
 
-        ClusterFactory.performSquareErrorClustering(Utility.randomInputGenerator(60,200), GraphFactory.rootKeywordVertices);
+        //ClusterFactory.performSquareErrorClustering(Utility.randomInputGenerator(60,200), GraphFactory.rootKeywordVertices);
+        ClusterFactory.performSquareErrorClustering(Utility.randomInputGenerator(60, 200));
 
         Scanner scanner = new Scanner(System.in);
         System.out.println("Enter keyword: ");
@@ -36,8 +38,8 @@ public class TestMain {
 
             System.out.println();
             System.out.println("Probabilities: ");
-            for(int i = 0; i < buffer.similarityVector.size(); i++){
-                System.out.println(buffer.probabilityList.get(i).getTargetVertexName() + " " + Double.toString(buffer.similarityVector.get(i)));
+            for(int i = 0; i < buffer.categorySimilarityVector.size(); i++){
+                System.out.println(buffer.probabilityList.get(i).getTargetVertexName() + " " + Double.toString(buffer.categorySimilarityVector.get(i)));
             }
 
             System.out.println("Enter keyword:");

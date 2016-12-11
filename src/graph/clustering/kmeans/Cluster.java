@@ -13,11 +13,13 @@ public class Cluster {
     public ArrayList<KeywordVertex> memberVertices;
     public Vector<Double> withinClusterVariation;
     public Vector<Double> categoryBasedCentroid;
+    public Vector<Double> masterBasedCentroid;
     public SparseDoubleMatrix1D centroid;
     public double averageSquaredDistance;
 
     public Cluster(){
         this.categoryBasedCentroid = new Vector<>();
+        this.masterBasedCentroid = new Vector<>();
         this.withinClusterVariation = new Vector<>();
         this.memberVertices = new ArrayList<>();
         this.averageSquaredDistance = 0;
@@ -25,6 +27,7 @@ public class Cluster {
 
     public Cluster(Vector<Double> similarityVector){
         this.categoryBasedCentroid = new Vector<>();
+        this.masterBasedCentroid = new Vector<>();
         this.categoryBasedCentroid.addAll(similarityVector);
         this.withinClusterVariation = new Vector<>();
         this.memberVertices = new ArrayList<>();

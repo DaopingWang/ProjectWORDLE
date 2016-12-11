@@ -104,14 +104,14 @@ public class GraphParser {
 
     public static void setProbability(KeywordVertex startVertex){
         double sum = 0;
-        startVertex.similarityVector = new Vector<>();
+        startVertex.categorySimilarityVector = new Vector<>();
         for(int i = 0; i < startVertex.probabilityList.size(); i++){
             sum += startVertex.probabilityList.get(i).getProbability();
         }
         for(int i = 0; i < startVertex.probabilityList.size(); i++){
             double probability = startVertex.probabilityList.get(i).getProbability();
             startVertex.probabilityList.get(i).setProbability(probability / sum);
-            startVertex.similarityVector.add(probability / sum);
+            startVertex.categorySimilarityVector.add(probability / sum);
         }
 
     }

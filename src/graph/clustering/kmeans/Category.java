@@ -9,7 +9,6 @@ import java.util.ArrayList;
  */
 public class Category {
     public ArrayList<KeywordVertex> categoryMembers;
-    public ArrayList<KeywordVertex> categoryMasters;
     public ArrayList<Cluster> clusters;
     public int categoryIndex;
     public int maxLayer;
@@ -17,7 +16,6 @@ public class Category {
     public Category(int inputIndex){
         this.categoryIndex = inputIndex;
         this.clusters = new ArrayList<>();
-        this.categoryMasters = new ArrayList<>();
         this.categoryMembers = new ArrayList<>();
         this.maxLayer = Integer.MAX_VALUE;
     }
@@ -33,7 +31,4 @@ public class Category {
         this.updateLayer(inputVertex.layer);
     }
 
-    public void addMaster(KeywordVertex inputVertex){
-        this.categoryMasters.add(inputVertex);
-    }
 }
