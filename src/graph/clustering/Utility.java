@@ -5,6 +5,7 @@ import graph.clustering.vertex.KeywordVertex;
 import graph.clustering.vertex.RootKeywordVertex;
 
 import java.util.ArrayList;
+import java.util.Vector;
 
 /**
  * Created by wang.daoping on 07.12.2016.
@@ -85,5 +86,18 @@ public class Utility {
             }
         }
         return -1;
+    }
+
+    public static void reinitializer(ArrayList<KeywordVertex> keywordVertices,
+                                     ArrayList<RootKeywordVertex> rootKeywordVertices){
+
+        for(int i = 0; i < keywordVertices.size(); i++){
+            keywordVertices.get(i).masterSimilarityVector = new Vector<>();
+            keywordVertices.get(i).categorySimilarityVector = new Vector<>();
+        }
+        for(int i = 0; i < rootKeywordVertices.size(); i++){
+            rootKeywordVertices.get(i).masterSimilarityVector = new Vector<>();
+            rootKeywordVertices.get(i).categorySimilarityVector = new Vector<>();
+        }
     }
 }

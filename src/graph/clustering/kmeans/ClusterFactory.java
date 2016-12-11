@@ -30,6 +30,9 @@ public class ClusterFactory {
         ClusteringInitializer.categoriesBasedInitializer(inputKeywords, categories, GraphFactory.keywordVertices, GraphFactory.rootKeywordVertices, missingCategories);
 
         for(int i = 0; i < categories.size(); i++){
+            System.out.println("==============================");
+            System.out.println(GraphFactory.rootKeywordVertices.get(categories.get(i).categoryMembers.get(0).dominantCategory).name + " Clustering: ");
+
             if(categories.get(i).categoryMembers.size() < 8) continue;
 
             int iteration = 0;
@@ -64,14 +67,13 @@ public class ClusterFactory {
 
             // Print
             for(int k = 0; k < categories.get(i).clusters.size(); k++){
-                System.out.println(Integer.toString(k) + ". cluster, ASD " + Double.toString(categories.get(i).clusters.get(k).averageSquaredDistance));
+                System.out.println(Integer.toString(k) + ". cluster, Average Squared Distance: " + Double.toString(categories.get(i).clusters.get(k).averageSquaredDistance));
                 for(int j = 0; j < categories.get(i).clusters.get(k).memberVertices.size(); j++){
                     System.out.println(categories.get(i).clusters.get(k).memberVertices.get(j).name);
                 }
                 System.out.println();
             }
 
-            System.out.println("Iterations: " + Integer.toString(iteration));
 
         }
 
@@ -236,7 +238,7 @@ public class ClusterFactory {
     }
 
     private static void recentralizeCentroids(int dimension, ArrayList<Cluster> clusters){
-        if(dimension == GraphFactory.rootKeywordVertices.size()){
+        /*if(dimension == GraphFactory.rootKeywordVertices.size()){
             for(int j = 0; j < dimension; j++){
                 for(int k = 0; k < clusters.size(); k++){
                     double entry = 0;
@@ -247,7 +249,7 @@ public class ClusterFactory {
                     clusters.get(k).categoryBasedCentroid.set(j, entry);
                 }
             }
-        } else {
+        } else {*/
             for(int j = 0; j < dimension; j++){
                 for(int k = 0; k < clusters.size(); k++){
                     double entry = 0;
@@ -258,7 +260,7 @@ public class ClusterFactory {
                     clusters.get(k).masterBasedCentroid.set(j, entry);
                 }
             }
-        }
+
     }
 
     // Calculates the error between given vertex and given cluster.

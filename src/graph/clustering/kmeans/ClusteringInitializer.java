@@ -1,6 +1,7 @@
 package graph.clustering.kmeans;
 
 import cern.colt.matrix.impl.SparseDoubleMatrix1D;
+import graph.clustering.GraphFactory;
 import graph.clustering.Utility;
 import graph.clustering.vertex.KeywordVertex;
 import graph.clustering.vertex.RootKeywordVertex;
@@ -40,22 +41,37 @@ public class ClusteringInitializer {
 
         for(int i = 0; i < inputCategories.size(); i++){
             for(int j = 0; j < keywordVertices.size(); j++){
-                if((keywordVertices.get(j).dominantCategory == inputCategories.get(i).categoryIndex) && (keywordVertices.get(j).layer <= inputCategories.get(i).maxLayer)){
-                    for(int k = 0; k < inputCategories.get(i).categoryMembers.size(); k++){
+                //if((keywordVertices.get(j).dominantCategory == inputCategories.get(i).categoryIndex) && (keywordVertices.get(j).layer <= inputCategories.get(i).maxLayer)){
+                if(checkMasterQualification(keywordVertices.get(j), inputCategories.get(i).categoryMembers, inputCategories.get(i))){
+                        for(int k = 0; k < inputCategories.get(i).categoryMembers.size(); k++){
                         inputCategories.get(i).categoryMembers.get(k).masterSimilarityVector.add(inputCategories.get(i).categoryMembers.get(k).pathLengthVector.get(j));
                     }
                 }
             }
 
-            if(inputCategories.get(i).categoryMembers.size() > 5){
-                kmeansPPInitializer(5, inputCategories.get(i).categoryMembers, inputCategories.get(i).clusters);
+            if(inputCategories.get(i).categoryMembers.size() > 3){
+                kmeansPPInitializer(3, inputCategories.get(i).categoryMembers, inputCategories.get(i).clusters);
             } else {
-                kmeansPPInitializer(inputCategories.get(i).categoryMembers.size(), inputCategories.get(i).categoryMembers, inputCategories.get(i).clusters);
+                kmeansPPInitializer(inputCategories.get(i).categoryMembers.size() / 2, inputCategories.get(i).categoryMembers, inputCategories.get(i).clusters);
             }
         }
+    }
 
+    private static boolean checkMasterQualification(KeywordVertex potentialMaster,
+                                                    ArrayList<KeywordVertex> memberList,
+                                                    Category category){
 
-
+        for(int i = 0; i < potentialMaster.subordinateList.size(); i++){
+            for(int j = 0; j < memberList.size(); j++){
+                if(potentialMaster.subordinateList.get(i).equals(memberList.get(j).name)){
+                    if(potentialMaster.layer <= category.maxLayer){
+                        return true;
+                    }
+                    return false;
+                }
+            }
+        }
+        return false;
     }
 
     /**
@@ -69,7 +85,7 @@ public class ClusteringInitializer {
         int inputVerticesCount = inputVertices.size();
         int createdCentroid = 1;
 
-        System.out.println("=== Start K-Means++ initialization ===");
+        System.out.println("=== Start K-Means++ initialization " + GraphFactory.rootKeywordVertices.get(inputVertices.get(0).dominantCategory).name + " ===");
         // Firstly initialize the first categoryBasedCentroid randomly.
         Cluster first = new Cluster();
         first.masterBasedCentroid = inputVertices.get(inputVerticesCount / 2).masterSimilarityVector;

@@ -58,7 +58,7 @@ public class GraphFactory {
             keywordVertices.get(i).pathLengthVector = new SparseDoubleMatrix1D(keywordVertices.size() + rootKeywordVertices.size());
             initializeProbabilityLists(keywordVertices.get(i));
         }
-        //setDirectSubordinates();
+        setDirectSubordinates();
 
         DijkstraPathFinder.initSparseVectors(keywordVertices, rootKeywordVertices);
         int percentage;

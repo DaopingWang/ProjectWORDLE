@@ -22,12 +22,18 @@ public class TestMain {
         }
 
         //ClusterFactory.performSquareErrorClustering(Utility.randomInputGenerator(60,200), GraphFactory.rootKeywordVertices);
-        ClusterFactory.performSquareErrorClustering(Utility.randomInputGenerator(60, 200));
+        Scanner sc = new Scanner(System.in);
+        System.out.println("Enter random number ");
+        String userin;
+        while(!(userin = sc.nextLine()).equals("exit")){
+            Utility.reinitializer(GraphFactory.keywordVertices, GraphFactory.rootKeywordVertices);
+            ClusterFactory.performSquareErrorClustering(Utility.randomInputGenerator(Integer.parseInt(userin), 200));
+        }
 
         Scanner scanner = new Scanner(System.in);
         System.out.println("Enter keyword: ");
         String userInput;
-        while (!(userInput = scanner.nextLine()).equals("EXIT")){
+        while (!(userInput = scanner.nextLine()).equals("exit")){
             KeywordVertex buffer = InputKeywordComparator.findMostSimilarKeywordOf(userInput);
             System.out.println("Most similar keyword found: " + buffer.name);
 
