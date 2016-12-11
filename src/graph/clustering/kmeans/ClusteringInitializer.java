@@ -1,6 +1,7 @@
 package graph.clustering.kmeans;
 
 import cern.colt.matrix.impl.SparseDoubleMatrix1D;
+import graph.clustering.Utility;
 import graph.clustering.vertex.KeywordVertex;
 import graph.clustering.vertex.RootKeywordVertex;
 
@@ -30,26 +31,26 @@ public class ClusteringInitializer {
             if(!createdCategories.contains(dominantCategory)){
                 Category category = new Category(dominantCategory);
                 category.addMember(inputVertices.get(i));
-                inputCategories.add(inputVertices.get(i).dominantCategory, category);
+                inputCategories.add(category);
                 createdCategories.add(dominantCategory);
             } else {
-                inputCategories.get(dominantCategory).addMember(inputVertices.get(i));
+                inputCategories.get(Utility.findIndexForCategoryIndex(inputCategories, dominantCategory)).addMember(inputVertices.get(i));
             }
         }
 
-        for(int i = 0; i < rootKeywordVertices.size(); i++){
-            if(inputCategories.get(i) == null){
-                missingCategories.add(i);
-            } else{
-                for(int j = 0; j < keywordVertices.size(); j++){
-                    if((keywordVertices.get(j).dominantCategory == inputCategories.get(i).categoryIndex) && (keywordVertices.get(j).layer <= inputCategories.get(i).maxLayer)){
-                        for(int k = 0; k < inputCategories.get(i).categoryMembers.size(); k++){
-                            inputCategories.get(i).categoryMembers.get(k).masterSimilarityVector.add(inputCategories.get(i).categoryMembers.get(k).pathLengthVector.get(j));
-                        }
+        for(int i = 0; i < inputCategories.size(); i++){
+            for(int j = 0; j < keywordVertices.size(); j++){
+                if((keywordVertices.get(j).dominantCategory == inputCategories.get(i).categoryIndex) && (keywordVertices.get(j).layer <= inputCategories.get(i).maxLayer)){
+                    for(int k = 0; k < inputCategories.get(i).categoryMembers.size(); k++){
+                        inputCategories.get(i).categoryMembers.get(k).masterSimilarityVector.add(inputCategories.get(i).categoryMembers.get(k).pathLengthVector.get(j));
                     }
                 }
+            }
 
+            if(inputCategories.get(i).categoryMembers.size() > 5){
                 kmeansPPInitializer(5, inputCategories.get(i).categoryMembers, inputCategories.get(i).clusters);
+            } else {
+                kmeansPPInitializer(inputCategories.get(i).categoryMembers.size(), inputCategories.get(i).categoryMembers, inputCategories.get(i).clusters);
             }
         }
 
@@ -71,12 +72,11 @@ public class ClusteringInitializer {
         System.out.println("=== Start K-Means++ initialization ===");
         // Firstly initialize the first categoryBasedCentroid randomly.
         Cluster first = new Cluster();
-        first.categoryBasedCentroid = inputVertices.get(inputVerticesCount / 2).masterSimilarityVector;
+        first.masterBasedCentroid = inputVertices.get(inputVerticesCount / 2).masterSimilarityVector;
         clusters.add(first);
 
         while(createdCentroid < k){
             double maxProbability = 0;
-            //SparseDoubleMatrix1D farestVertex = null;
             Vector<Double> farestVertex = null;
             double distanceSum = 0;
 

@@ -29,8 +29,7 @@ public class ClusterFactory {
 
         ClusteringInitializer.categoriesBasedInitializer(inputKeywords, categories, GraphFactory.keywordVertices, GraphFactory.rootKeywordVertices, missingCategories);
 
-        for(int i = 0; i < missingCategories.size() + categories.size(); i++){
-            if(missingCategories.contains(i)) continue;
+        for(int i = 0; i < categories.size(); i++){
             if(categories.get(i).categoryMembers.size() < 8) continue;
 
             int iteration = 0;
@@ -45,13 +44,13 @@ public class ClusterFactory {
 
             while(iteration < MAX_ITERATION && reallocCount > MAX_REALLOC_COUNT){
                 reallocCount = 0;
-                recentralizeCentroids(masterNumber);
-                for(int j = 0; j < inputKeywords.size(); j++){
-                    Cluster nearestCluster = nearestCentroid(inputKeywords.get(j).masterSimilarityVector, categories.get(i).clusters);
-                    if(!nearestCluster.memberVertices.contains(inputKeywords.get(j))){
-                        nearestCluster.memberVertices.add(inputKeywords.get(j));
-                        inputKeywords.get(j).originCluster.memberVertices.remove(inputKeywords.get(j));
-                        inputKeywords.get(j).originCluster = nearestCluster;
+                recentralizeCentroids(masterNumber, categories.get(i).clusters);
+                for(int j = 0; j < categories.get(i).categoryMembers.size(); j++){
+                    Cluster nearestCluster = nearestCentroid(categories.get(i).categoryMembers.get(j).masterSimilarityVector, categories.get(i).clusters);
+                    if(!nearestCluster.memberVertices.contains(categories.get(i).categoryMembers.get(j))){
+                        nearestCluster.memberVertices.add(categories.get(i).categoryMembers.get(j));
+                        categories.get(i).categoryMembers.get(j).originCluster.memberVertices.remove(categories.get(i).categoryMembers.get(j));
+                        categories.get(i).categoryMembers.get(j).originCluster = nearestCluster;
                         reallocCount++;
                     }
                 }
@@ -102,7 +101,7 @@ public class ClusterFactory {
         // Calculate new position of the centroids of the existing clusters and reallocate vertices iteratively.
         while(iteration < MAX_ITERATION && reallocCount > MAX_REALLOC_COUNT){
             reallocCount = 0;
-            recentralizeCentroids(masterNumber);
+            recentralizeCentroids(masterNumber, clusters);
             for(int i = 0; i < inputKeywords.size(); i++){
                 Cluster nearestCluster = nearestCentroid(inputKeywords.get(i).categorySimilarityVector, clusters);
                 if(!nearestCluster.memberVertices.contains(inputKeywords.get(i))){
@@ -155,7 +154,7 @@ public class ClusterFactory {
         // Calculate new position of the centroids of the existing clusters and reallocate vertices iteratively.
         while(iteration < MAX_ITERATION && reallocCount > MAX_REALLOC_COUNT){
             reallocCount = 0;
-            recentralizeCentroids(masterNumber);
+            recentralizeCentroids(masterNumber, clusters);
             for(int i = 0; i < inputKeywords.size(); i++){
                 Cluster nearestCluster = nearestCentroid(inputKeywords.get(i).pathLengthVector, clusters);
                 if(!nearestCluster.memberVertices.contains(inputKeywords.get(i))){
@@ -193,7 +192,7 @@ public class ClusterFactory {
         double minError = Double.MAX_VALUE;
         Cluster nearestCluster = null;
         for(int i = 0; i < clusters.size(); i++){
-            double e = euclideanDistance(inputVertex, clusters.get(i).categoryBasedCentroid);
+            double e = euclideanDistance(inputVertex, clusters.get(i).masterBasedCentroid);
             if(minError > e){
                 minError = e;
                 nearestCluster = clusters.get(i);
@@ -236,7 +235,7 @@ public class ClusterFactory {
         return Math.sqrt(averageSquareDistance) / dimension;
     }
 
-    private static void recentralizeCentroids(int dimension){
+    private static void recentralizeCentroids(int dimension, ArrayList<Cluster> clusters){
         if(dimension == GraphFactory.rootKeywordVertices.size()){
             for(int j = 0; j < dimension; j++){
                 for(int k = 0; k < clusters.size(); k++){

@@ -1,5 +1,6 @@
 package graph.clustering;
 
+import graph.clustering.kmeans.Category;
 import graph.clustering.vertex.KeywordVertex;
 import graph.clustering.vertex.RootKeywordVertex;
 
@@ -74,5 +75,15 @@ public class Utility {
             if(vertices.size() >= num) break;
         }
         return vertices;
+    }
+
+    public static int findIndexForCategoryIndex(ArrayList<Category> categories,
+                                                int categoryIndex){
+        for(int i = 0; i < categories.size(); i++){
+            if(categories.get(i).categoryIndex == categoryIndex){
+                return i;
+            }
+        }
+        return -1;
     }
 }
