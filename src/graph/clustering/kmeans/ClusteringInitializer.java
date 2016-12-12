@@ -82,7 +82,7 @@ public class ClusteringInitializer {
         int inputVerticesCount = inputVertices.size();
         int createdCentroid = 1;
 
-        System.out.println("=== Start K-Means++ initialization " + GraphFactory.rootKeywordVertices.get(inputVertices.get(0).dominantCategory).name + " ===");
+        //System.out.println("=== Start K-Means++ initialization " + GraphFactory.rootKeywordVertices.get(inputVertices.get(0).dominantCategory).name + " ===");
         // Firstly initialize the first categoryBasedCentroid randomly.
         Cluster first = new Cluster();
         first.masterBasedCentroid = inputVertices.get(inputVerticesCount / 2).masterSimilarityVector;
@@ -109,7 +109,8 @@ public class ClusteringInitializer {
             clusters.add(next);
             createdCentroid++;
         }
-        System.out.println("=== Initialization done ===");
+        //System.out.println("=== Initialization done ===");
+        //System.out.println();
     }
 
     private static double shortestDistanceToClosestCentroid(Vector<Double> inputVertex,
