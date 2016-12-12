@@ -64,7 +64,6 @@ public class ClusteringInitializer {
                     if(potentialMaster.layer <= category.maxLayer){
                         return true;
                     }
-                    return false;
                 }
             }
         }
@@ -84,11 +83,11 @@ public class ClusteringInitializer {
 
         // Firstly initialize the first categoryBasedCentroid randomly.
         Cluster first = new Cluster();
-        first.masterSimilarityCentroid = inputVertices.get(inputVerticesCount / 2).masterSimilarityVector;
+        first.masterSimilarityCentroid = inputVertices.get(0).masterSimilarityVector;
         clusters.add(first);
 
         while(createdCentroid < k){
-            double maxProbability = 0;
+            double maxProbability = -1;
             Vector<Double> farestVertex = null;
             double distanceSum = 0;
 

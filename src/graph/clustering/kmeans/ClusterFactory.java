@@ -32,6 +32,16 @@ public class ClusterFactory {
         ClusteringInitializer.categoriesBasedInitializer(inputKeywords, categories, GraphFactory.keywordVertices);
 
         for(int i = 0; i < categories.size(); i++){
+            if(categories.get(i).categoryIndex == 1) { // Alle Keywords der Kategorie Ba liegen in der 1. Ebene und haben keinerlei Querverbindungen miteinander => Kein Vektor kann erstellt werden.
+                Cluster cluster = new Cluster();
+                for(int j = 0; j < categories.get(i).categoryMembers.size(); j++){
+                    cluster.memberVertices.add(categories.get(i).categoryMembers.get(j));
+                }
+                categories.get(i).clusters.add(cluster);
+                //categories.get(i).clusters.get(0).averageSquaredDistance = calculateAverageSquareDistance(masterNumber, categories.get(i).clusters.get(0));
+                continue;
+            }
+
             System.out.println("==============================");
             System.out.println(GraphFactory.rootKeywordVertices.get(categories.get(i).categoryMembers.get(0).dominantCategory).name + " Clustering: ");
             masterNumber = categories.get(i).categoryMembers.get(0).masterSimilarityVector.size();
@@ -49,10 +59,8 @@ public class ClusterFactory {
             do {
                 performKMeans(MAX_ITERATION, MAX_REALLOC_COUNT, i);
                 } while (splitCluster(categories.get(i)));
-            //} while (false);
 
-            // flushEmptyCluster(categories.get(i));
-            // Set grand master
+            flushEmptyCluster(categories.get(i));
             // Print
             for(int k = 0; k < categories.get(i).clusters.size(); k++){
                 System.out.println(categories.get(i).clusters.get(k).grandMaster.name + ". cluster, Average Squared Distance: " + Double.toString(categories.get(i).clusters.get(k).averageSquaredDistance));
@@ -151,7 +159,7 @@ public class ClusterFactory {
         //flushEmptyCluster(category);
         for(int i = 0; i < category.clusters.size(); i++){
             Cluster currentCluster = category.clusters.get(i);
-            if(currentCluster.averageSquaredDistance >= MAX_ERROR - 0.01 && currentCluster.memberVertices.size() > 10){
+            if(currentCluster.memberVertices.size() > 13){
                 category.clusters.remove(currentCluster);
                 category.categoryMembers = currentCluster.memberVertices;
                 ClusteringInitializer.kMeansPPInitializer(2, currentCluster.memberVertices, category.clusters);
@@ -161,7 +169,7 @@ public class ClusterFactory {
                 category.categoryMembers = currentCluster.memberVertices;
                 ClusteringInitializer.kMeansPPInitializer(2, currentCluster.memberVertices, category.clusters);
                 return true;
-            } else if(Utility.findIndexForName(currentCluster.grandMaster.name) != -1 && currentCluster.averageSquaredDistance > MAX_ERROR*2){
+            } else if(Utility.findIndexForName(currentCluster.grandMaster.name) != -1 && currentCluster.averageSquaredDistance > 0.0){
                 category.clusters.remove(currentCluster);
                 category.categoryMembers = currentCluster.memberVertices;
                 ClusteringInitializer.kMeansPPInitializer(2, currentCluster.memberVertices, category.clusters);
