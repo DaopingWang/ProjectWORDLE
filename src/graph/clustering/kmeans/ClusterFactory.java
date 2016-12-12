@@ -14,7 +14,6 @@ import java.util.Vector;
 public class ClusterFactory {
     public static ArrayList<Cluster> clusters;
     public static ArrayList<Category> categories;
-    public static ArrayList missingCategories;
 
     public static int masterNumber;
     public static double squareError;
@@ -25,15 +24,14 @@ public class ClusterFactory {
 
     public static void performSquareErrorClustering(ArrayList<KeywordVertex> inputKeywords){
         categories = new ArrayList<>(GraphFactory.rootKeywordVertices.size());
-        missingCategories = new ArrayList();
 
-        ClusteringInitializer.categoriesBasedInitializer(inputKeywords, categories, GraphFactory.keywordVertices, GraphFactory.rootKeywordVertices, missingCategories);
+        ClusteringInitializer.categoriesBasedInitializer(inputKeywords, categories, GraphFactory.keywordVertices);
 
         for(int i = 0; i < categories.size(); i++){
             System.out.println("==============================");
             System.out.println(GraphFactory.rootKeywordVertices.get(categories.get(i).categoryMembers.get(0).dominantCategory).name + " Clustering: ");
 
-            if(categories.get(i).categoryMembers.size() < 8) continue;
+            if(categories.get(i).categoryMembers.size() < 6) continue;
 
             int iteration = 0;
             int reallocCount = Integer.MAX_VALUE;
@@ -73,11 +71,12 @@ public class ClusterFactory {
                 }
                 System.out.println();
             }
-
-
         }
+    }
 
-
+    private static void splitCluster(Category category, Cluster cluster){
+        category.clusters.remove(cluster);
+        ClusteringInitializer.kmeansPPInitializer(2, cluster.memberVertices, category.clusters);
     }
 
     public static void performSquareErrorClustering(ArrayList<KeywordVertex> inputKeywords,

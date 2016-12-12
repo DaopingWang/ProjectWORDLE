@@ -1,6 +1,5 @@
 package graph.clustering.kmeans;
 
-import cern.colt.matrix.impl.SparseDoubleMatrix1D;
 import graph.clustering.GraphFactory;
 import graph.clustering.Utility;
 import graph.clustering.vertex.KeywordVertex;
@@ -22,9 +21,7 @@ public class ClusteringInitializer {
 
     public static void categoriesBasedInitializer(ArrayList<KeywordVertex> inputVertices,
                                                   ArrayList<Category> inputCategories,
-                                                  ArrayList<KeywordVertex> keywordVertices,
-                                                  ArrayList<RootKeywordVertex> rootKeywordVertices,
-                                                  ArrayList missingCategories){
+                                                  ArrayList<KeywordVertex> keywordVertices){
 
         ArrayList createdCategories = new ArrayList();
         for(int i = 0; i < inputVertices.size(); i++){
@@ -113,19 +110,6 @@ public class ClusteringInitializer {
             createdCentroid++;
         }
         System.out.println("=== Initialization done ===");
-    }
-
-    private static double shortestDistanceToClosestCentroid(SparseDoubleMatrix1D inputVertex,
-                                                            ArrayList<Cluster> clusters){
-
-        double shortestDistance = Double.MAX_VALUE;
-        for(int i = 0; i < clusters.size(); i++){
-            double distance = ClusterFactory.euclideanDistance(inputVertex, clusters.get(i).centroid);
-            if(shortestDistance > distance){
-                shortestDistance = distance;
-            }
-        }
-        return shortestDistance;
     }
 
     private static double shortestDistanceToClosestCentroid(Vector<Double> inputVertex,

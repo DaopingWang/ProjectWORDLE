@@ -15,19 +15,21 @@ public class TestMain {
     public static void main(String[] args){
         try {
             //GraphFactory.parseGraphFromRawCSV("C:/Users/wang.daoping/Documents/Keyword_Graph.csv");
-            GraphFactory.readGraphFromParsedCSV("C:/Users/wang.daoping/Documents/rework_layers/ParsedCSV.csv");
+            GraphFactory.readGraphFromParsedCSV("C:/Users/wang.daoping/Documents/project_wordle_cache/ParsedCSV.csv");
         } catch (IOException e){
             System.out.println("ERROR: PARSE METHOD COULD NOT FIND RAW FILE");
             e.printStackTrace();
         }
 
-        //ClusterFactory.performSquareErrorClustering(Utility.randomInputGenerator(60,200), GraphFactory.rootKeywordVertices);
         Scanner sc = new Scanner(System.in);
         System.out.println("Enter random number ");
         String userin;
         while(!(userin = sc.nextLine()).equals("exit")){
             Utility.reinitializer(GraphFactory.keywordVertices, GraphFactory.rootKeywordVertices);
+            GraphFactory.calculateSparseVector(Utility.randomInputGenerator(Integer.parseInt(userin), 200));
             ClusterFactory.performSquareErrorClustering(Utility.randomInputGenerator(Integer.parseInt(userin), 200));
+            System.out.println("===============================");
+            System.out.println("Enter random number ");
         }
 
         Scanner scanner = new Scanner(System.in);
@@ -53,13 +55,14 @@ public class TestMain {
 
 /*
         try {
-            //GraphFactory.createProbabilityCSVFromGraph("C:/Users/wang.daoping/Documents/rework_layers/");
-            GraphFactory.createPathLengthMatrixFromGraph("C:/Users/wang.daoping/Documents/rework_layers/");
-            //GraphFactory.createParsedCSVFromGraph("C:/Users/wang.daoping/Documents/rework_layers/");
+            //GraphFactory.createProbabilityCSVFromGraph("C:/Users/wang.daoping/Documents/project_wordle_cache/");
+            //GraphFactory.createPathLengthMatrixFromGraph("C:/Users/wang.daoping/Documents/project_wordle_cache/");
+            GraphFactory.createSubordinatesCSVFromGraph("C:/Users/wang.daoping/Documents/project_wordle_cache/");
+            //GraphFactory.createParsedCSVFromGraph("C:/Users/wang.daoping/Documents/project_wordle_cache/");
         } catch (IOException e){
             System.out.println("ERROR: CANNOT CREATE LAYERS");
             e.printStackTrace();
-        }*/
-
+        }
+*/
     }
 }

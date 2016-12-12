@@ -13,6 +13,7 @@ import graph.clustering.vertex.RootKeywordVertex;
 import java.io.*;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.StringJoiner;
 import java.util.Vector;
 
 /**
@@ -29,7 +30,7 @@ public class GraphFactory {
         String[] lineBuffer = null;
         int index;
 
-        System.out.println("Loading parsed .csv...");
+        System.out.println("Read ParsedCSV...");
         CSVReader reader = new CSVReader(new InputStreamReader(new FileInputStream(filename), "Cp1252"), ';', '\"', 0);
         try {
             while ((lineBuffer = reader.readNext()) != null) {
@@ -55,11 +56,10 @@ public class GraphFactory {
         }
 
         for(int i = 0; i < keywordVertices.size(); i++){
-            keywordVertices.get(i).pathLengthVector = new SparseDoubleMatrix1D(keywordVertices.size() + rootKeywordVertices.size());
             initializeProbabilityLists(keywordVertices.get(i));
         }
-        setDirectSubordinates();
-
+        //setDirectSubordinates();
+/*
         DijkstraPathFinder.initSparseVectors(keywordVertices, rootKeywordVertices);
         int percentage;
         System.out.println("Start dijkstra...");
@@ -71,20 +71,18 @@ public class GraphFactory {
                 System.out.println("Dididi dijkstraing... " + Integer.toString(percentage) + "% done.");
             }
         }
-
+*/
         //calculateProbabilityList();
 
 
-        readProbabilityListFromCSV("C:/Users/wang.daoping/Documents/rework_layers/ProbabilityCSV.csv");
+        readProbabilityListFromCSV("C:/Users/wang.daoping/Documents/project_wordle_cache/ProbabilityCSV.csv");
+        readSubordinatesListFromCSV("C:/Users/wang.daoping/Documents/project_wordle_cache/SubordinatesCSV.csv");
+    }
 
-        for(int i = 0; i < rootKeywordVertices.size(); i++){
-            //System.out.print(rootKeywordVertices.get(i).name + ": " );
-            for(int j = 0; j < rootKeywordVertices.size(); j++){
-                rootKeywordVertices.get(i).categorySimilarityVector.add((double) 0);
-            }
-            rootKeywordVertices.get(i).categorySimilarityVector.set(i, (double) 1);
-            //System.out.print(Integer.toString(i));
-            //System.out.println();
+    public static void calculateSparseVector(ArrayList<KeywordVertex> inputVertices){
+        DijkstraPathFinder.initSparseVectors(keywordVertices, rootKeywordVertices);
+        for(int i = 0; i < inputVertices.size(); i++){
+            DijkstraPathFinder.findSingleSourceShortestPath(inputVertices.get(i), keywordVertices, rootKeywordVertices);
         }
     }
 
@@ -110,6 +108,37 @@ public class GraphFactory {
         for(int i = 0; i < rootKeywordVertices.size(); i++){
             rootKeywordVertices.get(i).setDominantCategory();
         }
+
+        for(int i = 0; i < rootKeywordVertices.size(); i++){
+            for(int j = 0; j < rootKeywordVertices.size(); j++){
+                rootKeywordVertices.get(i).categorySimilarityVector.add((double) 0);
+            }
+            rootKeywordVertices.get(i).categorySimilarityVector.set(i, (double) 1);
+        }
+    }
+
+    public static void readSubordinatesListFromCSV(String filename) throws IOException{
+        String[] lineBuffer;
+        CSVReader reader = new CSVReader(new InputStreamReader(new FileInputStream(filename), "Cp1252"), ';', '\"', 0);
+        int index = 0;
+        int row = 0;
+
+        System.out.println("Read SubordinatesList... ");
+        while ((lineBuffer = reader.readNext()) != null){
+            if(row < rootKeywordVertices.size()){
+                for(int i = 0; i < Integer.parseInt(lineBuffer[1]); i++){
+                    rootKeywordVertices.get(row).subordinateList.add(lineBuffer[i + 2]);
+                }
+                row++;
+                index++;
+            } else {
+                for(int i = 0; i < Integer.parseInt(lineBuffer[1]); i++){
+                    keywordVertices.get(index - row).subordinateList.add(lineBuffer[i + 2]);
+                }
+                index++;
+            }
+        }
+        reader.close();
     }
 
     public static void parseGraphFromRawCSV(String filename) throws IOException{
@@ -169,15 +198,15 @@ public class GraphFactory {
     }
 
     public static void createProbabilityCSVFromGraph(String filepath) throws IOException{
-        DecimalFormat f = new DecimalFormat("#0.0000");
-        String filename = filepath + "Probability_CSV.csv";
+        //DecimalFormat f = new DecimalFormat("#0.0000");
+        String filename = filepath + "ProbabilityCSV.csv";
         String lineBuffer;
         CSVWriter writer = new CSVWriter(new OutputStreamWriter(new FileOutputStream(filename), "Cp1252"),';');
 
         for(int i = 0; i < keywordVertices.size(); i++){
             lineBuffer = keywordVertices.get(i).name;
             for(int j = 0; j < keywordVertices.get(i).probabilityList.size(); j++){
-                lineBuffer += ";" + f.format(keywordVertices.get(i).probabilityList.get(j).getProbability());
+                lineBuffer += ";" + Double.toString(keywordVertices.get(i).probabilityList.get(j).getProbability());
             }
             String[] record = lineBuffer.split(";");
             writer.writeNext(record);
@@ -246,7 +275,7 @@ public class GraphFactory {
         }
     }
 
-    public static void createPathLengthMatrixFromGraph(String filepath)throws IOException{
+    public static void createPathLengthMatrixFromGraph(String filepath) throws IOException{
         //DecimalFormat f = new DecimalFormat("#0.0000");
 
         String filename = filepath + "path_length_matrix_v0.csv";
@@ -259,6 +288,30 @@ public class GraphFactory {
                 lineBuffer += Double.toString(keywordVertices.get(i).pathLengthVector.get(j)) + ";";
             }
             lineBuffer += "EOL";
+            String[] record = lineBuffer.split(";");
+            writer.writeNext(record);
+        }
+        writer.close();
+    }
+
+    public static void createSubordinatesCSVFromGraph(String filepath) throws IOException{
+        String filename = filepath + "SubordinatesCSV.csv";
+        CSVWriter writer = new CSVWriter(new OutputStreamWriter(new FileOutputStream(filename), "Cp1252"), ';');
+        String lineBuffer;
+
+        for(int i = 0; i < rootKeywordVertices.size(); i++){
+            lineBuffer = rootKeywordVertices.get(i).name + ";" + Integer.toString(rootKeywordVertices.get(i).subordinateList.size());
+                for(int j = 0; j < rootKeywordVertices.get(i).subordinateList.size(); j++){
+                lineBuffer += ";" + rootKeywordVertices.get(i).subordinateList.get(j);
+            }
+            String[] record = lineBuffer.split(";");
+            writer.writeNext(record);
+        }
+        for(int i = 0; i < keywordVertices.size(); i++){
+            lineBuffer = keywordVertices.get(i).name + ";" + Integer.toString(keywordVertices.get(i).subordinateList.size());
+            for(int j = 0; j < keywordVertices.get(i).subordinateList.size(); j++){
+                lineBuffer += ";" + keywordVertices.get(i).subordinateList.get(j);
+            }
             String[] record = lineBuffer.split(";");
             writer.writeNext(record);
         }
