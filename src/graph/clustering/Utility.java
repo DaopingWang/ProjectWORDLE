@@ -102,21 +102,17 @@ public class Utility {
         }
     }
 
-    public static int findIndexOfMinEntry(Vector<Double> vector, Cluster cluster){
+    public static int findIndexOfMinEntry(Vector<Double> masterSimilarityVector, Cluster cluster){
         double min = Double.MAX_VALUE;
-        try {
             int index = -1;
-            for(int i = 0; i < vector.size(); i++){
-                if(vector.get(i) < min && vector.get(i) != (double) 0 && checkConnectivity(i, cluster)) {
-                    min = vector.get(i);
+            for(int i = 0; i < masterSimilarityVector.size(); i++){
+                if((masterSimilarityVector.get(i) < min) && (masterSimilarityVector.get(i) != (double) 0) && (checkConnectivity(i, cluster))) {
+                    min = masterSimilarityVector.get(i);
                     index = i;
                 }
             }
             return index;
-        } catch (NullPointerException e){
-            System.out.println("findIndexOfMinEntry Null");
-            return 0;
-        }
+
     }
 
     public static boolean checkConnectivity(int index, Cluster cluster){

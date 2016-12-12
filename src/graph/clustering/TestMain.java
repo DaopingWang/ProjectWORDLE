@@ -28,6 +28,7 @@ public class TestMain {
             Utility.reinitializer(GraphFactory.keywordVertices, GraphFactory.rootKeywordVertices);
             GraphFactory.calculateSparseVector(Utility.randomInputGenerator(Integer.parseInt(userin), 200));
             ClusterFactory.performSquareErrorClustering(Utility.randomInputGenerator(Integer.parseInt(userin), 200));
+            System.out.println(Integer.toString(ClusterFactory.disbandonedKeywords));
             System.out.println("===============================");
             System.out.println("Enter random number ");
         }

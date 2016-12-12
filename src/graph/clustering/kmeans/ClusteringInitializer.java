@@ -1,6 +1,5 @@
 package graph.clustering.kmeans;
 
-import graph.clustering.GraphFactory;
 import graph.clustering.Utility;
 import graph.clustering.vertex.KeywordVertex;
 import graph.clustering.vertex.RootKeywordVertex;
@@ -48,9 +47,9 @@ public class ClusteringInitializer {
             }
 
             if(inputCategories.get(i).categoryMembers.size() > 3){
-                kmeansPPInitializer(3, inputCategories.get(i).categoryMembers, inputCategories.get(i).clusters);
+                kMeansPPInitializer(3, inputCategories.get(i).categoryMembers, inputCategories.get(i).clusters);
             } else {
-                kmeansPPInitializer(inputCategories.get(i).categoryMembers.size() / 2, inputCategories.get(i).categoryMembers, inputCategories.get(i).clusters);
+                kMeansPPInitializer(inputCategories.get(i).categoryMembers.size() / 2, inputCategories.get(i).categoryMembers, inputCategories.get(i).clusters);
             }
         }
     }
@@ -76,17 +75,16 @@ public class ClusteringInitializer {
      * using K-Means++ algorithm.
      * @param k Wished number of clusters.
      */
-    public static void kmeansPPInitializer(int k,
+    public static void kMeansPPInitializer(int k,
                                            ArrayList<KeywordVertex> inputVertices,
                                            ArrayList<Cluster> clusters){
 
         int inputVerticesCount = inputVertices.size();
         int createdCentroid = 1;
 
-        //System.out.println("=== Start K-Means++ initialization " + GraphFactory.rootKeywordVertices.get(inputVertices.get(0).dominantCategory).name + " ===");
         // Firstly initialize the first categoryBasedCentroid randomly.
         Cluster first = new Cluster();
-        first.masterBasedCentroid = inputVertices.get(inputVerticesCount / 2).masterSimilarityVector;
+        first.masterSimilarityCentroid = inputVertices.get(inputVerticesCount / 2).masterSimilarityVector;
         clusters.add(first);
 
         while(createdCentroid < k){
@@ -106,7 +104,7 @@ public class ClusteringInitializer {
                 }
             }
             Cluster next = new Cluster();
-            next.masterBasedCentroid = farestVertex;
+            next.masterSimilarityCentroid = farestVertex;
             clusters.add(next);
             createdCentroid++;
         }
@@ -119,7 +117,8 @@ public class ClusteringInitializer {
 
         double shortestDistance = Double.MAX_VALUE;
         for(int i = 0; i < clusters.size(); i++){
-            double distance = ClusterFactory.euclideanDistance(inputVertex, clusters.get(i).masterBasedCentroid);
+            if(clusters.get(i).isClosed) continue;
+            double distance = ClusterFactory.euclideanDistance(inputVertex, clusters.get(i).masterSimilarityCentroid);
             if(shortestDistance > distance){
                 shortestDistance = distance;
             }
