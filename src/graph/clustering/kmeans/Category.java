@@ -1,6 +1,7 @@
 package graph.clustering.kmeans;
 
 import graph.clustering.vertex.KeywordVertex;
+import graph.clustering.vertex.Vertex;
 
 import java.util.ArrayList;
 
@@ -10,7 +11,7 @@ import java.util.ArrayList;
 public class Category {
     public ArrayList<KeywordVertex> categoryMembers;
     public ArrayList<Cluster> clusters;
-    public ArrayList<KeywordVertex> masterVertices;
+    public ArrayList<Vertex> masterVertices;
     public int categoryIndex;
     public int maxLayer;
 

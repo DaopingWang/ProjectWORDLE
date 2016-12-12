@@ -14,17 +14,20 @@ public class KeywordVertex extends Vertex{
     public SparseDoubleMatrix1D pathLengthVector;
     public Cluster originCluster;
     public double shortestDistance;
+    public int duplicateCount;
 
     public KeywordVertex(String inputName){
         super(inputName);
         this.edgeList = new ArrayList<>();
         this.probabilityList = new ArrayList<>();
+        this.duplicateCount = 0;
     }
 
     public KeywordVertex(String inputName, int inputLayer){
         super(inputName, inputLayer);
         this.edgeList = new ArrayList<>();
         this.probabilityList = new ArrayList<>();
+        this.duplicateCount = 0;
     }
 
     public void createNewEdge(String inputName){

@@ -39,6 +39,14 @@ public class ClusterFactory {
                 }
                 categories.get(i).clusters.add(cluster);
                 //categories.get(i).clusters.get(0).averageSquaredDistance = calculateAverageSquareDistance(masterNumber, categories.get(i).clusters.get(0));
+
+                System.out.println("==============================");
+                System.out.println(GraphFactory.rootKeywordVertices.get(categories.get(i).categoryIndex).name + ". cluster");
+                for(int j = 0; j < categories.get(i).clusters.get(0).memberVertices.size(); j++){
+                    System.out.println(categories.get(i).clusters.get(0).memberVertices.get(j).name);
+                }
+                System.out.println();
+
                 continue;
             }
 
@@ -65,7 +73,7 @@ public class ClusterFactory {
             for(int k = 0; k < categories.get(i).clusters.size(); k++){
                 System.out.println(categories.get(i).clusters.get(k).grandMaster.name + ". cluster, Average Squared Distance: " + Double.toString(categories.get(i).clusters.get(k).averageSquaredDistance));
                 for(int j = 0; j < categories.get(i).clusters.get(k).memberVertices.size(); j++){
-                    System.out.println(categories.get(i).clusters.get(k).memberVertices.get(j).name);
+                    System.out.println(categories.get(i).clusters.get(k).memberVertices.get(j).name + " x " + Integer.toString(categories.get(i).clusters.get(k).memberVertices.get(j).duplicateCount));
                 }
                 System.out.println();
             }
@@ -80,13 +88,14 @@ public class ClusterFactory {
 
 
         for(int j = 0; j < currentCategoryMembers.size(); j++){
+            Cluster nearestCluster = null;
             try {
-                Cluster nearestCluster = nearestCentroid(currentCategoryMembers.get(j).masterSimilarityVector, currentCategoryClusters);
-                nearestCluster.memberVertices.add(currentCategoryMembers.get(j));
-                currentCategoryMembers.get(j).originCluster = nearestCluster;
+                nearestCluster = nearestCentroid(currentCategoryMembers.get(j).masterSimilarityVector, currentCategoryClusters);
             } catch (NullPointerException e){
-                System.out.println();
+                System.out.println("PKM Null");
             }
+            nearestCluster.memberVertices.add(currentCategoryMembers.get(j));
+            currentCategoryMembers.get(j).originCluster = nearestCluster;
         }
 
 
@@ -135,13 +144,13 @@ public class ClusterFactory {
         int clusterCount = category.clusters.size();
         for(int i = 0; i < clusterCount; i++){
             Cluster currentCluster = category.clusters.get(i);
-            if(currentCluster.memberVertices.size() < MIN_MEMBER_COUNT){
+            if(currentCluster.memberVertices.size() < MIN_MEMBER_COUNT && currentCluster.memberVertices.get(currentCluster.memberVertices.size() - 1).duplicateCount < 2){
                 category.clusters.remove(currentCluster);
                 i--;
                 clusterCount--;
+                disbandonedKeywords++;
             }
         }
-        disbandonedKeywords++;
     }
 
     private static void flushEmptyCluster(Category category){
@@ -159,7 +168,7 @@ public class ClusterFactory {
         //flushEmptyCluster(category);
         for(int i = 0; i < category.clusters.size(); i++){
             Cluster currentCluster = category.clusters.get(i);
-            if(currentCluster.memberVertices.size() > 13){
+            if(currentCluster.memberVertices.size() > 20 && currentCluster.averageSquaredDistance > 0.00){
                 category.clusters.remove(currentCluster);
                 category.categoryMembers = currentCluster.memberVertices;
                 ClusteringInitializer.kMeansPPInitializer(2, currentCluster.memberVertices, category.clusters);
@@ -294,7 +303,12 @@ public class ClusterFactory {
         Cluster nearestCluster = null;
         for(int i = 0; i < currentClusters.size(); i++){
 
-                double e = euclideanDistance(currentMasterSimilarityVector, currentClusters.get(i).masterSimilarityCentroid);
+            double e = 0;
+                try {
+                    e = euclideanDistance(currentMasterSimilarityVector, currentClusters.get(i).masterSimilarityCentroid);
+                } catch (NullPointerException er){
+                    System.out.println("nearest Null");
+                }
 
                 if (minError > e) {
                     minError = e;
@@ -368,7 +382,12 @@ public class ClusterFactory {
     public static double euclideanDistance(Vector<Double> a, Vector<Double> b){
         double distance = 0;
         for(int i = 0; i < a.size(); i++){
-            distance += Math.pow((a.get(i) - b.get(i)), 2);
+            try {
+                distance += Math.pow((a.get(i) - b.get(i)), 2);
+            } catch (NullPointerException e){
+                System.out.println("a " + Integer.toString(a.size()));
+                System.out.println("b " + Integer.toString(b.size()));
+            }
         }
         return Math.sqrt(distance);
     }

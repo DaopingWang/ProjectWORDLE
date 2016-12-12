@@ -68,12 +68,16 @@ public class Utility {
         return 0;
     }
 
-    public static ArrayList<KeywordVertex> randomInputGenerator(int rand, int num){
+    public static ArrayList<KeywordVertex> randomInputGenerator(int rand, int num, int duplicate){
         ArrayList<KeywordVertex> vertices = new ArrayList<>();
-        for(int i = 0; i < GraphFactory.keywordVertices.size(); i++){
-            if(i % rand == 0){
-                vertices.add(GraphFactory.keywordVertices.get(i));
-            }
+        for(int i = rand; i < GraphFactory.keywordVertices.size(); i++){
+            //if(rand % i == 0){
+                int j = 0;
+                while(j < duplicate){
+                    vertices.add(GraphFactory.keywordVertices.get(i));
+                    j++;
+                }
+            //}
             if(vertices.size() >= num) break;
         }
         return vertices;
@@ -106,12 +110,17 @@ public class Utility {
         double min = Double.MAX_VALUE;
             int index = -1;
             for(int i = 0; i < masterSimilarityVector.size(); i++){
-                if((masterSimilarityVector.get(i) < min) && (masterSimilarityVector.get(i) != (double) 0) && (checkConnectivity(i, cluster))) {
+                if((masterSimilarityVector.get(i) != 1) && (masterSimilarityVector.get(i) < min) && (masterSimilarityVector.get(i) != (double) 0) && (checkConnectivity(i, cluster))) {
                     min = masterSimilarityVector.get(i);
                     index = i;
                 }
             }
-            return index;
+            if(index == -1) {
+                index = masterSimilarityVector.size() - 1;
+                return index;
+            } else {
+                return index;
+            }
 
     }
 

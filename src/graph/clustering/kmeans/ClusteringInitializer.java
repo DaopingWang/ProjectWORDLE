@@ -1,5 +1,7 @@
 package graph.clustering.kmeans;
 
+import com.sun.corba.se.impl.orbutil.graph.Graph;
+import graph.clustering.GraphFactory;
 import graph.clustering.Utility;
 import graph.clustering.vertex.KeywordVertex;
 import graph.clustering.vertex.RootKeywordVertex;
@@ -21,6 +23,8 @@ public class ClusteringInitializer {
     public static void categoriesBasedInitializer(ArrayList<KeywordVertex> inputVertices,
                                                   ArrayList<Category> inputCategories,
                                                   ArrayList<KeywordVertex> keywordVertices){
+
+        checkDuplicates(inputVertices);
 
         ArrayList createdCategories = new ArrayList();
         for(int i = 0; i < inputVertices.size(); i++){
@@ -46,6 +50,12 @@ public class ClusteringInitializer {
                 }
             }
 
+            // Add root dependency to the last entry to ensure everyone has a mastersimivector
+            inputCategories.get(i).masterVertices.add(GraphFactory.rootKeywordVertices.get(inputCategories.get(i).categoryIndex));
+            for(int j = 0; j < inputCategories.get(i).categoryMembers.size(); j++){
+                inputCategories.get(i).categoryMembers.get(j).masterSimilarityVector.add((double) 1);
+            }
+
             if(inputCategories.get(i).categoryMembers.size() > 3){
                 kMeansPPInitializer(3, inputCategories.get(i).categoryMembers, inputCategories.get(i).clusters);
             } else {
@@ -68,6 +78,18 @@ public class ClusteringInitializer {
             }
         }
         return false;
+    }
+
+    private static void checkDuplicates(ArrayList<KeywordVertex> inputKeywords){
+        for(int i = 0; i < inputKeywords.size(); i++){
+            for(int j = i+1; j < inputKeywords.size(); j++){
+                if(inputKeywords.get(i).name.equals(inputKeywords.get(j).name)){
+                    inputKeywords.get(i).duplicateCount++;
+                    inputKeywords.remove(inputKeywords.get(j));
+                    j--;
+                }
+            }
+        }
     }
 
     /**
@@ -103,7 +125,11 @@ public class ClusteringInitializer {
                 }
             }
             Cluster next = new Cluster();
-            next.masterSimilarityCentroid = farestVertex;
+            if(farestVertex == null){ // bad way to prevent null mastersimicentroid
+                next.masterSimilarityCentroid = clusters.get(clusters.size() - 1).masterSimilarityCentroid;
+            } else {
+                next.masterSimilarityCentroid = farestVertex;
+            }
             clusters.add(next);
             createdCentroid++;
         }

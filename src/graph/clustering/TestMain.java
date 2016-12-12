@@ -26,10 +26,10 @@ public class TestMain {
         String userin;
         while(!(userin = sc.nextLine()).equals("exit")){
             Utility.reinitializer(GraphFactory.keywordVertices, GraphFactory.rootKeywordVertices);
-            GraphFactory.calculateSparseVector(Utility.randomInputGenerator(Integer.parseInt(userin), 200));
-            ClusterFactory.performSquareErrorClustering(Utility.randomInputGenerator(Integer.parseInt(userin), 200));
+            GraphFactory.calculateSparseVector(Utility.randomInputGenerator(Integer.parseInt(userin), 200, 1));
+            ClusterFactory.performSquareErrorClustering(Utility.randomInputGenerator(Integer.parseInt(userin), 200, 1));
             System.out.println(Integer.toString(ClusterFactory.disbandonedKeywords));
-            System.out.println("===============================");
+            System.out.println();
             System.out.println("Enter random number ");
         }
 
@@ -48,7 +48,7 @@ public class TestMain {
             System.out.println();
             System.out.println("Probabilities: ");
             for(int i = 0; i < buffer.categorySimilarityVector.size(); i++){
-                System.out.println(buffer.probabilityList.get(i).getTargetVertexName() + " " + Double.toString(buffer.categorySimilarityVector.get(i)));
+                System.out.println(buffer.probabilityList.get(i).getTargetVertexName() + " " + Double.toString(buffer.categorySimilarityVector.get(1)));
             }
 
             System.out.println("Enter keyword:");
