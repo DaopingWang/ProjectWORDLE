@@ -2,6 +2,7 @@ package graph.clustering.kmeans;
 
 import cern.colt.matrix.impl.SparseDoubleMatrix1D;
 import graph.clustering.GraphFactory;
+import graph.clustering.Utility;
 import graph.clustering.vertex.KeywordVertex;
 import graph.clustering.vertex.RootKeywordVertex;
 
@@ -47,11 +48,14 @@ public class ClusterFactory {
             do {
                 performKMeans(MAX_ITERATION, MAX_REALLOC_COUNT, i);
                 } while (splitCluster(categories.get(i)));
-
             //} while (false);
+
+            // Set grand master
+            setGrandMaster(categories.get(i));
+
             // Print
             for(int k = 0; k < categories.get(i).clusters.size(); k++){
-                System.out.println(Integer.toString(k) + ". cluster, Average Squared Distance: " + Double.toString(categories.get(i).clusters.get(k).averageSquaredDistance));
+                System.out.println(categories.get(i).clusters.get(k).grandMaster.name + ". cluster, Average Squared Distance: " + Double.toString(categories.get(i).clusters.get(k).averageSquaredDistance));
                 for(int j = 0; j < categories.get(i).clusters.get(k).memberVertices.size(); j++){
                     System.out.println(categories.get(i).clusters.get(k).memberVertices.get(j).name);
                 }
@@ -64,11 +68,17 @@ public class ClusterFactory {
         int iteration = 0;
         int reallocCount = Integer.MAX_VALUE;
 
+
         for(int j = 0; j < categories.get(i).categoryMembers.size(); j++){
-            Cluster nearestCluster = nearestCentroid(categories.get(i).categoryMembers.get(j).masterSimilarityVector, categories.get(i).clusters);
-            nearestCluster.memberVertices.add(categories.get(i).categoryMembers.get(j));
-            categories.get(i).categoryMembers.get(j).originCluster = nearestCluster;
+            try {
+                Cluster nearestCluster = nearestCentroid(categories.get(i).categoryMembers.get(j).masterSimilarityVector, categories.get(i).clusters);
+                nearestCluster.memberVertices.add(categories.get(i).categoryMembers.get(j));
+                categories.get(i).categoryMembers.get(j).originCluster = nearestCluster;
+            } catch (NullPointerException e){
+                System.out.println();
+            }
         }
+
 
         while(iteration < maxIteration && reallocCount > maxRealloc){
             reallocCount = 0;
@@ -91,6 +101,19 @@ public class ClusterFactory {
         }
     }
 
+    private static void setGrandMaster(Category category){
+        flushEmptyCluster(category);
+        for(int j = 0; j < category.clusters.size(); j++){
+            Cluster currentCluster = category.clusters.get(j);
+            int masterIndex;
+            if((masterIndex = Utility.findIndexOfMinEntry(currentCluster.masterBasedCentroid, currentCluster)) != -1){
+                currentCluster.grandMaster = category.masterVertices.get(masterIndex);
+            } else {
+                currentCluster.grandMaster = GraphFactory.rootKeywordVertices.get(category.categoryIndex);
+            }
+        }
+    }
+
     private static void eliminateOutstanders(Category category){
         for(int i = 0; i < category.clusters.size(); i++){
             Cluster currentCluster = category.clusters.get(i);
@@ -100,6 +123,13 @@ public class ClusterFactory {
         }
     }
 
+    private static void flushEmptyCluster(Category category){
+        for(int i = 0; i < category.clusters.size(); i++){
+            if(category.clusters.get(i).memberVertices.size() == 0){
+                category.clusters.remove(category.clusters.get(i));
+            }
+        }
+    }
     private static boolean splitCluster(Category category){
         eliminateOutstanders(category);
         for(int i = 0; i < category.clusters.size(); i++){
@@ -108,18 +138,20 @@ public class ClusterFactory {
                 category.clusters.remove(currentCluster);
                 category.categoryMembers = currentCluster.memberVertices;
                 ClusteringInitializer.kmeansPPInitializer(2, currentCluster.memberVertices, category.clusters);
+                flushEmptyCluster(category);
                 return true;
-            } /*else if(currentCluster.memberVertices.size() > MAX_MEMBER_COUNT){
+            } else if(currentCluster.averageSquaredDistance > MAX_ERROR){
+                category.clusters.remove(currentCluster);
+                category.categoryMembers = currentCluster.memberVertices;
+                ClusteringInitializer.kmeansPPInitializer(2, currentCluster.memberVertices, category.clusters);
+                flushEmptyCluster(category);
+                return true;
+            } /*else if(Utility.findIndexForName(currentCluster.grandMaster.name) != -1){
                 category.clusters.remove(currentCluster);
                 category.categoryMembers = currentCluster.memberVertices;
                 ClusteringInitializer.kmeansPPInitializer(2, currentCluster.memberVertices, category.clusters);
                 return true;
-            } */else if(currentCluster.averageSquaredDistance > MAX_ERROR){
-                category.clusters.remove(currentCluster);
-                category.categoryMembers = currentCluster.memberVertices;
-                ClusteringInitializer.kmeansPPInitializer(2, currentCluster.memberVertices, category.clusters);
-                return true;
-            }
+            }*/
         }
         return false;
     }
@@ -238,10 +270,16 @@ public class ClusterFactory {
         double minError = Double.MAX_VALUE;
         Cluster nearestCluster = null;
         for(int i = 0; i < clusters.size(); i++){
-            double e = euclideanDistance(inputVertex, clusters.get(i).masterBasedCentroid);
-            if(minError > e){
-                minError = e;
-                nearestCluster = clusters.get(i);
+
+            try {
+                double e = euclideanDistance(inputVertex, clusters.get(i).masterBasedCentroid);
+
+                if (minError > e) {
+                    minError = e;
+                    nearestCluster = clusters.get(i);
+                }
+            } catch (NullPointerException er){
+                System.out.println("ED Null");
             }
         }
         return nearestCluster;
@@ -282,28 +320,16 @@ public class ClusterFactory {
     }
 
     private static void recentralizeCentroids(int dimension, ArrayList<Cluster> clusters){
-        /*if(dimension == GraphFactory.rootKeywordVertices.size()){
-            for(int j = 0; j < dimension; j++){
-                for(int k = 0; k < clusters.size(); k++){
-                    double entry = 0;
-                    for(int i = 0; i < clusters.get(k).memberVertices.size(); i++){
-                        entry += clusters.get(k).memberVertices.get(i).categorySimilarityVector.get(j);
-                    }
-                    entry = entry / clusters.get(k).memberVertices.size();
-                    clusters.get(k).categoryBasedCentroid.set(j, entry);
+        for(int j = 0; j < dimension; j++){
+            for(int k = 0; k < clusters.size(); k++){
+                double entry = 0;
+                for(int i = 0; i < clusters.get(k).memberVertices.size(); i++){
+                    entry += clusters.get(k).memberVertices.get(i).masterSimilarityVector.get(j);
                 }
+                entry = entry / clusters.get(k).memberVertices.size();
+                clusters.get(k).masterBasedCentroid.set(j, entry);
             }
-        } else {*/
-            for(int j = 0; j < dimension; j++){
-                for(int k = 0; k < clusters.size(); k++){
-                    double entry = 0;
-                    for(int i = 0; i < clusters.get(k).memberVertices.size(); i++){
-                        entry += clusters.get(k).memberVertices.get(i).masterSimilarityVector.get(j);
-                    }
-                    entry = entry / clusters.get(k).memberVertices.size();
-                    clusters.get(k).masterBasedCentroid.set(j, entry);
-                }
-            }
+        }
 
     }
 
@@ -337,14 +363,6 @@ public class ClusterFactory {
 
     public static double calculateWithinClusterVariation(int j, Cluster k){
         double variance = 0;
-        /*if(masterNumber == GraphFactory.rootKeywordVertices.size()){
-            for(int i = 0; i < k.memberVertices.size(); i++){
-                double xij = k.memberVertices.get(i).categorySimilarityVector.get(j);
-                double mj = k.categoryBasedCentroid.get(j);
-                variance += Math.pow((xij - mj), 2);
-            }
-            return variance;
-        }*/
         for(int i = 0; i < k.memberVertices.size(); i++){
             double xij = k.memberVertices.get(i).masterSimilarityVector.get(j);
             double mj = k.masterBasedCentroid.get(j);

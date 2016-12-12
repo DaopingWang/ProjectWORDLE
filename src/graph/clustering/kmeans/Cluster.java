@@ -2,6 +2,7 @@ package graph.clustering.kmeans;
 
 import cern.colt.matrix.impl.SparseDoubleMatrix1D;
 import graph.clustering.vertex.KeywordVertex;
+import graph.clustering.vertex.Vertex;
 
 import java.util.ArrayList;
 import java.util.Vector;
@@ -16,6 +17,7 @@ public class Cluster {
     public Vector<Double> masterBasedCentroid;
     public SparseDoubleMatrix1D centroid;
     public double averageSquaredDistance;
+    public Vertex grandMaster;
 
     public Cluster(){
         this.categoryBasedCentroid = new Vector<>();

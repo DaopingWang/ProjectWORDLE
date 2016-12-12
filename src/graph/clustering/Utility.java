@@ -1,6 +1,7 @@
 package graph.clustering;
 
 import graph.clustering.kmeans.Category;
+import graph.clustering.kmeans.Cluster;
 import graph.clustering.vertex.KeywordVertex;
 import graph.clustering.vertex.RootKeywordVertex;
 
@@ -99,5 +100,31 @@ public class Utility {
             rootKeywordVertices.get(i).masterSimilarityVector = new Vector<>();
             rootKeywordVertices.get(i).categorySimilarityVector = new Vector<>();
         }
+    }
+
+    public static int findIndexOfMinEntry(Vector<Double> vector, Cluster cluster){
+        double min = Double.MAX_VALUE;
+        try {
+            int index = -1;
+            for(int i = 0; i < vector.size(); i++){
+                if(vector.get(i) < min && vector.get(i) != (double) 0 && checkConnectivity(i, cluster)) {
+                    min = vector.get(i);
+                    index = i;
+                }
+            }
+            return index;
+        } catch (NullPointerException e){
+            System.out.println("findIndexOfMinEntry Null");
+            return 0;
+        }
+    }
+
+    public static boolean checkConnectivity(int index, Cluster cluster){
+        for(int i = 0; i < cluster.memberVertices.size(); i++){
+            if(cluster.memberVertices.get(i).masterSimilarityVector.get(index) == 0){
+                return false;
+            }
+        }
+        return true;
     }
 }

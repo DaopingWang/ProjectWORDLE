@@ -10,6 +10,7 @@ import java.util.ArrayList;
 public class Category {
     public ArrayList<KeywordVertex> categoryMembers;
     public ArrayList<Cluster> clusters;
+    public ArrayList<KeywordVertex> masterVertices;
     public int categoryIndex;
     public int maxLayer;
 
@@ -18,6 +19,7 @@ public class Category {
         this.clusters = new ArrayList<>();
         this.categoryMembers = new ArrayList<>();
         this.maxLayer = Integer.MAX_VALUE;
+        this.masterVertices = new ArrayList<>();
     }
 
     public void updateLayer(int inputLayer){

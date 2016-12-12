@@ -40,7 +40,8 @@ public class ClusteringInitializer {
             for(int j = 0; j < keywordVertices.size(); j++){
                 //if((keywordVertices.get(j).dominantCategory == inputCategories.get(i).categoryIndex) && (keywordVertices.get(j).layer <= inputCategories.get(i).maxLayer)){
                 if(checkMasterQualification(keywordVertices.get(j), inputCategories.get(i).categoryMembers, inputCategories.get(i))){
-                        for(int k = 0; k < inputCategories.get(i).categoryMembers.size(); k++){
+                    inputCategories.get(i).masterVertices.add(keywordVertices.get(j)); // Add vertex to master vector of category.
+                    for(int k = 0; k < inputCategories.get(i).categoryMembers.size(); k++){
                         inputCategories.get(i).categoryMembers.get(k).masterSimilarityVector.add(inputCategories.get(i).categoryMembers.get(k).pathLengthVector.get(j));
                     }
                 }
