@@ -25,8 +25,8 @@ public class TestMain {
         String userin;
         while(!(userin = sc.nextLine()).equals("exit")){
             Utility.reinitializer(GraphFactory.keywordVertices, GraphFactory.rootKeywordVertices);
-            GraphFactory.calculateSparseVector(Utility.randomInputGenerator(Integer.parseInt(userin), 200, 1));
-            ClusterFactory.performSquareErrorClustering(Utility.randomInputGenerator(Integer.parseInt(userin), 200, 1));
+            GraphFactory.calculateSparseVector(Utility.randomInputGenerator(Integer.parseInt(userin), 500, 1));
+            ClusterFactory.performSquareErrorClustering(Utility.randomInputGenerator(Integer.parseInt(userin), 500, 1));
             System.out.println(Integer.toString(ClusterFactory.abandonedKeywords));
             System.out.println();
             System.out.println("Enter random number ");

@@ -16,7 +16,7 @@ public class Cluster {
     public Vector<Double> categoryBasedCentroid;
     public Vector<Double> masterSimilarityCentroid;
     public SparseDoubleMatrix1D centroid;
-    public double averageSquaredDistance;
+    public double averageEuclideanDistance;
     public Vertex grandMaster;
     public boolean isClosed;
 
@@ -25,7 +25,7 @@ public class Cluster {
         this.masterSimilarityCentroid = new Vector<>();
         this.withinClusterVariation = new Vector<>();
         this.memberVertices = new ArrayList<>();
-        this.averageSquaredDistance = 0;
+        this.averageEuclideanDistance = 0;
         this.isClosed = false;
     }
 
@@ -35,7 +35,7 @@ public class Cluster {
         this.categoryBasedCentroid.addAll(similarityVector);
         this.withinClusterVariation = new Vector<>();
         this.memberVertices = new ArrayList<>();
-        this.averageSquaredDistance = 0;
+        this.averageEuclideanDistance = 0;
         this.isClosed = false;
     }
 

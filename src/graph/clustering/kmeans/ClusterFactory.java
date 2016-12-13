@@ -21,7 +21,7 @@ public class ClusterFactory {
     public static int abandonedKeywords = 0;
 
     public static final int MAX_ITERATION = 10000;
-    public static final double MAX_ERROR = 0.05;
+    public static final double MAX_ERROR = 1;
     public static final int MAX_REALLOC_COUNT = 0;
     public static final int MAX_MEMBER_COUNT = 10;
     public static final int MIN_MEMBER_COUNT = 2;
@@ -38,7 +38,7 @@ public class ClusterFactory {
                     cluster.memberVertices.add(categories.get(i).categoryMembers.get(j));
                 }
                 categories.get(i).clusters.add(cluster);
-                //categories.get(i).clusters.get(0).averageSquaredDistance = calculateAverageSquareDistance(masterNumber, categories.get(i).clusters.get(0));
+                //categories.get(i).clusters.get(0).averageEuclideanDistance = calculateAverageSquareDistance(masterNumber, categories.get(i).clusters.get(0));
 
                 System.out.println("==============================");
                 System.out.println(GraphFactory.rootKeywordVertices.get(categories.get(i).categoryIndex).name + ". cluster");
@@ -60,7 +60,8 @@ public class ClusterFactory {
                     cluster.memberVertices.add(categories.get(i).categoryMembers.get(j));
                 }
                 categories.get(i).clusters.add(cluster);
-                categories.get(i).clusters.get(0).averageSquaredDistance = calculateAverageSquareDistance(masterNumber, categories.get(i).clusters.get(0));
+                //categories.get(i).clusters.get(0).averageEuclideanDistance = calculateAverageSquareDistance(masterNumber, categories.get(i).clusters.get(0));
+                categories.get(i).clusters.get(0).averageEuclideanDistance = calculateAverageEuclideanDistance(categories.get(i).clusters.get(0));
                 continue;
             }
 
@@ -68,10 +69,10 @@ public class ClusterFactory {
                 performKMeans(MAX_ITERATION, MAX_REALLOC_COUNT, i);
                 } while (splitCluster(categories.get(i)));
 
-            flushEmptyCluster(categories.get(i));
+            flushEmptyClusters(categories.get(i));
             // Print
             for(int k = 0; k < categories.get(i).clusters.size(); k++){
-                System.out.println(categories.get(i).clusters.get(k).grandMaster.name + ". cluster, Average Squared Distance: " + Double.toString(categories.get(i).clusters.get(k).averageSquaredDistance));
+                System.out.println(categories.get(i).clusters.get(k).grandMaster.name + ". cluster, AverageEuclideanDistance: " + Double.toString(categories.get(i).clusters.get(k).averageEuclideanDistance));
                 for(int j = 0; j < categories.get(i).clusters.get(k).memberVertices.size(); j++){
                     System.out.println(categories.get(i).clusters.get(k).memberVertices.get(j).name + " x " + Integer.toString(categories.get(i).clusters.get(k).memberVertices.get(j).duplicateCount));
                 }
@@ -101,7 +102,7 @@ public class ClusterFactory {
 
         while(iteration < maxIteration && reallocCount > maxRealloc){
             reallocCount = 0;
-            flushEmptyCluster(categories.get(i));
+            flushEmptyClusters(categories.get(i));
             recentralizeCentroids(masterNumber, currentCategoryClusters);
             for(int j = 0; j < currentCategoryMembers.size(); j++){
                 KeywordVertex currentCategoryMember = currentCategoryMembers.get(j);
@@ -118,11 +119,12 @@ public class ClusterFactory {
             }
             iteration++;
         }
-        //flushEmptyCluster(categories.get(i));
+        //flushEmptyClusters(categories.get(i));
         setGrandMaster(categories.get(i));
 
         for(int j = 0; j < categories.get(i).clusters.size(); j++){
-            categories.get(i).clusters.get(j).averageSquaredDistance = calculateAverageSquareDistance(masterNumber, categories.get(i).clusters.get(j));
+            //categories.get(i).clusters.get(j).averageEuclideanDistance = calculateAverageSquareDistance(masterNumber, categories.get(i).clusters.get(j));
+            currentCategoryClusters.get(j).averageEuclideanDistance = calculateAverageEuclideanDistance(currentCategoryClusters.get(j));
             categories.get(i).clusters.get(j).isClosed = true;
         }
     }
@@ -152,7 +154,7 @@ public class ClusterFactory {
         }
     }
 
-    private static void flushEmptyCluster(Category category){
+    private static void flushEmptyClusters(Category category){
         int clusterCount = category.clusters.size();
         for(int i = 0; i < clusterCount; i++){
             if(category.clusters.get(i).memberVertices.size() == 0){
@@ -166,17 +168,17 @@ public class ClusterFactory {
         eliminateOutstanders(category);
         for(int i = 0; i < category.clusters.size(); i++){
             Cluster currentCluster = category.clusters.get(i);
-            if(currentCluster.memberVertices.size() > 20 && currentCluster.averageSquaredDistance > 0.0){
+            if(currentCluster.memberVertices.size() > 20 && currentCluster.averageEuclideanDistance > 0.0){   // Cluster too big
                 category.clusters.remove(currentCluster);
                 category.categoryMembers = currentCluster.memberVertices;
                 ClusteringInitializer.kMeansPPInitializer(2, currentCluster.memberVertices, category.clusters);
                 return true;
-            } else if(currentCluster.averageSquaredDistance > MAX_ERROR){
+            } else if(currentCluster.averageEuclideanDistance > MAX_ERROR){                                   // Members' divergence too high
                 category.clusters.remove(currentCluster);
                 category.categoryMembers = currentCluster.memberVertices;
                 ClusteringInitializer.kMeansPPInitializer(2, currentCluster.memberVertices, category.clusters);
                 return true;
-            } else if(Utility.findIndexForName(currentCluster.grandMaster.name) != -1 && currentCluster.averageSquaredDistance > 0.0){
+            } else if(Utility.findIndexForName(currentCluster.grandMaster.name) != -1 && currentCluster.averageEuclideanDistance > 0.0){  // Grandmaster should better not be a root keyword
                 category.clusters.remove(currentCluster);
                 category.categoryMembers = currentCluster.memberVertices;
                 ClusteringInitializer.kMeansPPInitializer(2, currentCluster.memberVertices, category.clusters);
@@ -223,14 +225,15 @@ public class ClusterFactory {
         }
 
         for(int i = 0; i < clusters.size(); i++){
-            clusters.get(i).averageSquaredDistance = calculateAverageSquareDistance(masterNumber, clusters.get(i));
+            //clusters.get(i).averageEuclideanDistance = calculateAverageSquareDistance(masterNumber, clusters.get(i));
+            clusters.get(i).averageEuclideanDistance = calculateAverageEuclideanDistance(clusters.get(i));
         }
         squareError = calculateSquareErrorFORGYStyle(masterNumber);
 
 
         // Print
         for(int k = 0; k < clusters.size(); k++){
-            System.out.println(Integer.toString(k) + ". cluster, ASD " + Double.toString(clusters.get(k).averageSquaredDistance));
+            System.out.println(Integer.toString(k) + ". cluster, ASD " + Double.toString(clusters.get(k).averageEuclideanDistance));
             for(int i = 0; i < clusters.get(k).memberVertices.size(); i++){
                 System.out.println(clusters.get(k).memberVertices.get(i).name);
             }
@@ -276,14 +279,15 @@ public class ClusterFactory {
         }
 
         for(int i = 0; i < clusters.size(); i++){
-            clusters.get(i).averageSquaredDistance = calculateAverageSquareDistance(masterNumber, clusters.get(i));
+            //clusters.get(i).averageEuclideanDistance = calculateAverageSquareDistance(masterNumber, clusters.get(i));
+            clusters.get(i).averageEuclideanDistance = calculateAverageEuclideanDistance(clusters.get(i));
         }
         squareError = calculateSquareErrorFORGYStyle(masterNumber);
 
 
         // Print
         for(int k = 0; k < clusters.size(); k++){
-            System.out.println(Integer.toString(k) + ". cluster, ASD " + Double.toString(clusters.get(k).averageSquaredDistance));
+            System.out.println(Integer.toString(k) + ". cluster, ASD " + Double.toString(clusters.get(k).averageEuclideanDistance));
             for(int i = 0; i < clusters.get(k).memberVertices.size(); i++){
                 System.out.println(clusters.get(k).memberVertices.get(i).name);
             }
@@ -348,6 +352,14 @@ public class ClusterFactory {
             averageSquareDistance += calculateWithinClusterVariation(j, k) / (double) memberCount;
         }
         return Math.sqrt(averageSquareDistance) / dimension;
+    }
+
+    private static double calculateAverageEuclideanDistance(Cluster k){
+        double averageEuclideanDistance = 0;
+        for(int i = 0; i < k.memberVertices.size(); i++){
+            averageEuclideanDistance += euclideanDistance(k.memberVertices.get(i).masterSimilarityVector, k.masterSimilarityCentroid);
+        }
+        return averageEuclideanDistance / k.memberVertices.size();
     }
 
     private static void recentralizeCentroids(int dimension, ArrayList<Cluster> clusters){
