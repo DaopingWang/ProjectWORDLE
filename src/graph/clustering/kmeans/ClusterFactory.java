@@ -18,12 +18,12 @@ public class ClusterFactory {
 
     public static int masterNumber;
     public static double squareError;
-    public static int disbandonedKeywords = 0;
+    public static int abandonedKeywords = 0;
 
     public static final int MAX_ITERATION = 10000;
     public static final double MAX_ERROR = 0.05;
     public static final int MAX_REALLOC_COUNT = 0;
-    public static final int MAX_MEMBER_COUNT = 15;
+    public static final int MAX_MEMBER_COUNT = 10;
     public static final int MIN_MEMBER_COUNT = 2;
 
     public static void performSquareErrorClustering(ArrayList<KeywordVertex> inputKeywords){
@@ -121,7 +121,6 @@ public class ClusterFactory {
         //flushEmptyCluster(categories.get(i));
         setGrandMaster(categories.get(i));
 
-        //categories.get(i).categoryMembers = new ArrayList<>();
         for(int j = 0; j < categories.get(i).clusters.size(); j++){
             categories.get(i).clusters.get(j).averageSquaredDistance = calculateAverageSquareDistance(masterNumber, categories.get(i).clusters.get(j));
             categories.get(i).clusters.get(j).isClosed = true;
@@ -148,7 +147,7 @@ public class ClusterFactory {
                 category.clusters.remove(currentCluster);
                 i--;
                 clusterCount--;
-                disbandonedKeywords++;
+                abandonedKeywords++;
             }
         }
     }
@@ -165,15 +164,14 @@ public class ClusterFactory {
     }
     private static boolean splitCluster(Category category){
         eliminateOutstanders(category);
-        //flushEmptyCluster(category);
         for(int i = 0; i < category.clusters.size(); i++){
             Cluster currentCluster = category.clusters.get(i);
-            if(currentCluster.memberVertices.size() > 20 && currentCluster.averageSquaredDistance > 0.00){
+            /*if(currentCluster.memberVertices.size() > 20 && Utility.cardinality(currentCluster.masterSimilarityCentroid) > 1){
                 category.clusters.remove(currentCluster);
                 category.categoryMembers = currentCluster.memberVertices;
                 ClusteringInitializer.kMeansPPInitializer(2, currentCluster.memberVertices, category.clusters);
                 return true;
-            } else if(currentCluster.averageSquaredDistance > MAX_ERROR){
+            } else*/ if(currentCluster.averageSquaredDistance > MAX_ERROR){
                 category.clusters.remove(currentCluster);
                 category.categoryMembers = currentCluster.memberVertices;
                 ClusteringInitializer.kMeansPPInitializer(2, currentCluster.memberVertices, category.clusters);

@@ -1,6 +1,5 @@
 package graph.clustering;
 
-import graph.clustering.kmeans.Cluster;
 import graph.clustering.kmeans.ClusterFactory;
 import graph.clustering.vertex.KeywordVertex;
 
@@ -28,7 +27,7 @@ public class TestMain {
             Utility.reinitializer(GraphFactory.keywordVertices, GraphFactory.rootKeywordVertices);
             GraphFactory.calculateSparseVector(Utility.randomInputGenerator(Integer.parseInt(userin), 200, 1));
             ClusterFactory.performSquareErrorClustering(Utility.randomInputGenerator(Integer.parseInt(userin), 200, 1));
-            System.out.println(Integer.toString(ClusterFactory.disbandonedKeywords));
+            System.out.println(Integer.toString(ClusterFactory.abandonedKeywords));
             System.out.println();
             System.out.println("Enter random number ");
         }
