@@ -70,14 +70,14 @@ public class Utility {
 
     public static ArrayList<KeywordVertex> randomInputGenerator(int rand, int num, int duplicate){
         ArrayList<KeywordVertex> vertices = new ArrayList<>();
-        for(int i = 0; i < GraphFactory.keywordVertices.size(); i++){
-            if(i % rand == 0 && i >= rand){
+        for(int i = rand; i < GraphFactory.keywordVertices.size(); i++){
+            //if(i % rand == 0 && i >= rand){
                 int j = 0;
                 while(j < duplicate){
                     vertices.add(GraphFactory.keywordVertices.get(i));
                     j++;
                 }
-            }
+            //}
             if(vertices.size() >= num) break;
         }
         return vertices;
@@ -98,11 +98,11 @@ public class Utility {
 
         for(int i = 0; i < keywordVertices.size(); i++){
             keywordVertices.get(i).masterSimilarityVector = new Vector<>();
-            keywordVertices.get(i).categorySimilarityVector = new Vector<>();
+            //keywordVertices.get(i).categorySimilarityVector = new Vector<>();
         }
         for(int i = 0; i < rootKeywordVertices.size(); i++){
             rootKeywordVertices.get(i).masterSimilarityVector = new Vector<>();
-            rootKeywordVertices.get(i).categorySimilarityVector = new Vector<>();
+            //rootKeywordVertices.get(i).categorySimilarityVector = new Vector<>();
         }
     }
 

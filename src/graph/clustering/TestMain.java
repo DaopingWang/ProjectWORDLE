@@ -47,7 +47,7 @@ public class TestMain {
             System.out.println();
             System.out.println("Probabilities: ");
             for(int i = 0; i < buffer.categorySimilarityVector.size(); i++){
-                System.out.println(buffer.probabilityList.get(i).getTargetVertexName() + " " + Double.toString(buffer.categorySimilarityVector.get(1)));
+                System.out.println(buffer.probabilityList.get(i).getTargetVertexName() + " " + Double.toString(buffer.categorySimilarityVector.get(i)));
             }
 
             System.out.println("Enter keyword:");

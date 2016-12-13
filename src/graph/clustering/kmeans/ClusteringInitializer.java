@@ -67,7 +67,7 @@ public class ClusteringInitializer {
 
         for(int i = 0; i < potentialMaster.subordinateList.size(); i++){
             for(int j = 0; j < memberList.size(); j++){
-                if(potentialMaster.subordinateList.get(i).equals(memberList.get(j).name)){
+                if(potentialMaster.subordinateList.get(i).equals(memberList.get(j).name) && potentialMaster.dominantCategory == category.categoryIndex){
                     //if(potentialMaster.layer <= category.maxLayer){
                         return true;
                     //}

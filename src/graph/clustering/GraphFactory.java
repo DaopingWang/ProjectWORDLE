@@ -86,6 +86,7 @@ public class GraphFactory {
         }
     }
 
+
     public static void readProbabilityListFromCSV(String filename) throws IOException{
         String[] lineBuffer;
         CSVReader reader = new CSVReader(new InputStreamReader(new FileInputStream(filename), "Cp1252"), ';', '\"', 0);

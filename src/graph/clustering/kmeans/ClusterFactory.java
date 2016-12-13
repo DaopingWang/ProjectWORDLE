@@ -23,7 +23,7 @@ public class ClusterFactory {
     public static final int MAX_ITERATION = 10000;
     public static final double MAX_ERROR = 1;
     public static final int MAX_REALLOC_COUNT = 0;
-    public static final int MAX_MEMBER_COUNT = 10;
+    public static final int MAX_MEMBER_COUNT = 15;
     public static final int MIN_MEMBER_COUNT = 2;
 
     public static void performSquareErrorClustering(ArrayList<KeywordVertex> inputKeywords){
@@ -168,7 +168,7 @@ public class ClusterFactory {
         eliminateOutstanders(category);
         for(int i = 0; i < category.clusters.size(); i++){
             Cluster currentCluster = category.clusters.get(i);
-            if(currentCluster.memberVertices.size() > 20 && currentCluster.averageEuclideanDistance > 0.0){   // Cluster too big
+            if(currentCluster.memberVertices.size() > MAX_MEMBER_COUNT && currentCluster.averageEuclideanDistance > 0.0){   // Cluster too big
                 category.clusters.remove(currentCluster);
                 category.categoryMembers = currentCluster.memberVertices;
                 ClusteringInitializer.kMeansPPInitializer(2, currentCluster.memberVertices, category.clusters);
