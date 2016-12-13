@@ -166,12 +166,12 @@ public class ClusterFactory {
         eliminateOutstanders(category);
         for(int i = 0; i < category.clusters.size(); i++){
             Cluster currentCluster = category.clusters.get(i);
-            /*if(currentCluster.memberVertices.size() > 20 && Utility.cardinality(currentCluster.masterSimilarityCentroid) > 1){
+            if(currentCluster.memberVertices.size() > 20 && currentCluster.averageSquaredDistance > 0.0){
                 category.clusters.remove(currentCluster);
                 category.categoryMembers = currentCluster.memberVertices;
                 ClusteringInitializer.kMeansPPInitializer(2, currentCluster.memberVertices, category.clusters);
                 return true;
-            } else*/ if(currentCluster.averageSquaredDistance > MAX_ERROR){
+            } else if(currentCluster.averageSquaredDistance > MAX_ERROR){
                 category.clusters.remove(currentCluster);
                 category.categoryMembers = currentCluster.memberVertices;
                 ClusteringInitializer.kMeansPPInitializer(2, currentCluster.memberVertices, category.clusters);

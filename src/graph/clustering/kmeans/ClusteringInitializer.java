@@ -56,11 +56,8 @@ public class ClusteringInitializer {
                 inputCategories.get(i).categoryMembers.get(j).masterSimilarityVector.add((double) 1);
             }
 
-            if(inputCategories.get(i).categoryMembers.size() > 3){
-                kMeansPPInitializer(3, inputCategories.get(i).categoryMembers, inputCategories.get(i).clusters);
-            } else {
-                kMeansPPInitializer(inputCategories.get(i).categoryMembers.size() / 2, inputCategories.get(i).categoryMembers, inputCategories.get(i).clusters);
-            }
+            kMeansPPInitializer(inputCategories.get(i).categoryMembers.size() % 10, inputCategories.get(i).categoryMembers, inputCategories.get(i).clusters);
+
         }
     }
 
