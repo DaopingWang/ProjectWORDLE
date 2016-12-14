@@ -21,7 +21,7 @@ public class ClusterFactory {
     public static int abandonedKeywords = 0;
 
     public static final int MAX_ITERATION = 10000;
-    public static final double MAX_ERROR = 1;
+    public static final double MAX_ERROR = 0.5;
     public static final int MAX_REALLOC_COUNT = 0;
     public static final int MAX_MEMBER_COUNT = 15;
     public static final int MIN_MEMBER_COUNT = 2;
@@ -40,7 +40,8 @@ public class ClusterFactory {
                 categories.get(i).clusters.add(cluster);
                 //categories.get(i).clusters.get(0).averageEuclideanDistance = calculateAverageSquareDistance(masterNumber, categories.get(i).clusters.get(0));
 
-                System.out.println("==============================");
+                flushEmptyClusters(categories.get(i));
+                if(categories.get(i).clusters.size() == 0) continue;
                 System.out.println(GraphFactory.rootKeywordVertices.get(categories.get(i).categoryIndex).name + ". cluster");
                 for(int j = 0; j < categories.get(i).clusters.get(0).memberVertices.size(); j++){
                     System.out.println(categories.get(i).clusters.get(0).memberVertices.get(j).name);
@@ -50,8 +51,6 @@ public class ClusterFactory {
                 continue;
             }
 
-            System.out.println("==============================");
-            System.out.println(GraphFactory.rootKeywordVertices.get(categories.get(i).categoryMembers.get(0).dominantCategory).name + " Clustering: ");
             masterNumber = categories.get(i).categoryMembers.get(0).masterSimilarityVector.size();
 
             if(categories.get(i).categoryMembers.size() < 6) {
@@ -69,8 +68,11 @@ public class ClusterFactory {
                 performKMeans(MAX_ITERATION, MAX_REALLOC_COUNT, i);
                 } while (splitCluster(categories.get(i)));
 
-            flushEmptyClusters(categories.get(i));
             // Print
+            flushEmptyClusters(categories.get(i));
+            if(categories.get(i).clusters.size() == 0) continue;
+            System.out.println(GraphFactory.rootKeywordVertices.get(categories.get(i).categoryMembers.get(0).dominantCategory).name.toUpperCase() + " Clustering: ".toUpperCase());
+            System.out.println();
             for(int k = 0; k < categories.get(i).clusters.size(); k++){
                 System.out.println(categories.get(i).clusters.get(k).grandMaster.name + ". cluster, AverageEuclideanDistance: " + Double.toString(categories.get(i).clusters.get(k).averageEuclideanDistance));
                 for(int j = 0; j < categories.get(i).clusters.get(k).memberVertices.size(); j++){

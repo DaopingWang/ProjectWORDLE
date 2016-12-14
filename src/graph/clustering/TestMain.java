@@ -35,7 +35,9 @@ public class TestMain {
         for(int i = 0; i < GraphFactory.searchExamples.size(); i++){
             Utility.reinitializer(GraphFactory.keywordVertices, GraphFactory.rootKeywordVertices);
             GraphFactory.calculateSparseVector(GraphFactory.searchExamples.get(i).searchResults);
+            System.out.println();;
             System.out.println("*** " + GraphFactory.searchExamples.get(i).name + " " + Integer.toString(GraphFactory.searchExamples.get(i).searchResults.size()) + " ***");
+            System.out.println();
             ClusterFactory.performSquareErrorClustering(GraphFactory.searchExamples.get(i).searchResults);
         }
 
