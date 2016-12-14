@@ -21,7 +21,7 @@ public class ClusterFactory {
     public static int abandonedKeywords = 0;
 
     public static final int MAX_ITERATION = 10000;
-    public static final double MAX_ERROR = 0.5;
+    public static final double MAX_ERROR = 1;
     public static final int MAX_REALLOC_COUNT = 0;
     public static final int MAX_MEMBER_COUNT = 15;
     public static final int MIN_MEMBER_COUNT = 2;
@@ -47,18 +47,21 @@ public class ClusterFactory {
             }
 
             masterNumber = categories.get(i).categoryMembers.get(0).masterSimilarityVector.size();
-
+/*
             if(categories.get(i).categoryMembers.size() < 6) {
                 Cluster cluster = new Cluster();
                 for(int j = 0; j < categories.get(i).categoryMembers.size(); j++){
                     cluster.memberVertices.add(categories.get(i).categoryMembers.get(j));
                 }
                 categories.get(i).clusters.add(cluster);
-                //categories.get(i).clusters.get(0).averageEuclideanDistance = calculateAverageSquareDistance(masterNumber, categories.get(i).clusters.get(0));
                 categories.get(i).clusters.get(0).averageEuclideanDistance = calculateAverageEuclideanDistance(categories.get(i).clusters.get(0));
+
+                flushEmptyClusters(categories.get(i));
+                setGrandMaster(categories.get(i));
+                systemOutPrint(i);
                 continue;
             }
-
+*/
             do {
                 performKMeans(MAX_ITERATION, MAX_REALLOC_COUNT, i);
                 } while (splitCluster(categories.get(i)));
@@ -66,6 +69,7 @@ public class ClusterFactory {
             // Print
             flushEmptyClusters(categories.get(i));
             if(categories.get(i).clusters.size() == 0) continue;
+            mergeCluster(categories.get(i));
             systemOutPrint(i);
         }
     }
@@ -153,11 +157,24 @@ public class ClusterFactory {
         }
     }
 
+    private static void mergeCluster(Category category){
+        for(int i = 0; i < category.clusters.size(); i++){
+            for(int j = i+1; j < category.clusters.size(); j++){
+                if (category.clusters.get(i).grandMaster.equals(category.clusters.get(j).grandMaster)){
+                    category.clusters.get(i).memberVertices.addAll(category.clusters.get(j).memberVertices);
+                    category.clusters.get(i).averageEuclideanDistance = calculateAverageEuclideanDistance(category.clusters.get(i));
+                    category.clusters.remove(category.clusters.get(j));
+                    j--;
+                }
+            }
+        }
+    }
+
     private static boolean splitCluster(Category category){
         eliminateOutstanders(category);
         for(int i = 0; i < category.clusters.size(); i++){
             Cluster currentCluster = category.clusters.get(i);
-            if(currentCluster.memberVertices.size() > MAX_MEMBER_COUNT && currentCluster.averageEuclideanDistance > 0.0){   // Cluster too big
+            if(currentCluster.memberVertices.size() > MAX_MEMBER_COUNT && currentCluster.averageEuclideanDistance > MAX_ERROR / 2){   // Cluster too big
                 category.clusters.remove(currentCluster);
                 category.categoryMembers = currentCluster.memberVertices;
                 ClusteringInitializer.kMeansPPInitializer(2, currentCluster.memberVertices, category.clusters);

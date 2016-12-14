@@ -91,13 +91,13 @@ public class Utility {
     public static ArrayList<KeywordVertex> randomInputGenerator(int rand, int num, int duplicate){
         ArrayList<KeywordVertex> vertices = new ArrayList<>();
         for(int i = rand; i < GraphFactory.keywordVertices.size(); i++){
-            //if(i % rand == 0 && i >= rand){
+            if(i % rand == 0 && i >= rand){
                 int j = 0;
                 while(j < duplicate){
                     vertices.add(GraphFactory.keywordVertices.get(i));
                     j++;
                 }
-            //}
+            }
             if(vertices.size() >= num) break;
         }
         return vertices;

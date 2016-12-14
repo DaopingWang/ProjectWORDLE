@@ -56,7 +56,7 @@ public class ClusteringInitializer {
                 inputCategories.get(i).categoryMembers.get(j).masterSimilarityVector.add((double) 1);
             }
 
-            kMeansPPInitializer(inputCategories.get(i).categoryMembers.size() % 10, inputCategories.get(i).categoryMembers, inputCategories.get(i).clusters);
+            kMeansPPInitializer(Math.max(inputCategories.get(i).categoryMembers.size() / 10, 1), inputCategories.get(i).categoryMembers, inputCategories.get(i).clusters);
 
         }
     }
@@ -107,7 +107,8 @@ public class ClusteringInitializer {
 
         while(createdCentroid < k){
             double maxProbability = -1;
-            Vector<Double> farestVertex = null;
+            Vector<Double> farestVector = null;
+            KeywordVertex farestKeyword = null;
             double distanceSum = 0;
 
             for(int i = 0; i < inputVerticesCount; i++){
@@ -118,14 +119,16 @@ public class ClusteringInitializer {
                 double probability = inputVertices.get(i).shortestDistance / distanceSum;
                 if(maxProbability < probability){
                     maxProbability = probability;
-                    farestVertex = inputVertices.get(i).masterSimilarityVector;
+                    farestVector = inputVertices.get(i).masterSimilarityVector;
+                    farestKeyword = inputVertices.get(i);
                 }
             }
             Cluster next = new Cluster();
-            if(farestVertex == null){ // bad way to prevent null mastersimicentroid
+            if(farestVector == null){ // bad way to prevent null mastersimicentroid
                 next.masterSimilarityCentroid = clusters.get(clusters.size() - 1).masterSimilarityCentroid;
             } else {
-                next.masterSimilarityCentroid = farestVertex;
+                next.masterSimilarityCentroid = farestVector;
+                //next.memberVertices.add(farestKeyword);
             }
             clusters.add(next);
             createdCentroid++;
