@@ -2,8 +2,10 @@ package graph.clustering;
 
 import graph.clustering.kmeans.Category;
 import graph.clustering.kmeans.Cluster;
+import graph.clustering.vertex.Article;
 import graph.clustering.vertex.KeywordVertex;
 import graph.clustering.vertex.RootKeywordVertex;
+import graph.clustering.vertex.SearchKeyword;
 
 import java.util.ArrayList;
 import java.util.Vector;
@@ -22,6 +24,15 @@ public class Utility {
         return null;
     }
 
+    public static KeywordVertex findVertexForArticleNum(String inputArticle, ArrayList<Article> articles){
+        for(int i = 0; i < articles.size(); i++){
+            if(articles.get(i).articleNumber.equals(inputArticle)){
+                return articles.get(i).correspondingKeyword;
+            }
+        }
+        return null;
+    }
+
     public static RootKeywordVertex findVertexForName(String inputName){
         for(int i = 0; i < GraphFactory.rootKeywordVertices.size(); i++){
             if(GraphFactory.rootKeywordVertices.get(i).name.equals(inputName)){
@@ -30,6 +41,15 @@ public class Utility {
         }
         //System.out.println("ERROR: VERTEX NOT FOUND FOR " + inputName);
         return null;
+    }
+
+    public static int findSearchKeywordIndexForName(String inputName, ArrayList<SearchKeyword> searchKeywords){
+        for(int i = 0; i < searchKeywords.size(); i++){
+            if(searchKeywords.get(i).name.equals(inputName)){
+                return i;
+            }
+        }
+        return -1;
     }
 
     public static boolean isRootKeyword(String inputName){

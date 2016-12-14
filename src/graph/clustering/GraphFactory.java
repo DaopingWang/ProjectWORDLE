@@ -3,17 +3,12 @@ package graph.clustering;
 import cern.colt.matrix.impl.SparseDoubleMatrix1D;
 import com.opencsv.CSVReader;
 import com.opencsv.CSVWriter;
-import graph.clustering.vector.generation.DijkstraPathFinder;
-import graph.clustering.vector.generation.GraphParser;
-import graph.clustering.vertex.Edge;
-import graph.clustering.vertex.KeywordVertex;
-import graph.clustering.vertex.Probability;
-import graph.clustering.vertex.RootKeywordVertex;
+import graph.clustering.vector.DijkstraPathFinder;
+import graph.clustering.vector.GraphParser;
+import graph.clustering.vertex.*;
 
 import java.io.*;
-import java.text.DecimalFormat;
 import java.util.ArrayList;
-import java.util.StringJoiner;
 import java.util.Vector;
 
 /**
@@ -22,6 +17,8 @@ import java.util.Vector;
 public class GraphFactory {
     public static ArrayList<KeywordVertex> keywordVertices;
     public static ArrayList<RootKeywordVertex> rootKeywordVertices;
+    public static ArrayList<SearchKeyword> searchExamples;
+    public static ArrayList<Article> articles;
     public static int layerNum = 0;
 
     public static void readGraphFromParsedCSV(String filename) throws IOException{
@@ -77,6 +74,57 @@ public class GraphFactory {
 
         readProbabilityListFromCSV("C:/Users/wang.daoping/Documents/project_wordle_cache/ProbabilityCSV.csv");
         readSubordinatesListFromCSV("C:/Users/wang.daoping/Documents/project_wordle_cache/SubordinatesCSV.csv");
+        readArticlesFromCSV("C:/Users/wang.daoping/Documents/project_wordle_cache/Keywords_Artikel.csv");
+        readSearchExampleFromCSV("C:/Users/wang.daoping/Documents/project_wordle_cache/Suchen_example.csv");
+    }
+
+    public static void readArticlesFromCSV(String filename) throws IOException{
+        articles = new ArrayList<>();
+        String[] lineBuffer;
+        CSVReader reader = new CSVReader(new InputStreamReader(new FileInputStream(filename), "Cp1252"), ';', '\"', 1);
+
+        System.out.println("Read articles...");
+        while((lineBuffer = reader.readNext()) != null){
+            KeywordVertex kv = Utility.findVertexForName(lineBuffer[0], keywordVertices);
+            Article a = new Article(lineBuffer[1], kv);
+            articles.add(a);
+        }
+        reader.close();
+    }
+
+    public static void readSearchExampleFromCSV(String filename) throws IOException{
+        searchExamples = new ArrayList<>();
+        String[] lineBuffer;
+        CSVReader reader = new CSVReader(new InputStreamReader(new FileInputStream(filename), "Cp1252"), ';', '\"', 1);
+
+        System.out.println("Read SearchKeyword... ");
+        while((lineBuffer = reader.readNext()) != null){
+            int index = Utility.findSearchKeywordIndexForName(lineBuffer[3], searchExamples);
+            switch (index){
+                case -1:
+                    SearchKeyword sk = new SearchKeyword(lineBuffer[3]);
+                    KeywordVertex kv = Utility.findVertexForArticleNum(lineBuffer[7], articles);
+                    if(kv == null){
+                        break;
+                    } else {
+                        sk.searchResults.add(kv);
+                        searchExamples.add(sk);
+                    }
+                    break;
+
+                default:
+                    KeywordVertex kv1 = Utility.findVertexForArticleNum(lineBuffer[7], articles);
+                    if(kv1 == null) break;
+
+                    if(searchExamples.get(index).searchResults.contains(kv1)){
+                        kv1.duplicateCount++;
+                    } else {
+                        searchExamples.get(index).searchResults.add(kv1);
+                    }
+                    break;
+            }
+        }
+        reader.close();
     }
 
     public static void calculateSparseVector(ArrayList<KeywordVertex> inputVertices){
@@ -196,6 +244,8 @@ public class GraphFactory {
             }
         }
         calculateProbabilityList();
+        readArticlesFromCSV("C:/Users/wang.daoping/Documents/project_wordle_cache/Keywords_Artikel.csv");
+        readSearchExampleFromCSV("C:/Users/wang.daoping/Documents/project_wordle_cache/Suchen_example.csv");
     }
 
     public static void createProbabilityCSVFromGraph(String filepath) throws IOException{

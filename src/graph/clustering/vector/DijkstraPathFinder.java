@@ -1,4 +1,4 @@
-package graph.clustering.vector.generation;
+package graph.clustering.vector;
 
 import cern.colt.matrix.impl.SparseDoubleMatrix1D;
 import graph.clustering.Utility;
