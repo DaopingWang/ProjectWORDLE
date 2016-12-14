@@ -42,12 +42,7 @@ public class ClusterFactory {
 
                 flushEmptyClusters(categories.get(i));
                 if(categories.get(i).clusters.size() == 0) continue;
-                System.out.println(GraphFactory.rootKeywordVertices.get(categories.get(i).categoryIndex).name + ". cluster");
-                for(int j = 0; j < categories.get(i).clusters.get(0).memberVertices.size(); j++){
-                    System.out.println(categories.get(i).clusters.get(0).memberVertices.get(j).name);
-                }
-                System.out.println();
-
+                systemOutPrint(i);
                 continue;
             }
 
@@ -71,15 +66,7 @@ public class ClusterFactory {
             // Print
             flushEmptyClusters(categories.get(i));
             if(categories.get(i).clusters.size() == 0) continue;
-            System.out.println(GraphFactory.rootKeywordVertices.get(categories.get(i).categoryMembers.get(0).dominantCategory).name.toUpperCase() + " Clustering: ".toUpperCase());
-            System.out.println();
-            for(int k = 0; k < categories.get(i).clusters.size(); k++){
-                System.out.println(categories.get(i).clusters.get(k).grandMaster.name + ". cluster, AverageEuclideanDistance: " + Double.toString(categories.get(i).clusters.get(k).averageEuclideanDistance));
-                for(int j = 0; j < categories.get(i).clusters.get(k).memberVertices.size(); j++){
-                    System.out.println(categories.get(i).clusters.get(k).memberVertices.get(j).name + " x " + Integer.toString(categories.get(i).clusters.get(k).memberVertices.get(j).duplicateCount));
-                }
-                System.out.println();
-            }
+            systemOutPrint(i);
         }
     }
 
@@ -121,7 +108,6 @@ public class ClusterFactory {
             }
             iteration++;
         }
-        //flushEmptyClusters(categories.get(i));
         setGrandMaster(categories.get(i));
 
         for(int j = 0; j < categories.get(i).clusters.size(); j++){
@@ -158,7 +144,7 @@ public class ClusterFactory {
 
     private static void flushEmptyClusters(Category category){
         int clusterCount = category.clusters.size();
-        for(int i = 0; i < clusterCount; i++){
+        for(int i = 0; i < category.clusters.size(); i++){
             if(category.clusters.get(i).memberVertices.size() == 0){
                 category.clusters.remove(category.clusters.get(i));
                 i--;
@@ -166,6 +152,7 @@ public class ClusterFactory {
             }
         }
     }
+
     private static boolean splitCluster(Category category){
         eliminateOutstanders(category);
         for(int i = 0; i < category.clusters.size(); i++){
@@ -188,6 +175,22 @@ public class ClusterFactory {
             }
         }
         return false;
+    }
+
+    private static void systemOutPrint(int i){
+        System.out.println(GraphFactory.rootKeywordVertices.get(categories.get(i).categoryMembers.get(0).dominantCategory).name.toUpperCase() + " Clustering: ".toUpperCase());
+        System.out.println();
+        for(int k = 0; k < categories.get(i).clusters.size(); k++){
+            if(categories.get(i).categoryIndex == 1){
+                categories.get(i).clusters.get(k).averageEuclideanDistance = -1;
+                categories.get(i).clusters.get(k).grandMaster = GraphFactory.rootKeywordVertices.get(1);
+            }
+            System.out.println(categories.get(i).clusters.get(k).grandMaster.name + ". cluster, AverageEuclideanDistance: " + Double.toString(categories.get(i).clusters.get(k).averageEuclideanDistance));
+            for(int j = 0; j < categories.get(i).clusters.get(k).memberVertices.size(); j++){
+                System.out.println(categories.get(i).clusters.get(k).memberVertices.get(j).name + " x " + Integer.toString(categories.get(i).clusters.get(k).memberVertices.get(j).duplicateCount));
+            }
+            System.out.println();
+        }
     }
 
     public static void performSquareErrorClustering(ArrayList<KeywordVertex> inputKeywords,
