@@ -10,6 +10,7 @@ import java.util.ArrayList;
  */
 public class Category {
     public ArrayList<KeywordVertex> categoryMembers;
+    public int categoryMemberCount;
     public ArrayList<Cluster> clusters;
     public ArrayList<Vertex> masterVertices;
     public int categoryIndex;

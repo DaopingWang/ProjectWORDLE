@@ -6,6 +6,7 @@ import graph.clustering.Utility;
 import graph.clustering.vertex.KeywordVertex;
 import graph.clustering.vertex.RootKeywordVertex;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Vector;
 
@@ -18,7 +19,9 @@ public class ClusterFactory {
 
     public static int masterNumber;
     public static double squareError;
-    public static int abandonedKeywords = 0;
+    public static int abandonedKeywords;
+    public static int searchExampleCount;
+    public static double dropRate;
 
     public static final int MAX_ITERATION = 10000;
     public static final double MAX_ERROR = 1;
@@ -28,6 +31,9 @@ public class ClusterFactory {
 
     public static void performSquareErrorClustering(ArrayList<KeywordVertex> inputKeywords){
         categories = new ArrayList<>(GraphFactory.rootKeywordVertices.size());
+        abandonedKeywords = 0;
+        searchExampleCount = inputKeywords.size();
+        dropRate = 0.0;
 
         ClusteringInitializer.categoriesBasedInitializer(inputKeywords, categories, GraphFactory.keywordVertices);
 
@@ -69,9 +75,14 @@ public class ClusterFactory {
             // Print
             flushEmptyClusters(categories.get(i));
             if(categories.get(i).clusters.size() == 0) continue;
-            mergeCluster(categories.get(i));
+            mergeSameClusters(categories.get(i));
             systemOutPrint(i);
         }
+
+        dropRate = (double) abandonedKeywords / (double) searchExampleCount;
+        DecimalFormat f = new DecimalFormat("#0.00");
+        System.out.println("DropRate " + f.format(dropRate * 100) + "%");
+        System.out.println();
     }
 
     private static void performKMeans(int maxIteration, int maxRealloc, int i){
@@ -88,6 +99,7 @@ public class ClusterFactory {
             } catch (NullPointerException e){
                 System.out.println("PKM Null");
             }
+
             nearestCluster.memberVertices.add(currentCategoryMembers.get(j));
             currentCategoryMembers.get(j).originCluster = nearestCluster;
         }
@@ -135,10 +147,12 @@ public class ClusterFactory {
 
     private static void eliminateOutstanders(Category category){
         int clusterCount = category.clusters.size();
+        //int categoryMemberCount = Utility.categoryMemberCounter(category);
         for(int i = 0; i < clusterCount; i++){
             Cluster currentCluster = category.clusters.get(i);
-            if(currentCluster.memberVertices.size() < MIN_MEMBER_COUNT && currentCluster.memberVertices.get(currentCluster.memberVertices.size() - 1).duplicateCount < 2){
+            if(currentCluster.memberVertices.size() < MIN_MEMBER_COUNT && Utility.clusterMemberCounter(currentCluster) < searchExampleCount / 4){
                 category.clusters.remove(currentCluster);
+                //searchExampleCount -= Utility.clusterMemberCounter(currentCluster);
                 i--;
                 clusterCount--;
                 abandonedKeywords++;
@@ -157,7 +171,7 @@ public class ClusterFactory {
         }
     }
 
-    private static void mergeCluster(Category category){
+    private static void mergeSameClusters(Category category){
         for(int i = 0; i < category.clusters.size(); i++){
             for(int j = i+1; j < category.clusters.size(); j++){
                 if (category.clusters.get(i).grandMaster.equals(category.clusters.get(j).grandMaster)){
@@ -174,7 +188,7 @@ public class ClusterFactory {
         eliminateOutstanders(category);
         for(int i = 0; i < category.clusters.size(); i++){
             Cluster currentCluster = category.clusters.get(i);
-            if(currentCluster.memberVertices.size() > MAX_MEMBER_COUNT && currentCluster.averageEuclideanDistance > MAX_ERROR / 2){   // Cluster too big
+            if(currentCluster.memberVertices.size() > MAX_MEMBER_COUNT && currentCluster.averageEuclideanDistance > 0.0){   // Cluster too big
                 category.clusters.remove(currentCluster);
                 category.categoryMembers = currentCluster.memberVertices;
                 ClusteringInitializer.kMeansPPInitializer(2, currentCluster.memberVertices, category.clusters);
@@ -385,17 +399,17 @@ public class ClusterFactory {
     }
 
     private static void recentralizeCentroids(int dimension, ArrayList<Cluster> clusters){
+        int counter = 0;
         for(int j = 0; j < dimension; j++){
             for(int k = 0; k < clusters.size(); k++){
                 double entry = 0;
                 for(int i = 0; i < clusters.get(k).memberVertices.size(); i++){
-                    entry += clusters.get(k).memberVertices.get(i).masterSimilarityVector.get(j);
+                    for(int l = 0; l < clusters.get(k).memberVertices.get(i).duplicateCount; l++){
+                        entry += clusters.get(k).memberVertices.get(i).masterSimilarityVector.get(j);
+                        counter++;
+                    }
                 }
-                if(clusters.get(k).memberVertices.size() == 0) {
-                    System.out.println("Division durch null");
-                    continue;
-                }
-                entry = entry / clusters.get(k).memberVertices.size();
+                entry = entry / counter;
                 clusters.get(k).masterSimilarityCentroid.set(j, entry);
             }
         }

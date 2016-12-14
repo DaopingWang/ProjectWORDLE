@@ -20,14 +20,14 @@ public class KeywordVertex extends Vertex{
         super(inputName);
         this.edgeList = new ArrayList<>();
         this.probabilityList = new ArrayList<>();
-        this.duplicateCount = 0;
+        this.duplicateCount = 1;
     }
 
     public KeywordVertex(String inputName, int inputLayer){
         super(inputName, inputLayer);
         this.edgeList = new ArrayList<>();
         this.probabilityList = new ArrayList<>();
-        this.duplicateCount = 0;
+        this.duplicateCount = 1;
     }
 
     public void createNewEdge(String inputName){

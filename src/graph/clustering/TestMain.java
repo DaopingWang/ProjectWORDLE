@@ -21,7 +21,7 @@ public class TestMain {
         }
 
         Scanner sc = new Scanner(System.in);
-        System.out.println("Enter random number ");
+        System.out.println("RANDOMGEN:\"Enter random number\" ");
         String userin;
         while(!(userin = sc.nextLine()).equals("exit")){
             Utility.reinitializer(GraphFactory.keywordVertices, GraphFactory.rootKeywordVertices);
@@ -29,9 +29,9 @@ public class TestMain {
             ClusterFactory.performSquareErrorClustering(Utility.randomInputGenerator(Integer.parseInt(userin), 500, 1));
             System.out.println(Integer.toString(ClusterFactory.abandonedKeywords));
             System.out.println();
-            System.out.println("Enter random number ");
+            System.out.println("RANDOMGEN:\"Enter random number\" ");
         }
-/*
+
         for(int i = 0; i < GraphFactory.searchExamples.size(); i++){
             Utility.reinitializer(GraphFactory.keywordVertices, GraphFactory.rootKeywordVertices);
             GraphFactory.calculateSparseVector(GraphFactory.searchExamples.get(i).searchResults);
@@ -40,9 +40,9 @@ public class TestMain {
             System.out.println();
             ClusterFactory.performSquareErrorClustering(GraphFactory.searchExamples.get(i).searchResults);
         }
-*/
+
         Scanner scanner = new Scanner(System.in);
-        System.out.println("Enter keyword: ");
+        System.out.println("PROBABOT:\"Enter keyword: \"");
         String userInput;
         while (!(userInput = scanner.nextLine()).equals("exit")){
             KeywordVertex buffer = InputKeywordComparator.findMostSimilarKeywordOf(userInput);

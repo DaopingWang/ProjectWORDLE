@@ -129,8 +129,8 @@ public class Utility {
     public static int findIndexOfMinEntry(Vector<Double> masterSimilarityVector, Cluster cluster){
         double min = Double.MAX_VALUE;
             int index = -1;
-            for(int i = 0; i < masterSimilarityVector.size(); i++){
-                if((masterSimilarityVector.get(i) != 1) && (masterSimilarityVector.get(i) < min) && (masterSimilarityVector.get(i) != (double) 0) && (checkConnectivity(i, cluster))) {
+            for(int i = 0; i < masterSimilarityVector.size() - 1; i++){
+                if((masterSimilarityVector.get(i) != 1) && (masterSimilarityVector.get(i) < min) && (masterSimilarityVector.get(i) != 0) && (checkConnectivity(i, cluster))) {
                     min = masterSimilarityVector.get(i);
                     index = i;
                 }
@@ -142,6 +142,24 @@ public class Utility {
                 return index;
             }
 
+    }
+
+    public static int clusterMemberCounter(Cluster cluster){
+        int count = 0;
+        for(int i = 0; i < cluster.memberVertices.size(); i++){
+            for(int j = 0; j < cluster.memberVertices.get(i).duplicateCount; j++){
+                count++;
+            }
+        }
+        return count;
+    }
+
+    public static int categoryMemberCounter(Category category){
+        int count = 0;
+        for(int i = 0; i < category.clusters.size(); i++){
+            count += clusterMemberCounter(category.clusters.get(i));
+        }
+        return count;
     }
 
     public static boolean checkConnectivity(int index, Cluster cluster){
