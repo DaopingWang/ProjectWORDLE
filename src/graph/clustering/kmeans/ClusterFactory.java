@@ -43,17 +43,35 @@ public class ClusterFactory {
 
         for(int i = 0; i < categories.size(); i++){
             Category currentCategory = categories.get(i);
+            int iteration = 0;
 
             if(baSpecialTreatment(currentCategory, i)) continue;
-
             vectorSpaceDimension = currentCategory.categoryMembers.get(0).masterSimilarityVector.size();
-            do{
-                performKMeans(currentCategory.maxIter, MAX_REALLOC_COUNT, i);
-            } while (clusterSuspended);
-            assignDeltaDistance(currentCategory);
 
+            while(iteration < currentCategory.maxIter){
+                do{
+                    performKMeans(currentCategory.maxIter, MAX_REALLOC_COUNT, i);
+                } while (clusterSuspended);
+                assignDeltaDistance(currentCategory);
+                iteration++;
+                if(iteration == currentCategory.maxIter){
 
+                }
+                calculateStandardDeviationVectors(currentCategory);
+            }
 
+        }
+    }
+
+    private static void calculateStandardDeviationVectors(Category category){
+        double maxStdv = 0;
+        for(int i = 0; i < category.clusters.size(); i++){
+            for(int j = 0; j < vectorSpaceDimension; j++){
+                double stdv = calculateStandardDeviation(j, category.clusters.get(i));
+                maxStdv = (maxStdv > stdv) ? maxStdv : stdv;
+                category.clusters.get(i).standardDeviationVector.add(stdv);
+            }
+            category.clusters.get(i).maxStandardDeviation = maxStdv;
         }
     }
 
@@ -222,13 +240,13 @@ public class ClusterFactory {
         for(int i = 0; i < currentCategory.clusters.size(); i++){
             Cluster currentCluster = currentCategory.clusters.get(i);
             if(currentCluster.memberVertices.size() < currentCategory.samprm){
-                currentCategory.categoryMembers.addAll(currentCluster.memberVertices);
                 currentCategory.clusters.remove(currentCluster);
                 return true;
             }
         }
         return false;
     }
+
     private static void flushEmptyClusters(Category category){
         for(int i = 0; i < category.clusters.size(); i++){
             if(category.clusters.get(i).memberVertices.size() == 0){
@@ -275,17 +293,17 @@ public class ClusterFactory {
         return false;
     }
 
-    private static void systemOutPrint(int i){
-        System.out.println(GraphFactory.rootKeywordVertices.get(categories.get(i).categoryMembers.get(0).dominantCategory).name.toUpperCase() + " Clustering: ".toUpperCase());
+    private static void systemOutPrint(int index){
+        System.out.println(GraphFactory.rootKeywordVertices.get(categories.get(index).categoryMembers.get(0).dominantCategory).name.toUpperCase() + " Clustering: ".toUpperCase());
         System.out.println();
-        for(int k = 0; k < categories.get(i).clusters.size(); k++){
-            if(categories.get(i).categoryIndex == 1){
-                categories.get(i).clusters.get(k).averageEuclideanDistance = -1;
-                categories.get(i).clusters.get(k).grandMaster = GraphFactory.rootKeywordVertices.get(1);
+        for(int k = 0; k < categories.get(index).clusters.size(); k++){
+            if(categories.get(index).categoryIndex == 1){
+                categories.get(index).clusters.get(k).averageEuclideanDistance = -1;
+                categories.get(index).clusters.get(k).grandMaster = GraphFactory.rootKeywordVertices.get(1);
             }
-            System.out.println(categories.get(i).clusters.get(k).grandMaster.name + ". cluster, AverageEuclideanDistance: " + Double.toString(categories.get(i).clusters.get(k).averageEuclideanDistance));
-            for(int j = 0; j < categories.get(i).clusters.get(k).memberVertices.size(); j++){
-                System.out.println(categories.get(i).clusters.get(k).memberVertices.get(j).name + " x " + Integer.toString(categories.get(i).clusters.get(k).memberVertices.get(j).duplicateCount));
+            System.out.println(categories.get(index).clusters.get(k).grandMaster.name + ". cluster, AverageEuclideanDistance: " + Double.toString(categories.get(index).clusters.get(k).averageEuclideanDistance));
+            for(int j = 0; j < categories.get(index).clusters.get(k).memberVertices.size(); j++){
+                System.out.println(categories.get(index).clusters.get(k).memberVertices.get(j).name + " x " + Integer.toString(categories.get(index).clusters.get(k).memberVertices.get(j).duplicateCount));
             }
             System.out.println();
         }
@@ -448,13 +466,13 @@ public class ClusterFactory {
         return withinClusterVariation;
     }
 
-    private static double calculateAverageSquareDistance(int dimension, Cluster k){
-        int memberCount = k.memberVertices.size();
+    private static double calculateAverageSquareDistance(int dimension, Cluster currentCluster){
+        int memberCount = currentCluster.memberVertices.size();
         double averageSquareDistance = 0;
         for(int j = 0; j < dimension; j++){
-            averageSquareDistance += calculateWithinClusterVariation(j, k) / (double) memberCount;
+            averageSquareDistance += calculateWithinClusterVariation(j, currentCluster) / (double) memberCount;
         }
-        return Math.sqrt(averageSquareDistance) / dimension;
+        return Math.sqrt(averageSquareDistance / dimension);
     }
 
     private static double calculateAverageEuclideanDistance(Cluster k){
@@ -516,13 +534,23 @@ public class ClusterFactory {
         return Math.sqrt(distance);
     }
 
-    public static double calculateWithinClusterVariation(int j, Cluster k){
+    public static double calculateWithinClusterVariation(int currentDimension, Cluster currentCluster){
         double variance = 0;
-        for(int i = 0; i < k.memberVertices.size(); i++){
-            double xij = k.memberVertices.get(i).masterSimilarityVector.get(j);
-            double mj = k.masterSimilarityCentroid.get(j);
+        for(int i = 0; i < currentCluster.memberVertices.size(); i++){
+            double xij = currentCluster.memberVertices.get(i).masterSimilarityVector.get(currentDimension);
+            double mj = currentCluster.masterSimilarityCentroid.get(currentDimension);
             variance += Math.pow((xij - mj), 2);
         }
         return variance;
+    }
+
+    public static double calculateStandardDeviation(int currentDimension, Cluster currentCluster){
+        double stdv = 0;
+        for(int i = 0; i < currentCluster.memberVertices.size(); i++){
+            double xij = currentCluster.memberVertices.get(i).masterSimilarityVector.get(currentDimension);
+            double mj = currentCluster.masterSimilarityCentroid.get(currentDimension);
+            stdv += Math.pow((xij - mj), 2);
+        }
+        return Math.sqrt(stdv / currentCluster.memberVertices.size());
     }
 }

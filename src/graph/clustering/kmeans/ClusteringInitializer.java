@@ -13,6 +13,12 @@ import java.util.Vector;
  * Created by wang.daoping on 07.12.2016.
  */
 public class ClusteringInitializer {
+    public static final int MAX_ITERATION = 1000;
+    public static final int MIN_CLUSTER_SIZE = 3;
+    public static final double MIN_INTERCLUSTERAL_DISTANCE = 1;
+    public static final double MAX_STANDARD_DEVIATION = 1;
+    public static final int MAX_PAIR = 3;
+
     public static void categoriesBasedInitializer(ArrayList<RootKeywordVertex> rootKeywordVertices){
         for(int i = 0; i < rootKeywordVertices.size(); i++){
             Cluster k = new Cluster(rootKeywordVertices.get(i).categorySimilarityVector);
@@ -32,8 +38,11 @@ public class ClusteringInitializer {
             if(!createdCategories.contains(dominantCategory)){
                 Category category = new Category(dominantCategory);
                 category.addMember(inputVertices.get(i));
-                category.maxIter = 1000;
-                category.samprm = 3;
+                category.maxIter = MAX_ITERATION;
+                category.samprm = MIN_CLUSTER_SIZE;
+                category.lump = MIN_INTERCLUSTERAL_DISTANCE;
+                category.stdv = MAX_STANDARD_DEVIATION;
+                category.maxpair = MAX_PAIR;
                 inputCategories.add(category);
                 createdCategories.add(dominantCategory);
             } else {
