@@ -161,12 +161,10 @@ public class ClusterFactory {
     }
 
     private static void flushEmptyClusters(Category category){
-        int clusterCount = category.clusters.size();
         for(int i = 0; i < category.clusters.size(); i++){
             if(category.clusters.get(i).memberVertices.size() == 0){
                 category.clusters.remove(category.clusters.get(i));
                 i--;
-                clusterCount--;
             }
         }
     }
@@ -185,7 +183,7 @@ public class ClusterFactory {
     }
 
     private static boolean splitCluster(Category category){
-        eliminateOutstanders(category);
+        //eliminateOutstanders(category);
         for(int i = 0; i < category.clusters.size(); i++){
             Cluster currentCluster = category.clusters.get(i);
             if(currentCluster.memberVertices.size() > MAX_MEMBER_COUNT && currentCluster.averageEuclideanDistance > 0.0){   // Cluster too big
