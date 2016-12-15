@@ -32,6 +32,8 @@ public class ClusteringInitializer {
             if(!createdCategories.contains(dominantCategory)){
                 Category category = new Category(dominantCategory);
                 category.addMember(inputVertices.get(i));
+                category.maxIter = 1000;
+                category.samprm = 3;
                 inputCategories.add(category);
                 createdCategories.add(dominantCategory);
             } else {
@@ -56,7 +58,8 @@ public class ClusteringInitializer {
                 inputCategories.get(i).categoryMembers.get(j).masterSimilarityVector.add((double) 1);
             }
 
-            kMeansPPInitializer(Math.max(inputCategories.get(i).categoryMembers.size() / 10, 1), inputCategories.get(i).categoryMembers, inputCategories.get(i).clusters);
+            inputCategories.get(i).numClus = Math.max(inputCategories.get(i).categoryMembers.size() / 10, 1);
+            kMeansPPInitializer(inputCategories.get(i).numClus, inputCategories.get(i).categoryMembers, inputCategories.get(i).clusters);
 
         }
     }

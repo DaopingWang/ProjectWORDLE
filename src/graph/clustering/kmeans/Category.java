@@ -16,6 +16,42 @@ public class Category {
     public int categoryIndex;
     public int maxLayer;
 
+    // ISOCLUS
+    /**
+     * Initial number of clusters.
+     */
+    public int numClus;
+
+    /**
+     * Minimum number of points required to form a cluster.
+     */
+    public int samprm;
+
+    /**
+     * Maximum number of iterations.
+     */
+    public int maxIter;
+
+    /**
+     * Maximum standard deviation of points from their cluster center along each axis.
+     */
+    public double stdv;
+
+    /**
+     * Minimum required distance between two cluster centers.
+     */
+    public double lump;
+
+    /**
+     * Maximum number of cluster pairs that can be merged per iteration.
+     */
+    public int maxpair;
+
+    /**
+     * Average of averageEuDistances of all clusters.
+     */
+    public double overallAverageEuclideanDistance;
+
     public Category(int inputIndex){
         this.categoryIndex = inputIndex;
         this.clusters = new ArrayList<>();
