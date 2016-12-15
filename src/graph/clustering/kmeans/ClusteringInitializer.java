@@ -145,8 +145,6 @@ public class ClusteringInitializer {
             clusters.add(next);
             createdCentroid++;
         }
-        //System.out.println("=== Initialization done ===");
-        //System.out.println();
     }
 
     private static double shortestDistanceToClosestCentroid(Vector<Double> inputVertex,

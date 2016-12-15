@@ -58,9 +58,27 @@ public class ClusterFactory {
 
                 }
                 calculateStandardDeviationVectors(currentCategory);
+                if(splitClusterISOCLUS(currentCategory)) continue;
+
+                // TODO step 9
+
             }
 
         }
+    }
+
+    private static boolean splitClusterISOCLUS(Category currentCategory){
+        for(int i = 0; i < currentCategory.clusters.size(); i++){
+            Cluster currentCluster = currentCategory.clusters.get(i);
+            if (currentCluster.maxStandardDeviation > currentCategory.stdv){
+                if((currentCluster.averageEuclideanDistance > currentCategory.overallAverageEuclideanDistance && currentCluster.memberVertices.size() > 2 * (currentCategory.samprm + 1)) || (currentCategory.clusters.size() <= currentCategory.numClus / 2)){
+                    currentCategory.clusters.remove(currentCluster);
+                    ClusteringInitializer.kMeansPPInitializer(2, currentCluster.memberVertices, currentCategory.clusters);
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     private static void calculateStandardDeviationVectors(Category category){
@@ -270,7 +288,7 @@ public class ClusterFactory {
     }
 
     private static boolean splitCluster(Category category){
-        //eliminateOutstanders(category);
+        eliminateOutstanders(category);
         for(int i = 0; i < category.clusters.size(); i++){
             Cluster currentCluster = category.clusters.get(i);
             if(currentCluster.memberVertices.size() > MAX_MEMBER_COUNT && currentCluster.averageEuclideanDistance > 0.0){   // Cluster too big
