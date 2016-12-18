@@ -130,7 +130,7 @@ public class Utility {
         double min = Double.MAX_VALUE;
             int index = -1;
             for(int i = 0; i < masterSimilarityVector.size() - 1; i++){
-                if((masterSimilarityVector.get(i) != 1) && (masterSimilarityVector.get(i) < min) && (masterSimilarityVector.get(i) != 0) && (checkConnectivity(i, cluster))) {
+                if((masterSimilarityVector.get(i) != 1) && (masterSimilarityVector.get(i) < min) /*&& (masterSimilarityVector.get(i) != 0)*/ && (checkConnectivity(i, cluster))) {
                     min = masterSimilarityVector.get(i);
                     index = i;
                 }

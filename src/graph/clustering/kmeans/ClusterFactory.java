@@ -530,12 +530,21 @@ public class ClusterFactory {
 
     public static double euclideanDistance(Vector<Double> a, Vector<Double> b){
         double distance = 0;
+        boolean infinityA;
+        boolean infinityB;
+
         for(int i = 0; i < a.size(); i++){
-            try {
+            infinityA = a.get(i) == Double.MAX_VALUE;
+            infinityB = b.get(i) == Double.MAX_VALUE;
+
+            if(infinityA && !infinityB){
+                distance += Math.pow((b.get(i)), 2);
+            } else if(!infinityA && infinityB){
+                distance += Math.pow(a.get(i), 2);
+            } else if(infinityA && infinityB){
+                distance += 0;
+            } else {
                 distance += Math.pow((a.get(i) - b.get(i)), 2);
-            } catch (NullPointerException e){
-                System.out.println("a " + Integer.toString(a.size()));
-                System.out.println("b " + Integer.toString(b.size()));
             }
         }
         return Math.sqrt(distance);

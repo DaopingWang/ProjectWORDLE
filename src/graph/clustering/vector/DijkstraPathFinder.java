@@ -33,21 +33,30 @@ public class DijkstraPathFinder {
         dijkstra(unsettledVertices, settledVertices, keywordVertices, rootKeywordVertices);
 
         for(int i = 0; i < keywordVertices.size(); i++){
-            if(keywordVertices.get(i).distance == Double.MAX_VALUE/* && (startVertex.pathLengthVector.get(i) == 0)*/){ // second argument for undirected
-                startVertex.pathLengthVector.set(i, 0);
-            } else if(keywordVertices.get(i).distance != Double.MAX_VALUE){
+            //if(keywordVertices.get(i).distance == Double.MAX_VALUE/* && (startVertex.pathLengthVector.get(i) == 0)*/){ // second argument for undirected
+              //  startVertex.pathLengthVector.set(i, 0);
+            //} else
+                if(keywordVertices.get(i).distance != Double.MAX_VALUE){
                 startVertex.pathLengthVector.set(i, keywordVertices.get(i).distance);
                 //keywordVertices.get(i).pathLengthVector.set(Utility.findIndexForName(startVertex.name, keywordVertices), keywordVertices.get(i).distance); // Undirected
-            }
+                } else if(keywordVertices.get(i).name.equals(startVertex.name)){
+                    startVertex.pathLengthVector.set(i, 0);
+                }
         }
 
+        for(int i = 0; i < rootKeywordVertices.size(); i++){
+            if(rootKeywordVertices.get(i).distance != Double.MAX_VALUE){
+                startVertex.pathLengthVector.set(i + keywordVertices.size(), rootKeywordVertices.get(i).distance);
+            }
+        }
+        /*
         for(int i = 0; i < rootKeywordVertices.size(); i++){
             if(rootKeywordVertices.get(i).distance == Double.MAX_VALUE){
                 startVertex.pathLengthVector.set(i + keywordVertices.size(), 0);
             } else {
                 startVertex.pathLengthVector.set(i + keywordVertices.size(), rootKeywordVertices.get(i).distance);
             }
-        }
+        }*/
     }
 
     public static void initSparseVectors(ArrayList<KeywordVertex> keywordVertices,

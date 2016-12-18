@@ -72,10 +72,10 @@ public class GraphFactory {
         //calculateProbabilityList();
 
 
-        readProbabilityListFromCSV("C:/Users/wang.daoping/Documents/project_wordle_cache/ProbabilityCSV.csv");
-        readSubordinatesListFromCSV("C:/Users/wang.daoping/Documents/project_wordle_cache/SubordinatesCSV.csv");
-        readArticlesFromCSV("C:/Users/wang.daoping/Documents/project_wordle_cache/Keywords_Artikel.csv");
-        readSearchExampleFromCSV("C:/Users/wang.daoping/Documents/project_wordle_cache/Suchen_example.csv");
+        readProbabilityListFromCSV("D:/project_wordle_cache/ProbabilityCSV.csv");
+        readSubordinatesListFromCSV("D:/project_wordle_cache/SubordinatesCSV.csv");
+        readArticlesFromCSV("D:/project_wordle_cache/Keywords_Artikel.csv");
+        readSearchExampleFromCSV("D:/project_wordle_cache/Suchen_example.csv");
     }
 
     public static void readArticlesFromCSV(String filename) throws IOException{
