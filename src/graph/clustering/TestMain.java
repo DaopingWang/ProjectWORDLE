@@ -19,7 +19,7 @@ public class TestMain {
             System.out.println("ERROR: PARSE METHOD COULD NOT FIND RAW FILE");
             e.printStackTrace();
         }
-
+/*
         Scanner sc = new Scanner(System.in);
         System.out.println("RANDOMGEN:\"Enter random number\" ");
         String userin;
@@ -30,7 +30,7 @@ public class TestMain {
             System.out.println(Integer.toString(ClusterFactory.abandonedKeywords));
             System.out.println();
             System.out.println("RANDOMGEN:\"Enter random number\" ");
-        }
+        }*/
 
         for(int i = 0; i < GraphFactory.searchExamples.size(); i++){
             Utility.reinitializer(GraphFactory.keywordVertices, GraphFactory.rootKeywordVertices);
@@ -39,6 +39,7 @@ public class TestMain {
             System.out.println("*** " + GraphFactory.searchExamples.get(i).name + " " + Integer.toString(GraphFactory.searchExamples.get(i).searchResults.size()) + " ***");
             System.out.println();
             ClusterFactory.performSquareErrorClustering(GraphFactory.searchExamples.get(i).searchResults);
+            //ClusterFactory.performISOCLUSClustering(GraphFactory.searchExamples.get(i).searchResults);
         }
 
         Scanner scanner = new Scanner(System.in);

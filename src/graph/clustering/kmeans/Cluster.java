@@ -20,6 +20,8 @@ public class Cluster {
     public double averageEuclideanDistance;
     public Vertex grandMaster;
     public boolean isClosed;
+    public Vector<Double> interclusterDistance;
+    public boolean involvedInMerge;
 
     public Cluster(){
         this.categoryBasedCentroid = new Vector<>();
@@ -28,6 +30,7 @@ public class Cluster {
         this.memberVertices = new ArrayList<>();
         this.averageEuclideanDistance = 0;
         this.isClosed = false;
+        this.interclusterDistance = new Vector<>();
     }
 
     public Cluster(Vector<Double> similarityVector){
@@ -38,6 +41,7 @@ public class Cluster {
         this.memberVertices = new ArrayList<>();
         this.averageEuclideanDistance = 0;
         this.isClosed = false;
+        this.interclusterDistance = new Vector<>();
     }
 
 }

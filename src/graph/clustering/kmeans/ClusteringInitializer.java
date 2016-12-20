@@ -1,6 +1,5 @@
 package graph.clustering.kmeans;
 
-import com.sun.corba.se.impl.orbutil.graph.Graph;
 import graph.clustering.GraphFactory;
 import graph.clustering.Utility;
 import graph.clustering.vertex.KeywordVertex;
@@ -13,10 +12,10 @@ import java.util.Vector;
  * Created by wang.daoping on 07.12.2016.
  */
 public class ClusteringInitializer {
-    public static final int MAX_ITERATION = 1000;
+    public static final int MAX_ITERATION = 2;
     public static final int MIN_CLUSTER_SIZE = 3;
-    public static final double MIN_INTERCLUSTERAL_DISTANCE = 1;
-    public static final double MAX_STANDARD_DEVIATION = 1;
+    public static final double MIN_INTERCLUSTER_DISTANCE = 0.5;
+    public static final double MAX_STANDARD_DEVIATION = 2;
     public static final int MAX_PAIR = 3;
 
     public static void categoriesBasedInitializer(ArrayList<RootKeywordVertex> rootKeywordVertices){
@@ -40,7 +39,7 @@ public class ClusteringInitializer {
                 category.addMember(inputVertices.get(i));
                 category.maxIter = MAX_ITERATION;
                 category.samprm = MIN_CLUSTER_SIZE;
-                category.lump = MIN_INTERCLUSTERAL_DISTANCE;
+                category.lump = MIN_INTERCLUSTER_DISTANCE;
                 category.stdv = MAX_STANDARD_DEVIATION;
                 category.maxpair = MAX_PAIR;
                 inputCategories.add(category);

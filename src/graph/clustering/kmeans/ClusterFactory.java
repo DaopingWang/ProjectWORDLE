@@ -8,6 +8,7 @@ import graph.clustering.vertex.RootKeywordVertex;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.DoubleSummaryStatistics;
 import java.util.Vector;
 
 /**
@@ -49,22 +50,98 @@ public class ClusterFactory {
             vectorSpaceDimension = currentCategory.categoryMembers.get(0).masterSimilarityVector.size();
 
             while(iteration < currentCategory.maxIter){
+                for(int j = 0; j < currentCategory.clusters.size(); j++){
+                    currentCategory.clusters.get(j).involvedInMerge = false;
+                    currentCategory.clusters.get(j).interclusterDistance = new Vector<>();
+                }
+
                 do{
                     performKMeans(currentCategory.maxIter, MAX_REALLOC_COUNT, i);
                 } while (clusterSuspended);
                 assignDeltaDistance(currentCategory);
                 iteration++;
-                if(iteration == currentCategory.maxIter){
 
+                if(iteration == currentCategory.maxIter){
+                    Vector<int[]> minClusterPair = calculateInterclusterDistances(currentCategory);
+                    mergeClusterPairs(minClusterPair, currentCategory);
+                    continue;
                 }
+
                 calculateStandardDeviationVectors(currentCategory);
                 if(splitClusterISOCLUS(currentCategory)) continue;
 
                 // TODO step 9
-
+                Vector<int[]> minClusterPair = calculateInterclusterDistances(currentCategory);
+                mergeClusterPairs(minClusterPair, currentCategory);
             }
+            systemOutPrint(i);
 
         }
+    }
+
+    private static void mergeClusterPairs(Vector<int[]> clusterPairs, Category currentCategory){
+        for(int i = 0; i < clusterPairs.size(); i++){
+            Cluster old1 = currentCategory.clusters.get(clusterPairs.get(i)[0]);
+            Cluster old2 = currentCategory.clusters.get(clusterPairs.get(i)[1]);
+            if(!old1.involvedInMerge && !old2.involvedInMerge){
+                Cluster mergedCluster = new Cluster();
+                mergedCluster.memberVertices.addAll(old1.memberVertices);
+                mergedCluster.memberVertices.addAll(old2.memberVertices);
+                int memberCount1 = 0;
+                int memberCount2 = 0;
+                for(int k = 0; k < old1.memberVertices.size(); k++){
+                    memberCount1 += old1.memberVertices.get(k).duplicateCount;
+                }
+                for(int k = 0; k < old2.memberVertices.size(); k++){
+                    memberCount2 += old2.memberVertices.get(k).duplicateCount;
+                }
+
+                for(int j = 0; j < old1.masterSimilarityCentroid.size(); j++){
+                    double mergedCenter = (memberCount1 * old1.masterSimilarityCentroid.get(j) + memberCount2 * old2.masterSimilarityCentroid.get(j)) * (1 / (memberCount1 + memberCount2));
+                    mergedCluster.masterSimilarityCentroid.add(mergedCenter);
+                }
+
+                currentCategory.clusters.add(mergedCluster);
+                currentCategory.clusters.remove(old1);
+                currentCategory.clusters.remove(old2);
+                old1.involvedInMerge = true;
+                old2.involvedInMerge = true;
+            }
+        }
+    }
+
+    private static Vector<int[]> calculateInterclusterDistances(Category currentCategory){
+        double currentDistance;
+        int mergeCount = 0;
+        Vector<int[]> minPairVector = new Vector<>();
+
+        for(int i = 0; i < currentCategory.clusters.size(); i++){
+            Vector<Double> currentIDVector = currentCategory.clusters.get(i).interclusterDistance;
+            for(int j = 0; j < currentCategory .clusters.size(); j++){
+                if(i == j){
+                    currentIDVector.add(Double.MAX_VALUE);
+                    continue;
+                }
+                currentDistance = euclideanDistance(currentCategory.clusters.get(j).masterSimilarityCentroid, currentCategory.clusters.get(j).masterSimilarityCentroid);
+                currentIDVector.add(currentDistance);
+                int[] pair= {i, j};
+                if (currentCategory.lump > currentDistance && mergeCount < currentCategory.maxpair && !pairExists(minPairVector, pair)){
+                    minPairVector.add(pair);
+                    mergeCount++;
+                }
+            }
+        }
+        return minPairVector;
+    }
+
+    private static boolean pairExists(Vector<int[]> minPairVector, int[] minPair){
+        for(int i = 0; i < minPairVector.size(); i++){
+            int[] currentPair = minPairVector.get(i);
+            if((currentPair[0]==minPair[0] && currentPair[1]==minPair[1]) || (currentPair[1]==minPair[0] && currentPair[0]==minPair[1])){
+                return true;
+            }
+        }
+        return false;
     }
 
     private static boolean splitClusterISOCLUS(Category currentCategory){
@@ -119,6 +196,7 @@ public class ClusterFactory {
         ClusteringInitializer.categoriesBasedInitializer(inputKeywords, categories, GraphFactory.keywordVertices);
 
         for(int i = 0; i < categories.size(); i++){
+
             if(categories.get(i).categoryIndex == 1) { // Alle Keywords der Kategorie Ba liegen in der 1. Ebene und haben keinerlei Querverbindungen miteinander => Kein Vektor kann erstellt werden.
                 Cluster cluster = new Cluster();
                 for(int j = 0; j < categories.get(i).categoryMembers.size(); j++){
@@ -257,7 +335,7 @@ public class ClusterFactory {
     private static boolean suspendSmallClusters(Category currentCategory){
         for(int i = 0; i < currentCategory.clusters.size(); i++){
             Cluster currentCluster = currentCategory.clusters.get(i);
-            if(currentCluster.memberVertices.size() < currentCategory.samprm){
+            if(currentCluster.memberVertices.size() < currentCategory.samprm && currentCategory.categoryMemberCount > currentCategory.samprm){
                 currentCategory.clusters.remove(currentCluster);
                 return true;
             }
