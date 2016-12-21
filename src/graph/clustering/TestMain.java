@@ -38,8 +38,8 @@ public class TestMain {
             System.out.println();;
             System.out.println("*** " + GraphFactory.searchExamples.get(i).name + " " + Integer.toString(GraphFactory.searchExamples.get(i).searchResults.size()) + " ***");
             System.out.println();
-            ClusterFactory.performSquareErrorClustering(GraphFactory.searchExamples.get(i).searchResults);
-            //ClusterFactory.performISOCLUSClustering(GraphFactory.searchExamples.get(i).searchResults);
+            //ClusterFactory.performSquareErrorClustering(GraphFactory.searchExamples.get(i).searchResults);
+            ClusterFactory.performISOCLUSClustering(GraphFactory.searchExamples.get(i).searchResults);
         }
 
         Scanner scanner = new Scanner(System.in);

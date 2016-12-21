@@ -14,8 +14,8 @@ import java.util.Vector;
 public class ClusteringInitializer {
     public static final int MAX_ITERATION = 2;
     public static final int MIN_CLUSTER_SIZE = 3;
-    public static final double MIN_INTERCLUSTER_DISTANCE = 0.5;
-    public static final double MAX_STANDARD_DEVIATION = 1.5;
+    public static final double MIN_INTERCLUSTER_DISTANCE = 3;
+    public static final double MAX_STANDARD_DEVIATION = 0.5;
     public static final int MAX_PAIR = 3;
 
     public static void categoriesBasedInitializer(ArrayList<RootKeywordVertex> rootKeywordVertices){

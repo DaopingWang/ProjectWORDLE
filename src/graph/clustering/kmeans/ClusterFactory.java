@@ -74,6 +74,7 @@ public class ClusterFactory {
                 Vector<int[]> minClusterPair = calculateInterclusterDistances(currentCategory);
                 mergeClusterPairs(minClusterPair, currentCategory);
             }
+            setGrandMaster(currentCategory);
             systemOutPrint(i);
 
         }
@@ -125,7 +126,7 @@ public class ClusterFactory {
                 currentDistance = euclideanDistance(currentCategory.clusters.get(j).masterSimilarityCentroid, currentCategory.clusters.get(j).masterSimilarityCentroid);
                 currentIDVector.add(currentDistance);
                 int[] pair= {i, j};
-                if (currentCategory.lump > currentDistance && mergeCount < currentCategory.maxpair && !pairExists(minPairVector, pair)){
+                if (currentCategory.lump < currentDistance && mergeCount < currentCategory.maxpair && !pairExists(minPairVector, pair)){
                     minPairVector.add(pair);
                     mergeCount++;
                 }
@@ -148,7 +149,7 @@ public class ClusterFactory {
         for(int i = 0; i < currentCategory.clusters.size(); i++){
             Cluster currentCluster = currentCategory.clusters.get(i);
             if (currentCluster.maxStandardDeviation > currentCategory.stdv){
-                if((currentCluster.averageEuclideanDistance > currentCategory.overallAverageEuclideanDistance && currentCluster.memberVertices.size() > 2 * (currentCategory.samprm + 1)) || (currentCategory.clusters.size() <= currentCategory.numClus / 2)){
+                if((currentCluster.averageEuclideanDistance > currentCategory.overallAverageEuclideanDistance && currentCluster.memberVertices.size() > 2 * (currentCategory.samprm + 1)) || (currentCategory.clusters.size() <= 1 + currentCategory.numClus / 2)){
                     currentCategory.clusters.remove(currentCluster);
                     ClusteringInitializer.kMeansPPInitializer(2, currentCluster.memberVertices, currentCategory.clusters);
                     return true;
@@ -255,9 +256,10 @@ public class ClusterFactory {
         for(int j = 0; j < currentCategoryMembers.size(); j++){
             Cluster nearestCluster = null;
             nearestCluster = nearestCentroid(currentCategoryMembers.get(j).masterSimilarityVector, currentCategoryClusters);
-
-            nearestCluster.memberVertices.add(currentCategoryMembers.get(j));
-            currentCategoryMembers.get(j).originCluster = nearestCluster;
+            if(!nearestCluster.memberVertices.contains(currentCategoryMembers.get(j)) /*&& !currentCategoryMembers.get(j).originCluster.equals(nearestCluster)*/){
+                nearestCluster.memberVertices.add(currentCategoryMembers.get(j));
+                currentCategoryMembers.get(j).originCluster = nearestCluster;
+            }
         }
 
         if(isoclusMode){
@@ -300,7 +302,7 @@ public class ClusterFactory {
         for(int j = 0; j < currentCategory.clusters.size(); j++){
             currentCategory.clusters.get(j).averageEuclideanDistance = calculateAverageEuclideanDistance(currentCategory.clusters.get(j));
             overallAverage += currentCategory.clusters.get(j).averageEuclideanDistance;
-            currentCategory.clusters.get(j).isClosed = true;
+            //currentCategory.clusters.get(j).isClosed = true;
         }
         currentCategory.overallAverageEuclideanDistance = overallAverage / currentCategory.clusters.size();
     }
