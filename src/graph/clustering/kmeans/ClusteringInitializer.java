@@ -12,10 +12,10 @@ import java.util.Vector;
  * Created by wang.daoping on 07.12.2016.
  */
 public class ClusteringInitializer {
-    public static final int MAX_ITERATION = 2;
-    public static final int MIN_CLUSTER_SIZE = 3;
-    public static final double MIN_INTERCLUSTER_DISTANCE = 3;
-    public static final double MAX_STANDARD_DEVIATION = 0.5;
+    public static final int MAX_ITERATION = 100;
+    public static final int MIN_CLUSTER_SIZE = 1;
+    public static final double MIN_INTERCLUSTER_DISTANCE =0.5;
+    public static final double MAX_STANDARD_DEVIATION = 0.3;
     public static final int MAX_PAIR = 3;
 
     public static void categoriesBasedInitializer(ArrayList<RootKeywordVertex> rootKeywordVertices){
@@ -113,7 +113,7 @@ public class ClusteringInitializer {
 
         // Firstly initialize the first categoryBasedCentroid randomly.
         Cluster first = new Cluster();
-        first.masterSimilarityCentroid = inputVertices.get(0).masterSimilarityVector;
+        first.masterSimilarityCentroid = (Vector<Double>) inputVertices.get(0).masterSimilarityVector.clone();
         clusters.add(first);
 
         while(createdCentroid < k){
@@ -130,7 +130,7 @@ public class ClusteringInitializer {
                 double probability = inputVertices.get(i).shortestDistance / distanceSum;
                 if(maxProbability < probability){
                     maxProbability = probability;
-                    farestVector = inputVertices.get(i).masterSimilarityVector;
+                    farestVector = (Vector<Double>) inputVertices.get(i).masterSimilarityVector.clone();
                     farestKeyword = inputVertices.get(i);
                 }
             }
