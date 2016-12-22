@@ -1,4 +1,4 @@
-package graph.clustering.kmeans;
+package graph.clustering.algorithm.processing;
 
 import graph.clustering.vertex.KeywordVertex;
 import graph.clustering.vertex.Vertex;
@@ -16,7 +16,7 @@ public class Category {
     public int categoryIndex;
     public int maxLayer;
 
-    // ISOCLUS
+    // ISOCLUSFactory
     /**
      * Initial number of clusters.
      */

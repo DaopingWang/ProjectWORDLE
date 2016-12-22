@@ -1,4 +1,4 @@
-package graph.clustering.kmeans;
+package graph.clustering.algorithm.processing;
 
 import cern.colt.matrix.impl.SparseDoubleMatrix1D;
 import graph.clustering.vertex.KeywordVertex;

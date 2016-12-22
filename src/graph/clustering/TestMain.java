@@ -1,9 +1,12 @@
 package graph.clustering;
 
-import graph.clustering.kmeans.ClusterFactory;
+import graph.clustering.algorithm.ISOCLUSFactory;
+import graph.clustering.algorithm.KMeansFactory;
 import graph.clustering.vertex.KeywordVertex;
+import graph.clustering.algorithm.processing.*;
 
 import java.io.IOException;
+import java.util.IntSummaryStatistics;
 import java.util.Scanner;
 
 /**
@@ -19,18 +22,8 @@ public class TestMain {
             System.out.println("ERROR: PARSE METHOD COULD NOT FIND RAW FILE");
             e.printStackTrace();
         }
-/*
-        Scanner sc = new Scanner(System.in);
-        System.out.println("RANDOMGEN:\"Enter random number\" ");
-        String userin;
-        while(!(userin = sc.nextLine()).equals("exit")){
-            Utility.reinitializer(GraphFactory.keywordVertices, GraphFactory.rootKeywordVertices);
-            GraphFactory.calculateSparseVector(Utility.randomInputGenerator(Integer.parseInt(userin), 500, 1));
-            ClusterFactory.performSquareErrorClustering(Utility.randomInputGenerator(Integer.parseInt(userin), 500, 1));
-            System.out.println(Integer.toString(ClusterFactory.abandonedKeywords));
-            System.out.println();
-            System.out.println("RANDOMGEN:\"Enter random number\" ");
-        }*/
+
+        randomizer();
 
         for(int i = 0; i < GraphFactory.searchExamples.size(); i++){
             //if(!GraphFactory.searchExamples.get(i).name.equals("unimet")) continue;
@@ -39,8 +32,8 @@ public class TestMain {
             System.out.println();;
             System.out.println("*** " + GraphFactory.searchExamples.get(i).name + " " + Integer.toString(GraphFactory.searchExamples.get(i).searchResults.size()) + " ***");
             System.out.println();
-            ClusterFactory.performSquareErrorClustering(GraphFactory.searchExamples.get(i).searchResults);
-            //ClusterFactory.performISOCLUSClustering(GraphFactory.searchExamples.get(i).searchResults);
+            //KMeansFactory.performSquareErrorClustering(GraphFactory.searchExamples.get(i).searchResults);
+            ISOCLUSFactory.performISOCLUSClustering(GraphFactory.searchExamples.get(i).searchResults);
         }
 
         Scanner scanner = new Scanner(System.in);
@@ -75,5 +68,20 @@ public class TestMain {
             e.printStackTrace();
         }
 */
+    }
+
+    public static void randomizer(){
+        Scanner sc = new Scanner(System.in);
+        System.out.println("RANDOMGEN:\"Enter random number\" ");
+        String userin;
+        while(!(userin = sc.nextLine()).equals("exit")){
+            Utility.reinitializer(GraphFactory.keywordVertices, GraphFactory.rootKeywordVertices);
+            GraphFactory.calculateSparseVector(Utility.randomInputGenerator(Integer.parseInt(userin), 500, 1));
+            KMeansFactory.performSquareErrorClustering(Utility.randomInputGenerator(Integer.parseInt(userin), 500, 1));
+            //ISOCLUSFactory.performISOCLUSClustering(Utility.randomInputGenerator(Integer.parseInt(userin), 500, 1));
+            System.out.println(Integer.toString(CoreFunctions.abandonedKeywords));
+            System.out.println();
+            System.out.println("RANDOMGEN:\"Enter random number\" ");
+        }
     }
 }

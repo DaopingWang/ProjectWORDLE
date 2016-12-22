@@ -1,7 +1,7 @@
 package graph.clustering.vertex;
 
 import cern.colt.matrix.impl.SparseDoubleMatrix1D;
-import graph.clustering.kmeans.Cluster;
+import graph.clustering.algorithm.processing.Cluster;
 
 import java.util.ArrayList;
 
