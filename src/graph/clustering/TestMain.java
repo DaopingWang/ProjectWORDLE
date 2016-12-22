@@ -1,12 +1,11 @@
 package graph.clustering;
 
-import graph.clustering.algorithm.ISOCLUSFactory;
+import graph.clustering.algorithm.ISODATAFactory;
 import graph.clustering.algorithm.KMeansFactory;
 import graph.clustering.vertex.KeywordVertex;
 import graph.clustering.algorithm.processing.*;
 
 import java.io.IOException;
-import java.util.IntSummaryStatistics;
 import java.util.Scanner;
 
 /**
@@ -33,7 +32,7 @@ public class TestMain {
             System.out.println("*** " + GraphFactory.searchExamples.get(i).name + " " + Integer.toString(GraphFactory.searchExamples.get(i).searchResults.size()) + " ***");
             System.out.println();
             //KMeansFactory.performSquareErrorClustering(GraphFactory.searchExamples.get(i).searchResults);
-            ISOCLUSFactory.performISOCLUSClustering(GraphFactory.searchExamples.get(i).searchResults);
+            ISODATAFactory.performISODATAClustering(GraphFactory.searchExamples.get(i).searchResults);
         }
 
         Scanner scanner = new Scanner(System.in);
@@ -78,7 +77,7 @@ public class TestMain {
             Utility.reinitializer(GraphFactory.keywordVertices, GraphFactory.rootKeywordVertices);
             GraphFactory.calculateSparseVector(Utility.randomInputGenerator(Integer.parseInt(userin), 500, 1));
             KMeansFactory.performSquareErrorClustering(Utility.randomInputGenerator(Integer.parseInt(userin), 500, 1));
-            //ISOCLUSFactory.performISOCLUSClustering(Utility.randomInputGenerator(Integer.parseInt(userin), 500, 1));
+            //ISODATAFactory.performISODATAClustering(Utility.randomInputGenerator(Integer.parseInt(userin), 500, 1));
             System.out.println(Integer.toString(CoreFunctions.abandonedKeywords));
             System.out.println();
             System.out.println("RANDOMGEN:\"Enter random number\" ");

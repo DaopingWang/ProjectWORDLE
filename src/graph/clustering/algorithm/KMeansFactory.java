@@ -60,7 +60,7 @@ public class KMeansFactory {
 */
             do {
                 CoreFunctions.performKMeans(MAX_ITERATION, MAX_REALLOC_COUNT, i);
-                ISOCLUSFactory.assignDeltaDistance(CoreFunctions.categories.get(i));
+                ISODATAFactory.assignDeltaDistance(CoreFunctions.categories.get(i));
                 } while (splitCluster(CoreFunctions.categories.get(i)));
 
             // Print

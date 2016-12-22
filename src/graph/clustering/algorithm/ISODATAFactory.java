@@ -13,14 +13,32 @@ import java.util.Vector;
 /**
  * Created by DWang on 2016/12/22.
  */
-public class ISOCLUSFactory {
+
+/**
+ * ISODATA is a clustering algorithm based on the traditional KMeans clustering algorithm.
+ * The major difference between ISODATA and KMeans is that ISODATA adjusts k during iteration
+ * by merging and splitting clusters considering several criteria.
+ * This implementation of ISODATA contains some minor modification, for example, it uses KMeans++
+ * initialization strategy to initialize clusters properly.
+ *
+ * The steps of ISODATA algorithm:
+ * 1. Initialize k clusters.
+ * 2. Assign each point to it's closest cluster center.
+ * 3. Remove cluster centers with fewer than samprm points.
+ * 4. Recentralize cluster centers. Go back to step 2 if any cluster was deleted.
+ * 5. Calculate the average distance of the points to the associated cluster center.
+ * and the overall average, for each cluster.
+ * 6. If this is the last iteration,
+ */
+
+public class ISODATAFactory {
     public static final int MAX_ITERATION = 1000;
     public static final int MIN_CLUSTER_SIZE = 1;
     public static final double MIN_INTERCLUSTER_DISTANCE = 0.35;
     public static final double MAX_STANDARD_DEVIATION = 0.2;
     public static final int MAX_PAIR = 3;
 
-    public static void performISOCLUSClustering(ArrayList<KeywordVertex> inputKeywords){
+    public static void performISODATAClustering(ArrayList<KeywordVertex> inputKeywords){
 
         Initializer.categoriesBasedInitializer(inputKeywords, GraphFactory.keywordVertices, MAX_ITERATION, MIN_CLUSTER_SIZE, MAX_PAIR, MAX_STANDARD_DEVIATION, MIN_INTERCLUSTER_DISTANCE);
 

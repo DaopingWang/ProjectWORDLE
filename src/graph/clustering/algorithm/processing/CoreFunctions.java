@@ -3,7 +3,7 @@ package graph.clustering.algorithm.processing;
 import cern.colt.matrix.impl.SparseDoubleMatrix1D;
 import graph.clustering.GraphFactory;
 import graph.clustering.Utility;
-import graph.clustering.algorithm.ISOCLUSFactory;
+import graph.clustering.algorithm.ISODATAFactory;
 import graph.clustering.algorithm.KMeansFactory;
 import graph.clustering.vertex.KeywordVertex;
 import graph.clustering.vertex.RootKeywordVertex;
@@ -42,7 +42,7 @@ public class CoreFunctions {
                 currentDistance = euclideanDistance(currentCategory.clusters.get(i).masterSimilarityCentroid, currentCategory.clusters.get(j).masterSimilarityCentroid);
                 currentIDVector.add(currentDistance);
                 int[] pair= {i, j};
-                if ((currentCategory.lump > currentDistance) && (mergeCount < currentCategory.maxpair) && (!ISOCLUSFactory.pairExists(minPairVector, pair))){
+                if ((currentCategory.lump > currentDistance) && (mergeCount < currentCategory.maxpair) && (!ISODATAFactory.pairExists(minPairVector, pair))){
                     minPairVector.add(pair);
                     mergeCount++;
                 }
@@ -84,7 +84,7 @@ public class CoreFunctions {
         }
 
         if(isoclusMode){
-            clusterSuspended = ISOCLUSFactory.suspendSmallClusters(categories.get(i));
+            clusterSuspended = ISODATAFactory.suspendSmallClusters(categories.get(i));
         }
 
         while(iteration < maxIteration && reallocCount > maxRealloc){

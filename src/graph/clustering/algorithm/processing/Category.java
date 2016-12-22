@@ -16,7 +16,7 @@ public class Category {
     public int categoryIndex;
     public int maxLayer;
 
-    // ISOCLUSFactory
+    // ISODATAFactory
     /**
      * Initial number of clusters.
      */
