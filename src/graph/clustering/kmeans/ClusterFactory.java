@@ -25,7 +25,7 @@ public class ClusterFactory {
     public static double dropRate;
 
     public static final int MAX_ITERATION = 10000;
-    public static final double MAX_ERROR = 1;
+    public static final double MAX_ERROR = 0.5;
     public static final int MAX_REALLOC_COUNT = 0;
     public static final int MAX_MEMBER_COUNT = 15;
     public static final int MIN_MEMBER_COUNT = 2;

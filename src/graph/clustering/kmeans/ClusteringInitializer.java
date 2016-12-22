@@ -12,10 +12,10 @@ import java.util.Vector;
  * Created by wang.daoping on 07.12.2016.
  */
 public class ClusteringInitializer {
-    public static final int MAX_ITERATION = 100;
+    public static final int MAX_ITERATION = 1000;
     public static final int MIN_CLUSTER_SIZE = 1;
-    public static final double MIN_INTERCLUSTER_DISTANCE =0.5;
-    public static final double MAX_STANDARD_DEVIATION = 0.3;
+    public static final double MIN_INTERCLUSTER_DISTANCE = 0.35;
+    public static final double MAX_STANDARD_DEVIATION = 0.2;
     public static final int MAX_PAIR = 3;
 
     public static void categoriesBasedInitializer(ArrayList<RootKeywordVertex> rootKeywordVertices){
