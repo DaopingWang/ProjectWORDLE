@@ -42,9 +42,10 @@ import java.util.Vector;
 public class ISODATAFactory {
     public static final int MAX_ITERATION = 1000;
     public static final int MIN_CLUSTER_SIZE = 1;
-    public static final double MIN_INTERCLUSTER_DISTANCE = 0.35;
-    public static final double MAX_STANDARD_DEVIATION = 0.2;
+    public static final double MIN_INTERCLUSTER_DISTANCE = 0.45;
+    public static final double MAX_STANDARD_DEVIATION = 0.1;
     public static final int MAX_PAIR = 3;
+    public static final double MAX_ASD = 0.5;
 
     public static void performISODATAClustering(ArrayList<KeywordVertex> inputKeywords){
 
@@ -104,7 +105,7 @@ public class ISODATAFactory {
     public static boolean pairExists(Vector<int[]> minPairVector, int[] minPair){
         for(int i = 0; i < minPairVector.size(); i++){
             int[] currentPair = minPairVector.get(i);
-            if((currentPair[0]==minPair[0] && currentPair[1]==minPair[1]) || (currentPair[1]==minPair[0] && currentPair[0]==minPair[1])){
+            if((((currentPair[0]==minPair[0]) && (currentPair[1]==minPair[1]))) || (((currentPair[1]==minPair[0]) && (currentPair[0]==minPair[1])))){
                 return true;
             }
         }
@@ -119,7 +120,15 @@ public class ISODATAFactory {
                     currentCategory.clusters.remove(currentCluster);
                     Initializer.kMeansPPInitializer(2, currentCluster.memberVertices, currentCategory.clusters);
                     return true;
+                } else if(currentCluster.averageEuclideanDistance > MAX_ASD){
+                    currentCategory.clusters.remove(currentCluster);
+                    Initializer.kMeansPPInitializer(2, currentCluster.memberVertices, currentCategory.clusters);
+                    return true;
                 }
+            } else if(currentCluster.averageEuclideanDistance > MAX_ASD){
+                currentCategory.clusters.remove(currentCluster);
+                Initializer.kMeansPPInitializer(2, currentCluster.memberVertices, currentCategory.clusters);
+                return true;
             }
         }
         return false;
@@ -200,7 +209,11 @@ public class ISODATAFactory {
         for(int i = 0; i < currentCluster.memberVertices.size(); i++){
             double xij = currentCluster.memberVertices.get(i).masterSimilarityVector.get(currentDimension);
             double mj = currentCluster.masterSimilarityCentroid.get(currentDimension);
-            stdv += Math.pow((xij - mj), 2);
+            if(xij == Double.MAX_VALUE){
+                stdv += Math.pow((0.0 - mj), 2);
+            } else{
+                stdv += Math.pow((xij - mj), 2);
+            }
         }
         return Math.sqrt(stdv / currentCluster.memberVertices.size());
     }

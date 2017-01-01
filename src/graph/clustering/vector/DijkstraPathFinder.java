@@ -1,11 +1,13 @@
 package graph.clustering.vector;
 
+import cern.colt.matrix.impl.DenseDoubleMatrix1D;
 import cern.colt.matrix.impl.SparseDoubleMatrix1D;
 import graph.clustering.Utility;
 import graph.clustering.vertex.KeywordVertex;
 import graph.clustering.vertex.RootKeywordVertex;
 
 import java.util.ArrayList;
+import java.util.DoubleSummaryStatistics;
 import java.util.LinkedList;
 
 /**
@@ -37,16 +39,19 @@ public class DijkstraPathFinder {
               //  startVertex.pathLengthVector.set(i, 0);
             //} else
                 if(keywordVertices.get(i).distance != Double.MAX_VALUE){
-                startVertex.pathLengthVector.set(i, keywordVertices.get(i).distance);
+                startVertex.pathLengthVector.set(i, keywordVertices.get(i).distance); // sparse
+                //startVertex.densePathLengthVector.set(i, keywordVertices.get(i).distance); // dense
                 //keywordVertices.get(i).pathLengthVector.set(Utility.findIndexForName(startVertex.name, keywordVertices), keywordVertices.get(i).distance); // Undirected
                 } else if(keywordVertices.get(i).name.equals(startVertex.name)){
                     startVertex.pathLengthVector.set(i, 0);
+                    startVertex.densePathLengthVector.set(i, 0);
                 }
         }
 
         for(int i = 0; i < rootKeywordVertices.size(); i++){
             if(rootKeywordVertices.get(i).distance != Double.MAX_VALUE){
-                startVertex.pathLengthVector.set(i + keywordVertices.size(), rootKeywordVertices.get(i).distance);
+                startVertex.pathLengthVector.set(i + keywordVertices.size(), rootKeywordVertices.get(i).distance); // sparse
+//                startVertex.densePathLengthVector.set(i + keywordVertices.size(), rootKeywordVertices.get(i).distance); // dense
             }
         }
         /*
@@ -64,6 +69,8 @@ public class DijkstraPathFinder {
 
         for(int i = 0; i < keywordVertices.size(); i++){
             keywordVertices.get(i).pathLengthVector = new SparseDoubleMatrix1D(keywordVertices.size() + rootKeywordVertices.size());
+            //keywordVertices.get(i).densePathLengthVector = new DenseDoubleMatrix1D(keywordVertices.size() + rootKeywordVertices.size());
+            //keywordVertices.get(i).densePathLengthVector.assign(Double.MAX_VALUE);
         }
     }
 

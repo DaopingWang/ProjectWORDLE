@@ -62,7 +62,8 @@ public class Initializer {
                 if(checkMasterQualification(keywordVertices.get(j), categories.get(i).categoryMembers, categories.get(i))){
                     categories.get(i).masterVertices.add(keywordVertices.get(j)); // Add vertex to master vector of category.
                     for(int k = 0; k < categories.get(i).categoryMembers.size(); k++){
-                        categories.get(i).categoryMembers.get(k).masterSimilarityVector.add(categories.get(i).categoryMembers.get(k).pathLengthVector.get(j));
+                        categories.get(i).categoryMembers.get(k).masterSimilarityVector.add(categories.get(i).categoryMembers.get(k).pathLengthVector.get(j)); // sparse
+                        //categories.get(i).categoryMembers.get(k).masterSimilarityVector.add(categories.get(i).categoryMembers.get(k).densePathLengthVector.get(j)); // dense
                     }
                 }
             }
@@ -109,7 +110,8 @@ public class Initializer {
                 if(checkMasterQualification(keywordVertices.get(j), categories.get(i).categoryMembers, categories.get(i))){
                     categories.get(i).masterVertices.add(keywordVertices.get(j)); // Add vertex to master vector of category.
                     for(int k = 0; k < categories.get(i).categoryMembers.size(); k++){
-                        categories.get(i).categoryMembers.get(k).masterSimilarityVector.add(categories.get(i).categoryMembers.get(k).pathLengthVector.get(j));
+                        categories.get(i).categoryMembers.get(k).masterSimilarityVector.add(categories.get(i).categoryMembers.get(k).pathLengthVector.get(j)); // sparse
+                        //categories.get(i).categoryMembers.get(k).masterSimilarityVector.add(categories.get(i).categoryMembers.get(k).densePathLengthVector.get(j)); // dense
                     }
                 }
             }
@@ -168,6 +170,11 @@ public class Initializer {
         // Firstly initialize the first categoryBasedCentroid randomly.
         Cluster first = new Cluster();
         first.masterSimilarityCentroid = (Vector<Double>) inputVertices.get(0).masterSimilarityVector.clone();
+        for(int i = 0; i < first.masterSimilarityCentroid.size(); i++){
+            if(first.masterSimilarityCentroid.get(i) == Double.MAX_VALUE){
+                first.masterSimilarityCentroid.set(i, 0.0);
+            }
+        }
         clusters.add(first);
 
         while(createdCentroid < k){
@@ -191,8 +198,18 @@ public class Initializer {
             Cluster next = new Cluster();
             if(farestVector == null){ // bad way to prevent null mastersimicentroid
                 next.masterSimilarityCentroid = clusters.get(clusters.size() - 1).masterSimilarityCentroid;
+                for(int i = 0; i < next.masterSimilarityCentroid.size(); i++){
+                    if(next.masterSimilarityCentroid.get(i) == Double.MAX_VALUE){
+                        next.masterSimilarityCentroid.set(i, 0.0);
+                    }
+                }
             } else {
                 next.masterSimilarityCentroid = farestVector;
+                for(int i = 0; i < next.masterSimilarityCentroid.size(); i++){
+                    if(next.masterSimilarityCentroid.get(i) == Double.MAX_VALUE){
+                        next.masterSimilarityCentroid.set(i, 0.0);
+                    }
+                }
                 //next.memberVertices.add(farestKeyword);
             }
             clusters.add(next);

@@ -22,10 +22,10 @@ public class TestMain {
             e.printStackTrace();
         }
 
-        randomizer();
+        //randomizer();
 
         for(int i = 0; i < GraphFactory.searchExamples.size(); i++){
-            //if(!GraphFactory.searchExamples.get(i).name.equals("unimet")) continue;
+            //if(!GraphFactory.searchExamples.get(i).name.equals("terumo")) continue;
             Utility.reinitializer(GraphFactory.keywordVertices, GraphFactory.rootKeywordVertices);
             GraphFactory.calculateSparseVector(GraphFactory.searchExamples.get(i).searchResults);
             System.out.println();;

@@ -1,5 +1,6 @@
 package graph.clustering.vertex;
 
+import cern.colt.matrix.impl.DenseDoubleMatrix1D;
 import cern.colt.matrix.impl.SparseDoubleMatrix1D;
 import graph.clustering.algorithm.processing.Cluster;
 
@@ -12,6 +13,7 @@ public class KeywordVertex extends Vertex{
     public ArrayList<Edge> edgeList;
     public ArrayList<Probability> probabilityList;
     public SparseDoubleMatrix1D pathLengthVector;
+    public DenseDoubleMatrix1D densePathLengthVector;
     public Cluster originCluster;
     public double shortestDistance;
     public int duplicateCount;
