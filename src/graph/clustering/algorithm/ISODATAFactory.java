@@ -24,11 +24,19 @@ import java.util.Vector;
  * The steps of ISODATA algorithm:
  * 1. Initialize k clusters.
  * 2. Assign each point to it's closest cluster center.
- * 3. Remove cluster centers with fewer than samprm points.
+ * 3. Remove cluster centers with fewer than the preset minimum points.
  * 4. Recentralize cluster centers. Go back to step 2 if any cluster was deleted.
  * 5. Calculate the average distance of the points to the associated cluster center.
  * and the overall average, for each cluster.
- * 6. If this is the last iteration,
+ * 6. If this is the last iteration, go to step 9.
+ * 7. For each cluster Sj, compute a vector vj whose coordinates are the standard deviations of the
+ * euclidean distances between the center of Sj and every point of Sj in each dimension.
+ * 8. For each cluster, decide whether a split is needed by comparing the largest coordinate of vj
+ * with the preset maximum permitted standard deviation. If any splits occur, go back to step 2.
+ * 9. Compute the pairwise intercluster distances between all distinct pairs of cluster centers.
+ * 10. Select pairs whose intercluster distance is smaller than the preset minimum permitted value.
+ * Merge these pairs.
+ * 11. If the number of iterations is less than the preset iteration number, go to step 2.
  */
 
 public class ISODATAFactory {
@@ -40,6 +48,7 @@ public class ISODATAFactory {
 
     public static void performISODATAClustering(ArrayList<KeywordVertex> inputKeywords){
 
+        // step 1
         Initializer.categoriesBasedInitializer(inputKeywords, GraphFactory.keywordVertices, MAX_ITERATION, MIN_CLUSTER_SIZE, MAX_PAIR, MAX_STANDARD_DEVIATION, MIN_INTERCLUSTER_DISTANCE);
 
         for(int i = 0; i < CoreFunctions.categories.size(); i++){
@@ -56,22 +65,33 @@ public class ISODATAFactory {
                 }
 
                 do{
+                    // step 2
                     CoreFunctions.performKMeans(currentCategory.maxIter, KMeansFactory.MAX_REALLOC_COUNT, i);
+
+                    // step 3 + 4
                 } while (CoreFunctions.clusterSuspended);
+
+                // step 5
                 assignDeltaDistance(currentCategory);
                 iteration++;
 
+                // step 6
                 if(iteration == currentCategory.maxIter){
                     Vector<int[]> minClusterPair = CoreFunctions.calculateInterclusterDistances(currentCategory);
                     mergeClusterPairs(minClusterPair, currentCategory);
                     continue;
                 }
 
+                // step 7
                 calculateStandardDeviationVectors(currentCategory);
-                if(splitClusterISOCLUS(currentCategory)) continue;
+
+                // step 8
+                if(splitCluster(currentCategory)) continue;
 
                 // TODO step 9
                 Vector<int[]> minClusterPair = CoreFunctions.calculateInterclusterDistances(currentCategory);
+
+                // step 10
                 mergeClusterPairs(minClusterPair, currentCategory);
             }
             CoreFunctions.setGrandMaster(currentCategory);
@@ -91,7 +111,7 @@ public class ISODATAFactory {
         return false;
     }
 
-    public static boolean splitClusterISOCLUS(Category currentCategory){
+    public static boolean splitCluster(Category currentCategory){
         for(int i = 0; i < currentCategory.clusters.size(); i++){
             Cluster currentCluster = currentCategory.clusters.get(i);
             if (currentCluster.maxStandardDeviation > currentCategory.stdv){
