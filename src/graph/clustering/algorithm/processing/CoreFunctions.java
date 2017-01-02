@@ -14,6 +14,11 @@ import java.util.Vector;
 /**
  * Created by wang.daoping on 07.12.2016.
  */
+
+/**
+ * This class contains methods shared by both the traditional K-Means and the modified ISODATA
+ * clustering algorithm.
+ */
 public class CoreFunctions {
     public static ArrayList<Cluster> clusters;
     public static ArrayList<Category> categories;
@@ -67,6 +72,13 @@ public class CoreFunctions {
         return false;
     }
 
+    /**
+     * This is the core function of our clustering algorithm implementation.
+     * It assigns and repositions points and cluster centers until convergence.
+     * @param maxIteration Number of iteration
+     * @param maxRealloc Maximum permitted reallocation count
+     * @param i index of the current category
+     */
     public static void performKMeans(int maxIteration, int maxRealloc, int i){
         int iteration = 0;
         int reallocCount = Integer.MAX_VALUE;
@@ -118,6 +130,11 @@ public class CoreFunctions {
         overallAverage = overallAverage / currentCategoryClusters.size();*/
     }
 
+    /**
+     * finds for each cluster the closest common parent keyword, which is the smallest coordinate
+     * of the cluster center vector that is reachable from every cluster member.
+     * @param category current category
+     */
     public static void setGrandMaster(Category category){
         for(int j = 0; j < category.clusters.size(); j++){
             Cluster currentCluster = category.clusters.get(j);
@@ -130,6 +147,10 @@ public class CoreFunctions {
         }
     }
 
+    /**
+     * deletes outstanding points.
+     * @param category current keyword category
+     */
     public static void eliminateOutstanders(Category category){
         int clusterCount = category.clusters.size();
         //int categoryMemberCount = Utility.categoryMemberCounter(category);
@@ -145,6 +166,10 @@ public class CoreFunctions {
         }
     }
 
+    /**
+     * deletes empty clusters.
+     * @param category current category
+     */
     public static void flushEmptyClusters(Category category){
         for(int i = 0; i < category.clusters.size(); i++){
             if(category.clusters.get(i).memberVertices.size() == 0){
@@ -154,6 +179,10 @@ public class CoreFunctions {
         }
     }
 
+    /**
+     * merges clusters which are sharing the same grand master.
+     * @param category current keyword category
+     */
     public static void mergeSameClusters(Category category){
         for(int i = 0; i < category.clusters.size(); i++){
             for(int j = i+1; j < category.clusters.size(); j++){
@@ -167,6 +196,10 @@ public class CoreFunctions {
         }
     }
 
+    /**
+     * System output
+     * @param index index of the current cluster
+     */
     public static void systemOutPrint(int index){
         System.out.println(GraphFactory.rootKeywordVertices.get(categories.get(index).categoryMembers.get(0).dominantCategory).name.toUpperCase() + " Clustering: ".toUpperCase());
         System.out.println();
@@ -237,7 +270,12 @@ public class CoreFunctions {
         System.out.println("Iterations: " + Integer.toString(iteration));
     }
 
-    // Calculates the sum of errors, returns the nearest cluster for given keyword.
+    /**
+     * Calculates distances between the input keyword and all cluster centers, then returns the nearest cluster.
+     * @param currentMasterSimilarityVector Vector of the input keyword
+     * @param currentClusters cluster list of current category
+     * @return the nearest cluster.
+     */
     public static Cluster nearestCentroid(Vector<Double> currentMasterSimilarityVector,
                                            ArrayList<Cluster> currentClusters){
         double minError = Double.MAX_VALUE;

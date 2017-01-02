@@ -71,6 +71,7 @@ public class KMeansFactory {
      */
     public static void performSquareErrorClustering(ArrayList<KeywordVertex> inputKeywords){
 
+        // step 1
         Initializer.categoriesBasedInitializer(inputKeywords, GraphFactory.keywordVertices);
 
         for(int i = 0; i < CoreFunctions.categories.size(); i++){
@@ -106,11 +107,11 @@ public class KMeansFactory {
             }
 */
             do {
+                // step 2 + 3
                 CoreFunctions.performKMeans(MAX_ITERATION, MAX_REALLOC_COUNT, i);
                 ISODATAFactory.assignDeltaDistance(CoreFunctions.categories.get(i));
                 } while (splitCluster(CoreFunctions.categories.get(i)));
 
-            // Print
             CoreFunctions.flushEmptyClusters(CoreFunctions.categories.get(i));
             if(CoreFunctions.categories.get(i).clusters.size() == 0) continue;
             CoreFunctions.mergeSameClusters(CoreFunctions.categories.get(i));
@@ -123,6 +124,11 @@ public class KMeansFactory {
         System.out.println();
     }
 
+    /**
+     * splits large clusters / clusters with high internal distance.
+     * @param category current category
+     * @return true if any splits occur
+     */
     public static boolean splitCluster(Category category){
         CoreFunctions.eliminateOutstanders(category);
         for(int i = 0; i < category.clusters.size(); i++){
