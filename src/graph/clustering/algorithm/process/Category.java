@@ -1,4 +1,4 @@
-package graph.clustering.algorithm.processing;
+package graph.clustering.algorithm.process;
 
 import graph.clustering.vertex.KeywordVertex;
 import graph.clustering.vertex.Vertex;

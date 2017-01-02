@@ -2,10 +2,10 @@ package graph.clustering.algorithm;
 
 import graph.clustering.GraphFactory;
 import graph.clustering.Utility;
-import graph.clustering.algorithm.processing.Category;
-import graph.clustering.algorithm.processing.Cluster;
-import graph.clustering.algorithm.processing.CoreFunctions;
-import graph.clustering.algorithm.processing.Initializer;
+import graph.clustering.algorithm.process.Category;
+import graph.clustering.algorithm.process.Cluster;
+import graph.clustering.algorithm.process.CoreFunctions;
+import graph.clustering.algorithm.process.Initializer;
 import graph.clustering.vertex.KeywordVertex;
 import graph.clustering.vertex.RootKeywordVertex;
 

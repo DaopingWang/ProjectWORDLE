@@ -2,7 +2,7 @@ package graph.clustering.vertex;
 
 import cern.colt.matrix.impl.DenseDoubleMatrix1D;
 import cern.colt.matrix.impl.SparseDoubleMatrix1D;
-import graph.clustering.algorithm.processing.Cluster;
+import graph.clustering.algorithm.process.Cluster;
 
 import java.util.ArrayList;
 

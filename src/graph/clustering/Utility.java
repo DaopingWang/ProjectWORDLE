@@ -1,7 +1,7 @@
 package graph.clustering;
 
-import graph.clustering.algorithm.processing.Category;
-import graph.clustering.algorithm.processing.Cluster;
+import graph.clustering.algorithm.process.Category;
+import graph.clustering.algorithm.process.Cluster;
 import graph.clustering.vertex.Article;
 import graph.clustering.vertex.KeywordVertex;
 import graph.clustering.vertex.RootKeywordVertex;

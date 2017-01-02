@@ -1,9 +1,11 @@
 package graph.clustering;
 
-import graph.clustering.algorithm.ISODATAFactory;
 import graph.clustering.algorithm.KMeansFactory;
 import graph.clustering.vertex.KeywordVertex;
-import graph.clustering.algorithm.processing.*;
+import graph.clustering.algorithm.process.*;
+import graph.visualization.Sketch;
+import graph.visualization.WordleRenderer;
+import processing.core.PApplet;
 
 import java.io.IOException;
 import java.util.Scanner;
@@ -14,6 +16,7 @@ import java.util.Scanner;
 public class TestMain {
 
     public static void main(String[] args){
+
         try {
             //GraphFactory.parseGraphFromRawCSV("C:/Users/wang.daoping/Documents/Keyword_Graph.csv");
             GraphFactory.readGraphFromParsedCSV("C:/Users/wang.daoping/Documents/project_wordle_cache/ParsedCSV.csv");
@@ -54,6 +57,9 @@ public class TestMain {
 
             System.out.println("Enter keyword:");
         }
+
+        PApplet.main("graph.visualization.Sketch");
+
 
 /*
         try {

@@ -1,4 +1,4 @@
-package graph.clustering.algorithm.processing;
+package graph.clustering.algorithm.process;
 
 import graph.clustering.GraphFactory;
 import graph.clustering.Utility;
@@ -8,7 +8,7 @@ import graph.clustering.vertex.RootKeywordVertex;
 import java.util.ArrayList;
 import java.util.Vector;
 
-import static graph.clustering.algorithm.processing.CoreFunctions.categories;
+import static graph.clustering.algorithm.process.CoreFunctions.categories;
 
 /**
  * Created by wang.daoping on 07.12.2016.

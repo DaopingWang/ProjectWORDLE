@@ -1,4 +1,4 @@
-package graph.clustering.algorithm.processing;
+package graph.clustering.algorithm.process;
 
 import cern.colt.matrix.impl.SparseDoubleMatrix1D;
 import graph.clustering.GraphFactory;
