@@ -6,7 +6,9 @@ import graph.clustering.algorithm.process.Cluster;
 import graph.clustering.algorithm.process.CoreFunctions;
 import graph.clustering.algorithm.process.Initializer;
 import graph.clustering.vertex.KeywordVertex;
+import graph.visualization.Sketch;
 
+import java.rmi.server.ExportException;
 import java.util.ArrayList;
 import java.util.Vector;
 
@@ -129,6 +131,17 @@ public class ISODATAFactory {
             CoreFunctions.setGrandMaster(currentCategory);
             CoreFunctions.mergeSameClusters(currentCategory);
             CoreFunctions.systemOutPrint(i);
+            ArrayList<String[]> keywordStrings = CoreFunctions.createKeywordString(currentCategory);
+            for(int z = 0; z < keywordStrings.size(); z++){
+                if(keywordStrings.get(z).length > 2){
+                    Sketch.renderWordle(keywordStrings.get(z));
+                    try {
+                        System.in.read();
+                    } catch (Exception e){
+                        e.printStackTrace();
+                    }
+                }
+            }
         }
 
     }

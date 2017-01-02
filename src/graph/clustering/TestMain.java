@@ -1,11 +1,13 @@
 package graph.clustering;
 
+import graph.clustering.algorithm.ISODATAFactory;
 import graph.clustering.algorithm.KMeansFactory;
 import graph.clustering.vertex.KeywordVertex;
 import graph.clustering.algorithm.process.*;
 import graph.visualization.Sketch;
 import graph.visualization.WordleRenderer;
 import processing.core.PApplet;
+
 
 import java.io.IOException;
 import java.util.Scanner;
@@ -33,8 +35,8 @@ public class TestMain {
             System.out.println();;
             System.out.println("*** " + GraphFactory.searchExamples.get(i).name + " " + Integer.toString(GraphFactory.searchExamples.get(i).searchResults.size()) + " ***");
             System.out.println();
-            KMeansFactory.performSquareErrorClustering(GraphFactory.searchExamples.get(i).searchResults);
-            //ISODATAFactory.performISODATAClustering(GraphFactory.searchExamples.get(i).searchResults);
+            //KMeansFactory.performSquareErrorClustering(GraphFactory.searchExamples.get(i).searchResults);
+            ISODATAFactory.performISODATAClustering(GraphFactory.searchExamples.get(i).searchResults);
         }
 
         Scanner scanner = new Scanner(System.in);

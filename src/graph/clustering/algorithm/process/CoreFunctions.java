@@ -9,6 +9,7 @@ import graph.clustering.vertex.KeywordVertex;
 import graph.clustering.vertex.RootKeywordVertex;
 
 import java.util.ArrayList;
+import java.util.StringJoiner;
 import java.util.Vector;
 
 /**
@@ -214,6 +215,19 @@ public class CoreFunctions {
             }
             System.out.println();
         }
+    }
+
+    public static ArrayList<String[]> createKeywordString(Category currentCategory){
+        ArrayList<String[]> keywordStrings = new ArrayList<>();
+        for(int i = 0; i < currentCategory.clusters.size(); i++){
+            String[] keywordString = new String[currentCategory.clusters.get(i).memberVertices.size() + 1];
+            keywordString[0] = currentCategory.clusters.get(i).grandMaster.name;
+            for(int j = 0; j < currentCategory.clusters.get(i).memberVertices.size(); j++){
+                keywordString[j+1] = currentCategory.clusters.get(i).memberVertices.get(j).name;
+            }
+            keywordStrings.add(keywordString);
+        }
+        return keywordStrings;
     }
 
     public static void performSquareErrorClusteringPP(ArrayList<KeywordVertex> inputKeywords,

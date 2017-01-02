@@ -8,7 +8,7 @@ import wordcram.WordCram;
  */
 
 public class WordleRenderer {
-    PApplet parent;
+    private PApplet parent;
 
     public WordleRenderer(PApplet p){
         parent = p;
