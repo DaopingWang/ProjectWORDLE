@@ -15,13 +15,60 @@ import java.util.ArrayList;
 /**
  * Created by DWang on 2016/12/22.
  */
+
+/**
+ * The K-Means clustering is a widely used algorithm for data clustering.
+ * It's approach is quite simple and straight forward:
+ * 1. Initialize k cluster centers by picking points from the input data set
+ * randomly.
+ * 2. Assign each point to the nearest cluster center.
+ * 3. Recalculate the position of cluster centers by moving them to the center
+ * of their member points. If any position changes occur, go to step 2.
+ *
+ * In the following implementation, several modifications have been made in order to
+ * optimize the clustering process.
+ * 1. Instead of initializing cluster centers randomly, we use the K-Means++
+ * algorithm to avoid bad initializations which can trap the clustering in local
+ * minima. The K-Means++ approach only picks the first cluster center randomly.
+ * Then, it searches for the farthest located point and makes it the next
+ * cluster center.
+ * 2. After the clustering converges, we check if there are clusters too small,
+ * too large or with high internal distance. Large clusters/ clusters with high
+ * internal distance will then be split, the small ones deleted or merged into the
+ * closest cluster.
+ */
 public class KMeansFactory {
+
+    /**
+     * Number of iteration
+     */
     public static final int MAX_ITERATION = 10000;
+
+    /**
+     * Maximum internal distance
+     */
     public static final double MAX_ERROR = 0.5;
+
+    /**
+     * If the number of position changes exceeds this parameter,
+     * the iteration will continue. If not, the clustering converges.
+     */
     public static final int MAX_REALLOC_COUNT = 0;
+
+    /**
+     * Maximum permitted number of members of a single cluster
+     */
     public static final int MAX_MEMBER_COUNT = 15;
+
+    /**
+     * Minimum permitted number of members of a single cluster
+     */
     public static final int MIN_MEMBER_COUNT = 2;
 
+    /**
+     * performs the actual K-Means clustering algorithm.
+     * @param inputKeywords given input data
+     */
     public static void performSquareErrorClustering(ArrayList<KeywordVertex> inputKeywords){
 
         Initializer.categoriesBasedInitializer(inputKeywords, GraphFactory.keywordVertices);

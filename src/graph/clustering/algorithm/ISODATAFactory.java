@@ -15,11 +15,11 @@ import java.util.Vector;
  */
 
 /**
- * ISODATA is a clustering algorithm based on the traditional KMeans clustering algorithm.
- * The major difference between ISODATA and KMeans is that ISODATA adjusts k during iteration
+ * ISODATA is a clustering algorithm based on the traditional K-Means clustering algorithm.
+ * The major difference between ISODATA and K-Means is that during iteration, ISODATA adjusts k
  * by merging and splitting clusters considering several criteria.
- * This implementation of ISODATA contains some minor modification, for example, it uses KMeans++
- * initialization strategy to initialize clusters properly.
+ * This implementation of ISODATA contains some minor modification, for example, it uses K-Means++
+ * initialization strategy to initialize clusters smartly.
  *
  * The steps of ISODATA algorithm:
  * 1. Initialize k clusters.
@@ -32,7 +32,8 @@ import java.util.Vector;
  * 7. For each cluster Sj, compute a vector vj whose coordinates are the standard deviations of the
  * euclidean distances between the center of Sj and every point of Sj in each dimension.
  * 8. For each cluster, decide whether a split is needed by comparing the largest coordinate of vj
- * with the preset maximum permitted standard deviation. If any splits occur, go back to step 2.
+ * with the preset maximum permitted standard deviation (and by counting in the maximum permitted average
+ * squared distance). If any splits occur, go to step 2.
  * 9. Compute the pairwise intercluster distances between all distinct pairs of cluster centers.
  * 10. Select pairs whose intercluster distance is smaller than the preset minimum permitted value.
  * Merge these pairs.
@@ -40,13 +41,41 @@ import java.util.Vector;
  */
 
 public class ISODATAFactory {
+
+    /**
+     * Number of iteration
+     */
     public static final int MAX_ITERATION = 1000;
+
+    /**
+     * Minimum permitted number of points of a single cluster
+     */
     public static final int MIN_CLUSTER_SIZE = 1;
+
+    /**
+     * Minimum permitted intercluster distance
+     */
     public static final double MIN_INTERCLUSTER_DISTANCE = 0.45;
+
+    /**
+     * Maximum permitted standard deviation
+     */
     public static final double MAX_STANDARD_DEVIATION = 0.1;
+
+    /**
+     * Maximum permitted number of pairs that can be merged at one iteration
+     */
     public static final int MAX_PAIR = 3;
+
+    /**
+     * Maximum permitted average squared distance
+     */
     public static final double MAX_ASD = 0.5;
 
+    /**
+     * performs the so called ISODATA clustering algorithm for the input list.
+     * @param inputKeywords input keyword list
+     */
     public static void performISODATAClustering(ArrayList<KeywordVertex> inputKeywords){
 
         // step 1
@@ -89,7 +118,7 @@ public class ISODATAFactory {
                 // step 8
                 if(splitCluster(currentCategory)) continue;
 
-                // TODO step 9
+                // step 9
                 Vector<int[]> minClusterPair = CoreFunctions.calculateInterclusterDistances(currentCategory);
 
                 // step 10
@@ -102,6 +131,12 @@ public class ISODATAFactory {
 
     }
 
+    /**
+     * compares the given pair tuple with the pair tuple array. Returns true if the pair tuple exists.
+     * @param minPairVector pair tuple array
+     * @param minPair given pair tuple
+     * @return true if pair tuple exists.
+     */
     public static boolean pairExists(Vector<int[]> minPairVector, int[] minPair){
         for(int i = 0; i < minPairVector.size(); i++){
             int[] currentPair = minPairVector.get(i);
@@ -112,7 +147,14 @@ public class ISODATAFactory {
         return false;
     }
 
-    public static boolean splitCluster(Category currentCategory){
+    /**
+     * performs the 8. step of ISODATA: For each cluster, it checks whether the standard deviation and the
+     * average squared distance of the current cluster are exceeding the limit. If true, it splits that cluster
+     * by passing it's member points to the K-Means++ method and deleting the original cluster.
+     * @param currentCategory current keyword category
+     * @return true if any splits occur
+     */
+    private static boolean splitCluster(Category currentCategory){
         for(int i = 0; i < currentCategory.clusters.size(); i++){
             Cluster currentCluster = currentCategory.clusters.get(i);
             if (currentCluster.maxStandardDeviation > currentCategory.stdv){
@@ -134,6 +176,10 @@ public class ISODATAFactory {
         return false;
     }
 
+    /**
+     * computes the average squared distance for each cluster.
+     * @param currentCategory current keyword category
+     */
     public static void assignDeltaDistance(Category currentCategory){
         double overallAverage = 0;
         for(int j = 0; j < currentCategory.clusters.size(); j++){
@@ -144,6 +190,11 @@ public class ISODATAFactory {
         currentCategory.overallAverageEuclideanDistance = overallAverage / currentCategory.clusters.size();
     }
 
+    /**
+     * suspends clusters whose member points are less than the preset limit.
+     * @param currentCategory current keyword category
+     * @return true if any clusters are suspended
+     */
     public static boolean suspendSmallClusters(Category currentCategory){
         for(int i = 0; i < currentCategory.clusters.size(); i++){
             Cluster currentCluster = currentCategory.clusters.get(i);
@@ -155,6 +206,11 @@ public class ISODATAFactory {
         return false;
     }
 
+    /**
+     * merges the given pairs. Each cluster can only engage once in each iteration.
+     * @param clusterPairs input pairs
+     * @param currentCategory current keyword category
+     */
     public static void mergeClusterPairs(Vector<int[]> clusterPairs, Category currentCategory){
         for(int i = 0; i < clusterPairs.size(); i++){
             Cluster old1 = currentCategory.clusters.get(clusterPairs.get(i)[0]);
@@ -192,6 +248,10 @@ public class ISODATAFactory {
         }
     }
 
+    /**
+     * computes the standard deviation vector of each cluster.
+     * @param category current keyword category
+     */
     public static void calculateStandardDeviationVectors(Category category){
         double maxStdv = 0;
         for(int i = 0; i < category.clusters.size(); i++){
@@ -203,6 +263,7 @@ public class ISODATAFactory {
             category.clusters.get(i).maxStandardDeviation = maxStdv;
         }
     }
+
 
     public static double calculateStandardDeviation(int currentDimension, Cluster currentCluster){
         double stdv = 0;
