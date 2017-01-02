@@ -27,12 +27,11 @@ public class TestMain {
         for(int i = 0; i < GraphFactory.searchExamples.size(); i++){
             //if(!GraphFactory.searchExamples.get(i).name.equals("terumo")) continue;
             Utility.reinitializer(GraphFactory.keywordVertices, GraphFactory.rootKeywordVertices);
-            GraphFactory.calculateSparseVector(GraphFactory.searchExamples.get(i).searchResults);
             System.out.println();;
             System.out.println("*** " + GraphFactory.searchExamples.get(i).name + " " + Integer.toString(GraphFactory.searchExamples.get(i).searchResults.size()) + " ***");
             System.out.println();
-            //KMeansFactory.performSquareErrorClustering(GraphFactory.searchExamples.get(i).searchResults);
-            ISODATAFactory.performISODATAClustering(GraphFactory.searchExamples.get(i).searchResults);
+            KMeansFactory.performSquareErrorClustering(GraphFactory.searchExamples.get(i).searchResults);
+            //ISODATAFactory.performISODATAClustering(GraphFactory.searchExamples.get(i).searchResults);
         }
 
         Scanner scanner = new Scanner(System.in);

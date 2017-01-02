@@ -78,6 +78,8 @@ public class ISODATAFactory {
      */
     public static void performISODATAClustering(ArrayList<KeywordVertex> inputKeywords){
 
+        GraphFactory.calculateSparseVector(inputKeywords);
+
         // step 1
         Initializer.categoriesBasedInitializer(inputKeywords, GraphFactory.keywordVertices, MAX_ITERATION, MIN_CLUSTER_SIZE, MAX_PAIR, MAX_STANDARD_DEVIATION, MIN_INTERCLUSTER_DISTANCE);
 

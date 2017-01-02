@@ -70,6 +70,7 @@ public class KMeansFactory {
      * @param inputKeywords given input data
      */
     public static void performSquareErrorClustering(ArrayList<KeywordVertex> inputKeywords){
+        GraphFactory.calculateSparseVector(inputKeywords);
 
         // step 1
         Initializer.categoriesBasedInitializer(inputKeywords, GraphFactory.keywordVertices);
