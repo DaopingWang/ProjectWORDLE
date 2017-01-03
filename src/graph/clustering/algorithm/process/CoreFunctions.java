@@ -7,6 +7,7 @@ import graph.clustering.algorithm.ISODATAFactory;
 import graph.clustering.algorithm.KMeansFactory;
 import graph.clustering.vertex.KeywordVertex;
 import graph.clustering.vertex.RootKeywordVertex;
+import graph.clustering.vertex.Vertex;
 
 import java.util.ArrayList;
 import java.util.StringJoiner;
@@ -217,13 +218,13 @@ public class CoreFunctions {
         }
     }
 
-    public static String[] createKeywordString(Cluster currentCluster){
-        String[] keywordString = new String[currentCluster.memberVertices.size() + 1];
-        keywordString[0] = currentCluster.grandMaster.name;
+    public static Vertex[] createListForCluster(Cluster currentCluster){
+        Vertex[] list = new Vertex[currentCluster.memberVertices.size() + 1];
+        list[0] = currentCluster.grandMaster;
         for(int i = 0; i < currentCluster.memberVertices.size(); i++){
-            keywordString[i + 1] = currentCluster.memberVertices.get(i).name;
+            list[i + 1] = currentCluster.memberVertices.get(i);
         }
-        return keywordString;
+        return list;
     }
 
     public static void performSquareErrorClusteringPP(ArrayList<KeywordVertex> inputKeywords,

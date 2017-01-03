@@ -1,7 +1,7 @@
 package graph.visualization;
 
 import processing.core.PApplet;
-import wordcram.WordCram;
+import wordcram.*;
 
 /**
  * Created by wang.daoping on 02.01.2017.
@@ -14,11 +14,16 @@ public class WordleRenderer {
         parent = p;
     }
 
-    public void makeWordCram(String[] keywords){
+    public void makeWordCram(Word[] keywords){
         new WordCram(parent)
-                .fromTextString(keywords)
-                .withColors(parent.color(30), parent.color(110), parent.color(parent.random(255), 240, 200))
+                .fromWords(keywords)
+                .withColors(parent.color(255), parent.color(255), parent.color(255))
                 .withFont("Copse")
+                .includeNumbers()
+                .keepCase()
+                .sizedByRank(10, 40)
+                .withNudger(new PlottingWordNudger(parent, new RandomWordNudger()))
+                .withPlacer(new PlottingWordPlacer(parent, new SwirlWordPlacer()))
                 .drawAll();
     }
 }

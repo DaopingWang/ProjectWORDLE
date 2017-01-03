@@ -4,9 +4,12 @@ import graph.clustering.algorithm.ISODATAFactory;
 import graph.clustering.algorithm.KMeansFactory;
 import graph.clustering.vertex.KeywordVertex;
 import graph.clustering.algorithm.process.*;
+import graph.visualization.WordleFactory;
+import wordcram.Word;
 
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Scanner;
 
 /**
@@ -35,7 +38,17 @@ public class TestMain {
             //KMeansFactory.performSquareErrorClustering(GraphFactory.searchKeywords.get(i).searchResults);
             ISODATAFactory.performISODATAClustering(GraphFactory.searchKeywords.get(i).searchResults, i);
         }
-        
+
+        for(int i = 0; i < GraphFactory.searchKeywords.size(); i++){
+            ArrayList<Word[]> words = WordleFactory.convertKeywordListToWords(GraphFactory.searchKeywords.get(i).clusters);
+            WordleFactory.renderWordle(words);
+
+            try {
+                System.in.read();
+            } catch (Exception e){
+                e.printStackTrace();
+            }
+        }
 
         Scanner scanner = new Scanner(System.in);
         System.out.println("PROBABOT:\"Enter keyword: \"");

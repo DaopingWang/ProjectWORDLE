@@ -16,7 +16,6 @@ public class KeywordVertex extends Vertex{
     public DenseDoubleMatrix1D densePathLengthVector;
     public Cluster originCluster;
     public double shortestDistance;
-    public int duplicateCount;
 
     public KeywordVertex(String inputName){
         super(inputName);

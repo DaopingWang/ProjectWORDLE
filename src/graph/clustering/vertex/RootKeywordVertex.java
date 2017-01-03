@@ -5,9 +5,9 @@ package graph.clustering.vertex;
  */
 public class RootKeywordVertex extends Vertex {
 
-
     public RootKeywordVertex(String inputName, int inputLayer){
         super(inputName, inputLayer);
+        this.duplicateCount = 1;
     }
 
 }

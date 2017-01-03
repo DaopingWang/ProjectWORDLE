@@ -16,6 +16,8 @@ public abstract class Vertex {
      * in which a vertex is located in the graph.
      */
     public int layer;
+    public int duplicateCount;
+
 
     public ArrayList<String> subordinateList;
 

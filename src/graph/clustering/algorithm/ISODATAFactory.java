@@ -6,6 +6,7 @@ import graph.clustering.algorithm.process.Cluster;
 import graph.clustering.algorithm.process.CoreFunctions;
 import graph.clustering.algorithm.process.Initializer;
 import graph.clustering.vertex.KeywordVertex;
+import graph.clustering.vertex.Vertex;
 
 import java.util.ArrayList;
 import java.util.Vector;
@@ -131,7 +132,8 @@ public class ISODATAFactory {
             CoreFunctions.systemOutPrint(i);
 
             for(int z = 0; z < currentCategory.clusters.size(); z++){
-                String[] keywordString = CoreFunctions.createKeywordString(currentCategory.clusters.get(z));
+
+                Vertex[] keywordString = CoreFunctions.createListForCluster(currentCategory.clusters.get(z));
                 GraphFactory.searchKeywords.get(searchKeywordIndex).clusters.add(keywordString);
             }
 
