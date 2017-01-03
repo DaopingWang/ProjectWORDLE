@@ -217,17 +217,13 @@ public class CoreFunctions {
         }
     }
 
-    public static ArrayList<String[]> createKeywordString(Category currentCategory){
-        ArrayList<String[]> keywordStrings = new ArrayList<>();
-        for(int i = 0; i < currentCategory.clusters.size(); i++){
-            String[] keywordString = new String[currentCategory.clusters.get(i).memberVertices.size() + 1];
-            keywordString[0] = currentCategory.clusters.get(i).grandMaster.name;
-            for(int j = 0; j < currentCategory.clusters.get(i).memberVertices.size(); j++){
-                keywordString[j+1] = currentCategory.clusters.get(i).memberVertices.get(j).name;
-            }
-            keywordStrings.add(keywordString);
+    public static String[] createKeywordString(Cluster currentCluster){
+        String[] keywordString = new String[currentCluster.memberVertices.size() + 1];
+        keywordString[0] = currentCluster.grandMaster.name;
+        for(int i = 0; i < currentCluster.memberVertices.size(); i++){
+            keywordString[i + 1] = currentCluster.memberVertices.get(i).name;
         }
-        return keywordStrings;
+        return keywordString;
     }
 
     public static void performSquareErrorClusteringPP(ArrayList<KeywordVertex> inputKeywords,

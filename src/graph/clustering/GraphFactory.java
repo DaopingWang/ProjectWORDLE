@@ -17,7 +17,7 @@ import java.util.Vector;
 public class GraphFactory {
     public static ArrayList<KeywordVertex> keywordVertices;
     public static ArrayList<RootKeywordVertex> rootKeywordVertices;
-    public static ArrayList<SearchKeyword> searchExamples;
+    public static ArrayList<SearchKeyword> searchKeywords;
     public static ArrayList<Article> articles;
     public static int layerNum = 0;
 
@@ -93,13 +93,13 @@ public class GraphFactory {
     }
 
     public static void readSearchExampleFromCSV(String filename) throws IOException{
-        searchExamples = new ArrayList<>();
+        searchKeywords = new ArrayList<>();
         String[] lineBuffer;
         CSVReader reader = new CSVReader(new InputStreamReader(new FileInputStream(filename), "Cp1252"), ';', '\"', 1);
 
         System.out.println("Read SearchKeyword... ");
         while((lineBuffer = reader.readNext()) != null){
-            int index = Utility.findSearchKeywordIndexForName(lineBuffer[3], searchExamples);
+            int index = Utility.findSearchKeywordIndexForName(lineBuffer[3], searchKeywords);
             switch (index){
                 case -1:
                     SearchKeyword sk = new SearchKeyword(lineBuffer[3]);
@@ -108,7 +108,7 @@ public class GraphFactory {
                         break;
                     } else {
                         sk.searchResults.add(kv);
-                        searchExamples.add(sk);
+                        searchKeywords.add(sk);
                     }
                     break;
 
@@ -116,10 +116,10 @@ public class GraphFactory {
                     KeywordVertex kv1 = Utility.findVertexForArticleNum(lineBuffer[7], articles);
                     if(kv1 == null) break;
 
-                    if(searchExamples.get(index).searchResults.contains(kv1)){
+                    if(searchKeywords.get(index).searchResults.contains(kv1)){
                         kv1.duplicateCount++;
                     } else {
-                        searchExamples.get(index).searchResults.add(kv1);
+                        searchKeywords.get(index).searchResults.add(kv1);
                     }
                     break;
             }

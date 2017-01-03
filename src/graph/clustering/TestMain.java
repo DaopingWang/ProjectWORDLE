@@ -4,9 +4,6 @@ import graph.clustering.algorithm.ISODATAFactory;
 import graph.clustering.algorithm.KMeansFactory;
 import graph.clustering.vertex.KeywordVertex;
 import graph.clustering.algorithm.process.*;
-import graph.visualization.Sketch;
-import graph.visualization.WordleRenderer;
-import processing.core.PApplet;
 
 
 import java.io.IOException;
@@ -29,15 +26,16 @@ public class TestMain {
 
         //randomizer();
 
-        for(int i = 0; i < GraphFactory.searchExamples.size(); i++){
-            //if(!GraphFactory.searchExamples.get(i).name.equals("terumo")) continue;
+        for(int i = 0; i < GraphFactory.searchKeywords.size(); i++){
+            //if(!GraphFactory.searchKeywords.get(i).name.equals("terumo")) continue;
             Utility.reinitializer(GraphFactory.keywordVertices, GraphFactory.rootKeywordVertices);
             System.out.println();;
-            System.out.println("*** " + GraphFactory.searchExamples.get(i).name + " " + Integer.toString(GraphFactory.searchExamples.get(i).searchResults.size()) + " ***");
+            System.out.println("*** " + GraphFactory.searchKeywords.get(i).name + " " + Integer.toString(GraphFactory.searchKeywords.get(i).searchResults.size()) + " ***");
             System.out.println();
-            //KMeansFactory.performSquareErrorClustering(GraphFactory.searchExamples.get(i).searchResults);
-            ISODATAFactory.performISODATAClustering(GraphFactory.searchExamples.get(i).searchResults);
+            //KMeansFactory.performSquareErrorClustering(GraphFactory.searchKeywords.get(i).searchResults);
+            ISODATAFactory.performISODATAClustering(GraphFactory.searchKeywords.get(i).searchResults, i);
         }
+        
 
         Scanner scanner = new Scanner(System.in);
         System.out.println("PROBABOT:\"Enter keyword: \"");
@@ -60,7 +58,7 @@ public class TestMain {
             System.out.println("Enter keyword:");
         }
 
-        PApplet.main("graph.visualization.Sketch");
+
 
 
 /*

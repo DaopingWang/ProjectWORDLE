@@ -6,9 +6,7 @@ import graph.clustering.algorithm.process.Cluster;
 import graph.clustering.algorithm.process.CoreFunctions;
 import graph.clustering.algorithm.process.Initializer;
 import graph.clustering.vertex.KeywordVertex;
-import graph.visualization.Sketch;
 
-import java.rmi.server.ExportException;
 import java.util.ArrayList;
 import java.util.Vector;
 
@@ -78,7 +76,7 @@ public class ISODATAFactory {
      * performs the so called ISODATA clustering algorithm for the input list.
      * @param inputKeywords input keyword list
      */
-    public static void performISODATAClustering(ArrayList<KeywordVertex> inputKeywords){
+    public static void performISODATAClustering(ArrayList<KeywordVertex> inputKeywords, int searchKeywordIndex){
 
         GraphFactory.calculateSparseVector(inputKeywords);
 
@@ -131,17 +129,24 @@ public class ISODATAFactory {
             CoreFunctions.setGrandMaster(currentCategory);
             CoreFunctions.mergeSameClusters(currentCategory);
             CoreFunctions.systemOutPrint(i);
-            ArrayList<String[]> keywordStrings = CoreFunctions.createKeywordString(currentCategory);
-            for(int z = 0; z < keywordStrings.size(); z++){
-                if(keywordStrings.get(z).length > 2){
-                    Sketch.renderWordle(keywordStrings.get(z));
+
+            for(int z = 0; z < currentCategory.clusters.size(); z++){
+                String[] keywordString = CoreFunctions.createKeywordString(currentCategory.clusters.get(z));
+                GraphFactory.searchKeywords.get(searchKeywordIndex).clusters.add(keywordString);
+            }
+
+            /*
+            for(int z = 0; z < GraphFactory.keywordStrings.size(); z++){
+                if(GraphFactory.keywordStrings.get(z).length > 2){
+                    Sketch.renderWordle(GraphFactory.keywordStrings.get(z));
+
                     try {
                         System.in.read();
                     } catch (Exception e){
                         e.printStackTrace();
                     }
                 }
-            }
+            }*/
         }
 
     }
