@@ -21,8 +21,8 @@ public class WordleRenderer {
                 .withFont("Copse")
                 .includeNumbers()
                 .keepCase()
-                .sizedByRank(10, 40)
-                .withNudger(new PlottingWordNudger(parent, new RandomWordNudger()))
+                .sizedByRank(3, 45)
+                .withNudger(new PlottingWordNudger(parent, new SpiralWordNudger()))
                 .withPlacer(new PlottingWordPlacer(parent, new SwirlWordPlacer()))
                 .drawAll();
     }
