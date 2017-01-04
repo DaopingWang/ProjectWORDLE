@@ -1,5 +1,7 @@
 package graph.visualization;
 
+import graph.visualization.nudger.CustomSpiralWordNudger;
+import graph.visualization.placer.CustomSwirlWordPlacer;
 import processing.core.PApplet;
 import wordcram.*;
 
@@ -17,13 +19,16 @@ public class WordleRenderer {
     public void makeWordCram(Word[] keywords){
         new WordCram(parent)
                 .fromWords(keywords)
-                .withColors(parent.color(255), parent.color(255), parent.color(255))
+                //.withColors(parent.color(255), parent.color(255), parent.color(255))
+                .withColor(parent.color(255))
                 .withFont("Copse")
                 .includeNumbers()
+                //.angledAt(0f)
+                .maxAttemptsToPlaceWord(Integer.MAX_VALUE)
                 .keepCase()
-                .sizedByRank(3, 45)
-                .withNudger(new PlottingWordNudger(parent, new SpiralWordNudger()))
-                .withPlacer(new PlottingWordPlacer(parent, new SwirlWordPlacer()))
+                .sizedByRank(3, 50)
+                .withNudger(new PlottingWordNudger(parent, new CustomSpiralWordNudger()))
+                .withPlacer(new PlottingWordPlacer(parent, new CustomSwirlWordPlacer()))
                 .drawAll();
     }
 }

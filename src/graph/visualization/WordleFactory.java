@@ -27,12 +27,12 @@ public class WordleFactory {
             }
 
             Word[] buffer = new Word[list.get(i).length];
-            for(int j = 0; j < list.get(i).length; j++){
+            buffer[0] = new Word(list.get(i)[0].name, 1f);
+            for(int j = 1; j < list.get(i).length; j++){
                 buffer[j] = new Word(list.get(i)[j].name, (float) list.get(i)[j].duplicateCount / (float) maxDuplicateCount);
             }
-            buffer[0].setSize(55)
-                    .setAngle(0)
-                    .setPlace(SKETCH_X / 4, SKETCH_Y / 3);
+            buffer[0].setAngle(0);
+                    //.setPlace(SKETCH_X / 4, SKETCH_Y / 3);
 
             words.add(buffer);
         }
