@@ -2,6 +2,7 @@ package graph.visualization;
 
 import graph.clustering.vertex.Vertex;
 import processing.core.PApplet;
+import processing.core.PConstants;
 import wordcram.Word;
 
 import java.util.ArrayList;
@@ -30,6 +31,13 @@ public class WordleFactory {
             buffer[0] = new Word(list.get(i)[0].name, 1f);
             for(int j = 1; j < list.get(i).length; j++){
                 buffer[j] = new Word(list.get(i)[j].name, (float) list.get(i)[j].duplicateCount / (float) maxDuplicateCount);
+                if(list.get(i)[j].name.length() > 15)               // if a word is too long, it will not be rotated.
+                {
+                    buffer[j].setAngle(0);
+                } else if(list.get(i)[j].name.length() < 9)         // if a word is short, it will certainly be rotated to create some newness.
+                {
+                    buffer[j].setAngle(PConstants.PI / 2f);
+                }
             }
             buffer[0].setAngle(0);
                     //.setPlace(SKETCH_X / 4, SKETCH_Y / 3);
