@@ -8,6 +8,7 @@ import graph.clustering.algorithm.KMeansFactory;
 import graph.clustering.vertex.KeywordVertex;
 import graph.clustering.vertex.RootKeywordVertex;
 import graph.clustering.vertex.Vertex;
+import org.apache.commons.lang3.ArrayUtils;
 
 import java.util.ArrayList;
 import java.util.StringJoiner;
@@ -218,12 +219,21 @@ public class CoreFunctions {
         }
     }
 
-    public static Vertex[] createListForCluster(Cluster currentCluster){
+    public static Vertex[] convertClusterToVertexArray(Cluster currentCluster){
         Vertex[] list = new Vertex[currentCluster.memberVertices.size() + 1];
         list[0] = currentCluster.grandMaster;
         for(int i = 0; i < currentCluster.memberVertices.size(); i++){
             list[i + 1] = currentCluster.memberVertices.get(i);
         }
+
+        // cluster size completion for wordle
+        if(currentCluster.memberVertices.size() < 5){
+            Vertex[] complement = Utility.findMinVerticesFromSVector(Utility.findVertexWithMostDublicates(currentCluster.memberVertices).pathLengthVector, 5 - currentCluster.memberVertices.size(), list);
+            if(complement != null){
+                list = ArrayUtils.addAll(list, complement);
+            }
+        }
+
         return list;
     }
 

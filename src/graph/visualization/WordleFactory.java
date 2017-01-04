@@ -24,7 +24,12 @@ public class WordleFactory {
         for(int i = 0; i < list.size(); i++){
             int maxDuplicateCount = 0;
             for(int j = 0; j < list.get(i).length; j++){
-                maxDuplicateCount = (maxDuplicateCount < list.get(i)[j].duplicateCount) ? list.get(i)[j].duplicateCount : maxDuplicateCount;
+                try {
+                    maxDuplicateCount = (maxDuplicateCount < list.get(i)[j].duplicateCount) ? list.get(i)[j].duplicateCount : maxDuplicateCount;
+                } catch (NullPointerException e){
+                    System.out.println("j=" + Integer.toString(j) + " i=" + Integer.toString(i));
+                    System.exit(666);
+                }
             }
 
             Word[] buffer = new Word[list.get(i).length];

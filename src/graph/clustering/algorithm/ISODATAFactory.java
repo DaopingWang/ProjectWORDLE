@@ -131,10 +131,11 @@ public class ISODATAFactory {
             CoreFunctions.mergeSameClusters(currentCategory);
             CoreFunctions.systemOutPrint(i);
 
+            // convert clusters to vertex array for later use (visualization).
             for(int z = 0; z < currentCategory.clusters.size(); z++){
 
-                Vertex[] keywordString = CoreFunctions.createListForCluster(currentCategory.clusters.get(z));
-                GraphFactory.searchKeywords.get(searchKeywordIndex).clusters.add(keywordString);
+                Vertex[] vertexArray = CoreFunctions.convertClusterToVertexArray(currentCategory.clusters.get(z));
+                GraphFactory.searchKeywords.get(searchKeywordIndex).clusters.add(vertexArray);
             }
 
             /*

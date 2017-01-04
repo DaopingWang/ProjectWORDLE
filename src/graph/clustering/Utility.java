@@ -1,14 +1,12 @@
 package graph.clustering;
 
+import cern.colt.matrix.impl.SparseDoubleMatrix1D;
 import graph.clustering.algorithm.process.Category;
 import graph.clustering.algorithm.process.Cluster;
-import graph.clustering.vertex.Article;
-import graph.clustering.vertex.KeywordVertex;
-import graph.clustering.vertex.RootKeywordVertex;
-import graph.clustering.vertex.SearchKeyword;
+import graph.clustering.vertex.*;
+import org.apache.commons.lang3.ArrayUtils;
 
-import java.util.ArrayList;
-import java.util.Vector;
+import java.util.*;
 
 /**
  * Created by wang.daoping on 07.12.2016.
@@ -142,6 +140,58 @@ public class Utility {
                 return index;
             }
 
+    }
+
+    public static KeywordVertex findVertexWithMostDublicates(ArrayList<KeywordVertex> vertices){
+        int maxDuplicates = 0;
+        KeywordVertex theOne = null;
+
+        for(int i = 0; i < vertices.size(); i++){
+            if(vertices.get(i).duplicateCount > maxDuplicates){
+                maxDuplicates = vertices.get(i).duplicateCount;
+                theOne = vertices.get(i);
+            }
+        }
+
+        return theOne;
+    }
+
+    public static Vertex[] findMinVerticesFromSVector(SparseDoubleMatrix1D sparseDoubleMatrix1D, int k, Vertex[] list){
+        int count = 0;
+        int arrayIndex = 0;
+        double min = Double.MAX_VALUE;
+        int minIndex = Integer.MAX_VALUE;
+        Vertex[] vertices = new Vertex[k];
+
+        while(count < k){
+            for(int i = 0; i < sparseDoubleMatrix1D.size() - GraphFactory.rootKeywordVertices.size(); i++){
+                if(sparseDoubleMatrix1D.get(i) != 0 && sparseDoubleMatrix1D.get(i) < min && !ArrayUtils.contains(list, GraphFactory.keywordVertices.get(i)) && !ArrayUtils.contains(vertices, GraphFactory.keywordVertices.get(i))){
+                    min = sparseDoubleMatrix1D.get(i);
+                    minIndex = i;
+                }
+            }
+            if(minIndex == Integer.MAX_VALUE){
+                //System.out.println("findMinVertices: nothing found");
+                count++;
+                continue;
+            }
+            //if(minIndex < GraphFactory.keywordVertices.size()){
+                vertices[arrayIndex] = GraphFactory.keywordVertices.get(minIndex);
+            minIndex = Integer.MAX_VALUE;
+            min = Double.MAX_VALUE;
+                arrayIndex++;
+            //}
+            count++;
+        }
+        if(arrayIndex == 0) return null;
+
+        return clean(vertices);
+    }
+
+    public static Vertex[] clean(final Vertex[] v) {
+        List<Vertex> list = new ArrayList<>(Arrays.asList(v));
+        list.removeAll(Collections.singleton(null));
+        return list.toArray(new Vertex[list.size()]);
     }
 
     public static int clusterMemberCounter(Cluster cluster){

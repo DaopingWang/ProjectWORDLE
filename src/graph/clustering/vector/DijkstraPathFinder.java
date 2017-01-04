@@ -44,7 +44,7 @@ public class DijkstraPathFinder {
                 //keywordVertices.get(i).pathLengthVector.set(Utility.findIndexForName(startVertex.name, keywordVertices), keywordVertices.get(i).distance); // Undirected
                 } else if(keywordVertices.get(i).name.equals(startVertex.name)){
                     startVertex.pathLengthVector.set(i, 0);
-                    startVertex.densePathLengthVector.set(i, 0);
+                    //startVertex.densePathLengthVector.set(i, 0);
                 }
         }
 
