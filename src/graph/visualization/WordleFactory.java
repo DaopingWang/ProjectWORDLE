@@ -14,8 +14,8 @@ public class WordleFactory {
     public static float SKETCH_X = 1000;
     public static float SKETCH_Y = 1000;
 
-    public static void renderWordle(ArrayList<Word[]> inputClusters){
-        Sketch sketch = new Sketch(inputClusters, SKETCH_X, SKETCH_Y);
+    public static void renderWordle(ArrayList<Word[]> inputClusters, String searchWord){
+        Sketch sketch = new Sketch(inputClusters, searchWord, SKETCH_X, SKETCH_Y);
         PApplet.runSketch(new String[]{"graph.visualization.Sketch"}, sketch);
     }
 

@@ -16,7 +16,7 @@ public class WordleRenderer {
         parent = p;
     }
 
-    public void makeWordCram(Word[] keywords){
+    public void renderWordCram(Word[] keywords){
         new WordCram(parent)
                 .fromWords(keywords)
                 //.withColors(parent.color(255), parent.color(255), parent.color(255))
@@ -29,6 +29,21 @@ public class WordleRenderer {
                 .sizedByRank(3, 50)
                 .withNudger(new PlottingWordNudger(parent, new CustomSpiralWordNudger()))
                 .withPlacer(new PlottingWordPlacer(parent, new CustomSwirlWordPlacer()))
+                .drawAll();
+    }
+
+    public void renderTitle(String searchWord){
+        Word[] title = new Word[1];
+        Word searchW = new Word("Keyword: " + searchWord, 1f);
+        searchW.setAngle(0)
+                .setSize(20)
+                .setColor(parent.color(255))
+                .setPlace(10, 10);
+
+        title[0] = searchW;
+
+        new WordCram(parent)
+                .fromWords(title)
                 .drawAll();
     }
 }

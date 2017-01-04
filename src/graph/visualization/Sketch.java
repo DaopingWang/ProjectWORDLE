@@ -3,7 +3,6 @@ package graph.visualization;
  * Created by wang.daoping on 02.01.2017.
  */
 
-import graph.clustering.vertex.Vertex;
 import processing.core.PApplet;
 import wordcram.*;
 
@@ -11,14 +10,16 @@ import java.util.ArrayList;
 
 public class Sketch extends PApplet{
     private ArrayList<Word[]> clusters;
+    private String searchW;
     private int counter;
     private WordleRenderer wordleRenderer;
     private int x;
     private int y;
 
-    public Sketch(ArrayList<Word[]> words, float X, float Y){
+    public Sketch(ArrayList<Word[]> words, String searchWord, float X, float Y){
         super();
         this.clusters = words;
+        this.searchW = searchWord;
         this.counter = 0;
         this.x = (int) X;
         this.y = (int) Y;
@@ -35,8 +36,8 @@ public class Sketch extends PApplet{
 
     public void draw(){
         background(0);
-        //WordleRenderer wordleRenderer = new WordleRenderer(this);
-        this.wordleRenderer.makeWordCram(clusters.get(counter));
+        this.wordleRenderer.renderTitle(this.searchW);
+        this.wordleRenderer.renderWordCram(clusters.get(counter));
         counter++;
     }
 

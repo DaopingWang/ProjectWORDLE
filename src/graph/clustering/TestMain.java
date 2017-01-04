@@ -41,7 +41,7 @@ public class TestMain {
 
         for(int i = 0; i < GraphFactory.searchKeywords.size(); i++){
             ArrayList<Word[]> words = WordleFactory.convertKeywordListToWords(GraphFactory.searchKeywords.get(i).clusters);
-            WordleFactory.renderWordle(words);
+            WordleFactory.renderWordle(words, GraphFactory.searchKeywords.get(i).name);
 
             try {
                 System.in.read();
