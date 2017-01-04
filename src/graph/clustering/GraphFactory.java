@@ -395,6 +395,13 @@ public class GraphFactory {
             }
             rootKeywordVertices.get(i).categorySimilarityVector.set(i, (double) 1);
         }
+
+        for(int i = 0; i < keywordVertices.size(); i++){
+            keywordVertices.get(i).setDominantCategory();
+        }
+        for(int i = 0; i < rootKeywordVertices.size(); i++){
+            rootKeywordVertices.get(i).setDominantCategory();
+        }
     }
 
     public static void setDirectSubordinates(){

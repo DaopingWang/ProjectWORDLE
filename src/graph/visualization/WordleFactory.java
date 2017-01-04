@@ -11,8 +11,8 @@ import java.util.ArrayList;
  * Created by wang.daoping on 03.01.2017.
  */
 public class WordleFactory {
-    public static float SKETCH_X = 1000;
-    public static float SKETCH_Y = 1000;
+    public static float SKETCH_X = 1300;
+    public static float SKETCH_Y = 700;
 
     public static void renderWordle(ArrayList<Word[]> inputClusters, String searchWord){
         Sketch sketch = new Sketch(inputClusters, searchWord, SKETCH_X, SKETCH_Y);
