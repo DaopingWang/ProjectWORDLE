@@ -22,6 +22,7 @@ public class Main {
     public static final Boolean readCacheFile = true;
     public static final Boolean writeCacheFile = false;
 
+    // not ready for wordle renderer
     public static final Boolean enableRandomInputGenerator = false;
     public static final Boolean enableKeywordInspector = false;
     public static final Boolean enableWordleRenderer = true;
@@ -84,7 +85,7 @@ public class Main {
                     System.out.println("*** " + GraphFactory.searchKeywords.get(i).name + " " + Integer.toString(GraphFactory.searchKeywords.get(i).searchResults.size()) + " ***");
                     System.out.println();
                     ISODATAFactory.performISODATAClustering(GraphFactory.searchKeywords.get(i).searchResults,
-                            i,
+                            GraphFactory.searchKeywords.get(i),
                             GraphFactory.keywordVertices,
                             GraphFactory.rootKeywordVertices,
                             MAX_ITERATION_ISODATA,
@@ -97,8 +98,8 @@ public class Main {
                 if (enableWordleRenderer){
                     System.out.println();
                     System.out.println("********************************");
-                    System.out.println("\"exit\"...... terminate the renderer");
-                    System.out.println("any others...... render next cluster");
+                    System.out.println("\"exit\" terminates the renderer");
+                    System.out.println("any other inputs will render the next search result");
                     for(int i = 0; i < GraphFactory.searchKeywords.size(); i++){
                         WordleFactory.renderWordle(GraphFactory.searchKeywords.get(i).clusters, GraphFactory.searchKeywords.get(i).countOriginalMembers, GraphFactory.searchKeywords.get(i).name, WORDLE_SKETCH_WIDTH, WORDLE_SKETCH_HEIGHT);
                         Scanner scanner = new Scanner(System.in);
@@ -189,7 +190,6 @@ public class Main {
             Utility.reinitializer(GraphFactory.keywordVertices, GraphFactory.rootKeywordVertices);
             GraphFactory.calculateSparseVector(Utility.randomInputGenerator(Integer.parseInt(userin), 500, 1));
             KMeansFactory.performSquareErrorClustering(Utility.randomInputGenerator(Integer.parseInt(userin), 500, 1), GraphFactory.rootKeywordVertices);
-            //ISODATAFactory.performISODATAClustering(Utility.randomInputGenerator(Integer.parseInt(userin), 500, 1));
             System.out.println(Integer.toString(CoreFunctions.abandonedKeywords));
             System.out.println();
             System.out.println("RANDOMGEN:\"Enter random number\" ");

@@ -7,6 +7,7 @@ import graph.clustering.algorithm.process.CoreFunctions;
 import graph.clustering.algorithm.process.Initializer;
 import graph.clustering.vertex.KeywordVertex;
 import graph.clustering.vertex.RootKeywordVertex;
+import graph.clustering.vertex.SearchKeyword;
 import graph.clustering.vertex.Vertex;
 
 import java.util.ArrayList;
@@ -77,9 +78,18 @@ public class ISODATAFactory {
     /**
      * performs the so called ISODATA clustering algorithm for the input list.
      * @param inputKeywords input keyword list
+     * @param currentSearchKeyword current set of search results
+     * @param keywordVertices all keywords from csv file
+     * @param rootKeywordVertices all root keywords from csv file
+     * @param maxIteration
+     * @param minClusterSize
+     * @param minInterclusterDistance
+     * @param maxStandardDeviation
+     * @param maxPair
+     * @param maxASD
      */
     public static void performISODATAClustering(ArrayList<KeywordVertex> inputKeywords,
-                                                int searchKeywordIndex,
+                                                SearchKeyword currentSearchKeyword,
                                                 ArrayList<KeywordVertex> keywordVertices,
                                                 ArrayList<RootKeywordVertex> rootKeywordVertices,
                                                 int maxIteration,
@@ -146,8 +156,8 @@ public class ISODATAFactory {
             for(int z = 0; z < currentCategory.clusters.size(); z++){
 
                 Vertex[] vertexArray = CoreFunctions.convertClusterToVertexArray(currentCategory.clusters.get(z));
-                GraphFactory.searchKeywords.get(searchKeywordIndex).countOriginalMembers.add(currentCategory.clusters.get(z).memberVertices.size() + 1);
-                GraphFactory.searchKeywords.get(searchKeywordIndex).clusters.add(vertexArray);
+                currentSearchKeyword.countOriginalMembers.add(currentCategory.clusters.get(z).memberVertices.size() + 1);
+                currentSearchKeyword.clusters.add(vertexArray);
 
             }
 

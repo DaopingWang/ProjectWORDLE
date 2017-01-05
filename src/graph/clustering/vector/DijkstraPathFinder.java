@@ -13,7 +13,28 @@ import java.util.LinkedList;
 /**
  * Created by Wang.Daoping on 05.12.2016.
  */
+
+/**
+ * In order to apply the k-means clustering algorithm on our keywords, we need
+ * to firstly define a specific vector space for each set of keywords, individually.
+ * To find out how keywords are chosen as the dimensions / coordinates of
+ * these vector spaces, see Initializer.checkMasterQualification() method.
+ *
+ * After defining the vector space, we have to compute the distance between each keyword-cluster center
+ * and between keyword-keyword. The coordinates of each keyword within a cluster are calculated in this class.
+ */
 public class DijkstraPathFinder {
+
+    /**
+     * calculates the shortest paths from the starting keyword to every other keyword using the
+     * dijkstra algorithm.
+     * The distance between the starting keyword and a unreachable keyword is undefined, which is zero
+     * due to the way SparseDoubleMatrix1D of colt is implemented.
+     * The distance between the starting keyword and itself is zero.
+     * @param startVertex the keyword we select as the start vertex
+     * @param keywordVertices all keywords from the csv file
+     * @param rootKeywordVertices all root keywords from the csv file
+     */
     public static void findSingleSourceShortestPath(KeywordVertex startVertex,
                                                     ArrayList<KeywordVertex> keywordVertices,
                                                     ArrayList<RootKeywordVertex> rootKeywordVertices){
