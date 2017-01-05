@@ -24,6 +24,7 @@ public class Main {
 
     public static final Boolean enableRandomInputGenerator = false;
     public static final Boolean enableKeywordInspector = false;
+    public static final Boolean enableWordleRenderer = true;
 
     public static final int CLUSTERING_MODE = 1;
     public static final String TARGET_WORD = null;
@@ -32,15 +33,15 @@ public class Main {
     public static final float WORDLE_SKETCH_HEIGHT = 700;
 
     // ISODATA parameters
-    public static final int MAX_ITERATION = 1000;
+    public static final int MAX_ITERATION_ISODATA = 1000;
     public static final int MIN_CLUSTER_SIZE = 1;
     public static final double MIN_INTERCLUSTER_DISTANCE = 0.45;
     public static final double MAX_STANDARD_DEVIATION = 0.1;
     public static final int MAX_PAIR = 3;
     public static final double MAX_ASD = 0.5;
 
-    // Traditional KMeans parameters
-    public static final int MAX_ITERATION_KMEANS = 10000;
+    // Traditional K-Means parameters
+    public static final int MAX_ITERATION_K_MEANS = 10000;
     public static final double MAX_ERROR = 0.5;
     public static final int MAX_REALLOC_COUNT = 0;
     public static final int MAX_MEMBER_COUNT = 15;
@@ -86,19 +87,22 @@ public class Main {
                             i,
                             GraphFactory.keywordVertices,
                             GraphFactory.rootKeywordVertices,
-                            MAX_ITERATION,
+                            MAX_ITERATION_ISODATA,
                             MIN_CLUSTER_SIZE,
                             MIN_INTERCLUSTER_DISTANCE,
                             MAX_STANDARD_DEVIATION,
                             MAX_PAIR,
                             MAX_ASD);
                 }
-                for(int i = 0; i < GraphFactory.searchKeywords.size(); i++){
-                    WordleFactory.renderWordle(GraphFactory.searchKeywords.get(i).clusters, GraphFactory.searchKeywords.get(i).countOriginalMembers, GraphFactory.searchKeywords.get(i).name, WORDLE_SKETCH_WIDTH, WORDLE_SKETCH_HEIGHT);
-                    try {
-                        System.in.read();
-                    } catch (Exception e){
-                        e.printStackTrace();
+                if (enableWordleRenderer){
+                    System.out.println();
+                    System.out.println("********************************");
+                    System.out.println("\"exit\"...... terminate the renderer");
+                    System.out.println("any others...... render next cluster");
+                    for(int i = 0; i < GraphFactory.searchKeywords.size(); i++){
+                        WordleFactory.renderWordle(GraphFactory.searchKeywords.get(i).clusters, GraphFactory.searchKeywords.get(i).countOriginalMembers, GraphFactory.searchKeywords.get(i).name, WORDLE_SKETCH_WIDTH, WORDLE_SKETCH_HEIGHT);
+                        Scanner scanner = new Scanner(System.in);
+                        if(scanner.nextLine().equals("exit")) break;
                     }
                 }
                 break;
@@ -116,18 +120,22 @@ public class Main {
                     KMeansFactory.performSquareErrorClustering(GraphFactory.searchKeywords.get(i).searchResults,
                             GraphFactory.rootKeywordVertices,
                             GraphFactory.keywordVertices,
-                            MAX_ITERATION_KMEANS,
+                            MAX_ITERATION_K_MEANS,
                             MAX_ERROR,
                             MAX_REALLOC_COUNT,
                             MAX_MEMBER_COUNT,
                             MIN_MEMBER_COUNT);
                 }
-                for(int i = 0; i < GraphFactory.searchKeywords.size(); i++){
-                    WordleFactory.renderWordle(GraphFactory.searchKeywords.get(i).clusters, GraphFactory.searchKeywords.get(i).countOriginalMembers, GraphFactory.searchKeywords.get(i).name, WORDLE_SKETCH_WIDTH, WORDLE_SKETCH_HEIGHT);
-                    try {
-                        System.in.read();
-                    } catch (Exception e){
-                        e.printStackTrace();
+                if (enableWordleRenderer){
+                    System.out.println();
+                    System.out.println("********************************");
+                    System.out.println("\"exit\" terminates the renderer");
+                    System.out.println("any other inputs will render the next search result");
+                    for(int i = 0; i < GraphFactory.searchKeywords.size(); i++){
+                        WordleFactory.renderWordle(GraphFactory.searchKeywords.get(i).clusters, GraphFactory.searchKeywords.get(i).countOriginalMembers, GraphFactory.searchKeywords.get(i).name, WORDLE_SKETCH_WIDTH, WORDLE_SKETCH_HEIGHT);
+
+                        Scanner scanner = new Scanner(System.in);
+                        if(scanner.nextLine().equals("exit")) break;
                     }
                 }
                 break;
@@ -168,6 +176,9 @@ public class Main {
                 System.exit(666);
             }
         }
+
+        System.out.println("ProjectWordle closed successfully.");
+        System.exit(666);
     }
 
     public static void randomizer(){

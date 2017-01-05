@@ -199,7 +199,7 @@ public class GraphFactory {
         String rawFilepath = rawOrderPath + "Keyword_Graph.csv";
         int index;
 
-        CSVReader reader = new CSVReader(new InputStreamReader(new FileInputStream(rawFilepath), "Cp1252"), ',', '\"', 1);
+        CSVReader reader = new CSVReader(new InputStreamReader(new FileInputStream(rawFilepath), "Cp1252"), ';', '\"', 1);
         while((lineBuffer = reader.readNext()) != null){
             System.out.println(lineBuffer[0] + " " + lineBuffer[1]);
             switch (lineBuffer[1]){

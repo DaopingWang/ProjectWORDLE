@@ -4,6 +4,7 @@ package graph.visualization;
  */
 
 import processing.core.PApplet;
+import processing.core.PSurface;
 import wordcram.*;
 
 import java.util.ArrayList;
@@ -37,6 +38,7 @@ public class Sketch extends PApplet{
     }
 
     public void setup(){
+        removeExitEvent(getSurface());
         noLoop();
         this.wordleRenderer = new WordleRenderer(this);
     }
@@ -62,4 +64,11 @@ public class Sketch extends PApplet{
         //surface.setVisible(false);
     }
 
+    static final void removeExitEvent(final PSurface surf) {
+        final java.awt.Window win
+                = ((processing.awt.PSurfaceAWT.SmoothCanvas) surf.getNative()).getFrame();
+
+        for (final java.awt.event.WindowListener evt : win.getWindowListeners())
+            win.removeWindowListener(evt);
+    }
 }
