@@ -1,6 +1,7 @@
 package graph.clustering;
 
 import graph.clustering.vertex.KeywordVertex;
+import graph.clustering.vertex.RootKeywordVertex;
 
 import java.util.ArrayList;
 
@@ -58,15 +59,17 @@ public class InputKeywordComparator {
         }
     }
 
-    public static KeywordVertex findMostSimilarKeywordOf(String inputKeyword){
+    public static KeywordVertex findMostSimilarKeywordOf(String inputKeyword,
+                                                         ArrayList<KeywordVertex> keywordVertices,
+                                                         ArrayList<RootKeywordVertex> rootKeywordVertices){
         double maxSimilarity = 0;
         double currentSimilarity;
         KeywordVertex mostSimilarKeyword = null;
-        for(int i = 0; i < GraphFactory.keywordVertices.size(); i++){
-            currentSimilarity = InputKeywordComparator.compareStrings(GraphFactory.keywordVertices.get(i).name, inputKeyword);
+        for(int i = 0; i < keywordVertices.size(); i++){
+            currentSimilarity = InputKeywordComparator.compareStrings(keywordVertices.get(i).name, inputKeyword);
             if(maxSimilarity < currentSimilarity){
                 maxSimilarity = currentSimilarity;
-                mostSimilarKeyword = GraphFactory.keywordVertices.get(i);
+                mostSimilarKeyword = keywordVertices.get(i);
             }
         }
         return mostSimilarKeyword;

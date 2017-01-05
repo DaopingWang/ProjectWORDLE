@@ -229,8 +229,8 @@ public class GraphFactory {
             initializeProbabilityLists(keywordVertices.get(i));
         }
         setDirectSubordinates();
-        GraphParser.calculateLayers();
-        GraphParser.calculateEdgesWeights();
+        GraphParser.calculateLayers(keywordVertices, rootKeywordVertices);
+        GraphParser.calculateEdgesWeights(keywordVertices, rootKeywordVertices);
 
         DijkstraPathFinder.initSparseVectors(keywordVertices, rootKeywordVertices);
         int percentage;

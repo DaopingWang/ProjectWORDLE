@@ -4,26 +4,25 @@ import graph.clustering.GraphFactory;
 import graph.clustering.Utility;
 import graph.clustering.vertex.Edge;
 import graph.clustering.vertex.KeywordVertex;
+import graph.clustering.vertex.RootKeywordVertex;
 
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.Stack;
-import java.util.Vector;
+import java.util.*;
 
 /**
  * Created by Wang.Daoping on 02.12.2016.
  */
 public class GraphParser {
-    public static void calculateLayers(){
+    public static void calculateLayers(ArrayList<KeywordVertex> keywordVertices,
+                                       ArrayList<RootKeywordVertex> rootKeywordVertices){
         KeywordVertex v;
         LinkedList<KeywordVertex> bfsQueue = new LinkedList<>();
 
-        for(int i = 0; i < GraphFactory.rootKeywordVertices.size(); i++){
-            for(int j = 0; j < GraphFactory.rootKeywordVertices.get(i).subordinateList.size(); j++){
-                for(int k = 0; k < GraphFactory.keywordVertices.size(); k++){
-                    if(GraphFactory.keywordVertices.get(k).name.equals(GraphFactory.rootKeywordVertices.get(i).subordinateList.get(j))){
-                        bfsQueue.offer(GraphFactory.keywordVertices.get(k));
-                        GraphFactory.keywordVertices.get(k).setLayer(1);
+        for(int i = 0; i < rootKeywordVertices.size(); i++){
+            for(int j = 0; j < rootKeywordVertices.get(i).subordinateList.size(); j++){
+                for(int k = 0; k < keywordVertices.size(); k++){
+                    if(keywordVertices.get(k).name.equals(rootKeywordVertices.get(i).subordinateList.get(j))){
+                        bfsQueue.offer(keywordVertices.get(k));
+                        keywordVertices.get(k).setLayer(1);
                         GraphFactory.layerNum = 0;
                     }
                 }
@@ -34,26 +33,27 @@ public class GraphParser {
         while(!bfsQueue.isEmpty()){
             v = bfsQueue.pollFirst();
             for(int i = 0; i < v.subordinateList.size(); i++){
-                if(GraphFactory.keywordVertices.get(Utility.findIndexForName(v.subordinateList.get(i), GraphFactory.keywordVertices)).layerIsUnset()){
-                    GraphFactory.keywordVertices.get(Utility.findIndexForName(v.subordinateList.get(i), GraphFactory.keywordVertices)).setLayer(v.layer + 1);
+                if(keywordVertices.get(Utility.findIndexForName(v.subordinateList.get(i), keywordVertices)).layerIsUnset()){
+                    keywordVertices.get(Utility.findIndexForName(v.subordinateList.get(i), keywordVertices)).setLayer(v.layer + 1);
                     if(GraphFactory.layerNum < v.layer + 1){
                         GraphFactory.layerNum = v.layer + 1;
                     }
-                    bfsQueue.offerLast(GraphFactory.keywordVertices.get(Utility.findIndexForName(v.subordinateList.get(i), GraphFactory.keywordVertices)));
+                    bfsQueue.offerLast(keywordVertices.get(Utility.findIndexForName(v.subordinateList.get(i), keywordVertices)));
                 }
             }
         }
     }
 
-    public static void calculateEdgesWeights(){
+    public static void calculateEdgesWeights(ArrayList<KeywordVertex> keywordVertices,
+                                             ArrayList<RootKeywordVertex> rootKeywordVertices){
         String currentEndVertexName;
         Edge currentEdge;
 
         System.out.println("Start edges calculations...");
-        for(int i = 0; i < GraphFactory.keywordVertices.size(); i++){
-            for(int j = 0; j < GraphFactory.keywordVertices.get(i).edgeList.size(); j++){
-                currentEndVertexName = GraphFactory.keywordVertices.get(i).edgeList.get(j).getTargetVertexName();
-                currentEdge = GraphFactory.keywordVertices.get(i).edgeList.get(j);
+        for(int i = 0; i < keywordVertices.size(); i++){
+            for(int j = 0; j < keywordVertices.get(i).edgeList.size(); j++){
+                currentEndVertexName = keywordVertices.get(i).edgeList.get(j).getTargetVertexName();
+                currentEdge = keywordVertices.get(i).edgeList.get(j);
 
                 if(Utility.isRootKeyword(currentEndVertexName)){
                     currentEdge.setEdgeWeight(0);

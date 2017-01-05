@@ -81,8 +81,12 @@ public class CoreFunctions {
      * @param maxIteration Number of iteration
      * @param maxRealloc Maximum permitted reallocation count
      * @param i index of the current category
+     * @param rootKeywordVertices root keywords from data set
      */
-    public static void performKMeans(int maxIteration, int maxRealloc, int i){
+    public static void performKMeans(int maxIteration,
+                                     int maxRealloc,
+                                     int i,
+                                     ArrayList<RootKeywordVertex> rootKeywordVertices){
         int iteration = 0;
         int reallocCount = Integer.MAX_VALUE;
         ArrayList<KeywordVertex> currentCategoryMembers = categories.get(i).categoryMembers;
@@ -121,7 +125,7 @@ public class CoreFunctions {
             }
             iteration++;
         }
-        setGrandMaster(categories.get(i));
+        setGrandMaster(categories.get(i), rootKeywordVertices);
 
         /*
         double overallAverage = 0;
@@ -137,15 +141,17 @@ public class CoreFunctions {
      * finds for each cluster the closest common parent keyword, which is the smallest coordinate
      * of the cluster center vector that is reachable from every cluster member.
      * @param category current category
+     * @param rootKeywordVertices root keywords from data set
      */
-    public static void setGrandMaster(Category category){
+    public static void setGrandMaster(Category category,
+                                      ArrayList<RootKeywordVertex> rootKeywordVertices){
         for(int j = 0; j < category.clusters.size(); j++){
             Cluster currentCluster = category.clusters.get(j);
             int masterIndex;
             if((masterIndex = Utility.findIndexOfMinEntry(currentCluster.masterSimilarityCentroid, currentCluster)) != -1){
                 currentCluster.grandMaster = category.masterVertices.get(masterIndex);
             } else {
-                currentCluster.grandMaster = GraphFactory.rootKeywordVertices.get(category.categoryIndex);
+                currentCluster.grandMaster = rootKeywordVertices.get(category.categoryIndex);
             }
         }
     }

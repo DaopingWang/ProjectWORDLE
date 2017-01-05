@@ -6,6 +6,7 @@ import graph.clustering.algorithm.process.Cluster;
 import graph.clustering.algorithm.process.CoreFunctions;
 import graph.clustering.algorithm.process.Initializer;
 import graph.clustering.vertex.KeywordVertex;
+import graph.clustering.vertex.RootKeywordVertex;
 import graph.clustering.vertex.Vertex;
 
 import java.util.ArrayList;
@@ -77,7 +78,10 @@ public class ISODATAFactory {
      * performs the so called ISODATA clustering algorithm for the input list.
      * @param inputKeywords input keyword list
      */
-    public static void performISODATAClustering(ArrayList<KeywordVertex> inputKeywords, int searchKeywordIndex){
+    public static void performISODATAClustering(ArrayList<KeywordVertex> inputKeywords,
+                                                int searchKeywordIndex,
+                                                ArrayList<KeywordVertex> keywordVertices,
+                                                ArrayList<RootKeywordVertex> rootKeywordVertices){
 
         GraphFactory.calculateSparseVector(inputKeywords);
 
@@ -99,7 +103,7 @@ public class ISODATAFactory {
 
                 do{
                     // step 2
-                    CoreFunctions.performKMeans(currentCategory.maxIter, KMeansFactory.MAX_REALLOC_COUNT, i);
+                    CoreFunctions.performKMeans(currentCategory.maxIter, KMeansFactory.MAX_REALLOC_COUNT, i, rootKeywordVertices);
 
                     // step 3 + 4
                 } while (CoreFunctions.clusterSuspended);
@@ -127,7 +131,7 @@ public class ISODATAFactory {
                 // step 10
                 mergeClusterPairs(minClusterPair, currentCategory);
             }
-            CoreFunctions.setGrandMaster(currentCategory);
+            CoreFunctions.setGrandMaster(currentCategory, rootKeywordVertices);
             CoreFunctions.mergeSameClusters(currentCategory);
             CoreFunctions.systemOutPrint(i);
 

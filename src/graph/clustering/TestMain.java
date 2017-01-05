@@ -5,11 +5,9 @@ import graph.clustering.algorithm.KMeansFactory;
 import graph.clustering.vertex.KeywordVertex;
 import graph.clustering.algorithm.process.*;
 import graph.visualization.WordleFactory;
-import wordcram.Word;
 
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Scanner;
 
 /**
@@ -35,8 +33,8 @@ public class TestMain {
             System.out.println();;
             System.out.println("*** " + GraphFactory.searchKeywords.get(i).name + " " + Integer.toString(GraphFactory.searchKeywords.get(i).searchResults.size()) + " ***");
             System.out.println();
-            //KMeansFactory.performSquareErrorClustering(GraphFactory.searchKeywords.get(i).searchResults);
-            ISODATAFactory.performISODATAClustering(GraphFactory.searchKeywords.get(i).searchResults, i);
+            //KMeansFactory.performSquareErrorClustering(GraphFactory.searchKeywords.get(i).searchResults, GraphFactory.rootKeywordVertices, GraphFactory.keywordVertices);
+            ISODATAFactory.performISODATAClustering(GraphFactory.searchKeywords.get(i).searchResults, i, GraphFactory.keywordVertices, GraphFactory.rootKeywordVertices);
         }
 
         for(int i = 0; i < GraphFactory.searchKeywords.size(); i++){
@@ -53,7 +51,7 @@ public class TestMain {
         System.out.println("PROBABOT:\"Enter keyword: \"");
         String userInput;
         while (!(userInput = scanner.nextLine()).equals("exit")){
-            KeywordVertex buffer = InputKeywordComparator.findMostSimilarKeywordOf(userInput);
+            KeywordVertex buffer = InputKeywordComparator.findMostSimilarKeywordOf(userInput, GraphFactory.keywordVertices, GraphFactory.rootKeywordVertices);
             System.out.println("Most similar keyword found: " + buffer.name);
 
             System.out.println(buffer.name + " in layer " + Integer.toString(buffer.layer) + " has edges to ");
@@ -93,7 +91,7 @@ public class TestMain {
         while(!(userin = sc.nextLine()).equals("exit")){
             Utility.reinitializer(GraphFactory.keywordVertices, GraphFactory.rootKeywordVertices);
             GraphFactory.calculateSparseVector(Utility.randomInputGenerator(Integer.parseInt(userin), 500, 1));
-            KMeansFactory.performSquareErrorClustering(Utility.randomInputGenerator(Integer.parseInt(userin), 500, 1));
+            KMeansFactory.performSquareErrorClustering(Utility.randomInputGenerator(Integer.parseInt(userin), 500, 1), GraphFactory.rootKeywordVertices);
             //ISODATAFactory.performISODATAClustering(Utility.randomInputGenerator(Integer.parseInt(userin), 500, 1));
             System.out.println(Integer.toString(CoreFunctions.abandonedKeywords));
             System.out.println();

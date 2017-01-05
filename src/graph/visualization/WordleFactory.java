@@ -55,6 +55,7 @@ public class WordleFactory {
 
             for(int j = (int) originalMembers.get(i); j < list.get(i).length; j++){
                 buffer[j].setColor(sketch.color(100));          // set complementary words to a different color.
+                buffer[j].setSize(20);
             }
             buffer[0].setAngle(0);
                     //.setPlace(SKETCH_X / 4, SKETCH_Y / 3);

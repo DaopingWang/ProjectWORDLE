@@ -69,11 +69,13 @@ public class KMeansFactory {
      * performs the actual K-Means clustering algorithm.
      * @param inputKeywords given input data
      */
-    public static void performSquareErrorClustering(ArrayList<KeywordVertex> inputKeywords){
+    public static void performSquareErrorClustering(ArrayList<KeywordVertex> inputKeywords,
+                                                    ArrayList<RootKeywordVertex> rootKeywordVertices,
+                                                    ArrayList<KeywordVertex> keywordVertices){
         GraphFactory.calculateSparseVector(inputKeywords);
 
         // step 1
-        Initializer.categoriesBasedInitializer(inputKeywords, GraphFactory.keywordVertices);
+        Initializer.categoriesBasedInitializer(inputKeywords, keywordVertices);
 
         for(int i = 0; i < CoreFunctions.categories.size(); i++){
 
@@ -109,7 +111,7 @@ public class KMeansFactory {
 */
             do {
                 // step 2 + 3
-                CoreFunctions.performKMeans(MAX_ITERATION, MAX_REALLOC_COUNT, i);
+                CoreFunctions.performKMeans(MAX_ITERATION, MAX_REALLOC_COUNT, i, rootKeywordVertices);
                 ISODATAFactory.assignDeltaDistance(CoreFunctions.categories.get(i));
                 } while (splitCluster(CoreFunctions.categories.get(i)));
 
@@ -209,4 +211,5 @@ public class KMeansFactory {
         System.out.println("FORGY Square Error: " + Double.toString(CoreFunctions.squareError));
         System.out.println("Iterations: " + Integer.toString(iteration));
     }
+
 }
