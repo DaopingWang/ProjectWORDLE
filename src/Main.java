@@ -31,6 +31,21 @@ public class Main {
     public static final float WORDLE_SKETCH_WIDTH = 1300;
     public static final float WORDLE_SKETCH_HEIGHT = 700;
 
+    // ISODATA parameters
+    public static final int MAX_ITERATION = 1000;
+    public static final int MIN_CLUSTER_SIZE = 1;
+    public static final double MIN_INTERCLUSTER_DISTANCE = 0.45;
+    public static final double MAX_STANDARD_DEVIATION = 0.1;
+    public static final int MAX_PAIR = 3;
+    public static final double MAX_ASD = 0.5;
+
+    // Traditional KMeans parameters
+    public static final int MAX_ITERATION_KMEANS = 10000;
+    public static final double MAX_ERROR = 0.5;
+    public static final int MAX_REALLOC_COUNT = 0;
+    public static final int MAX_MEMBER_COUNT = 15;
+    public static final int MIN_MEMBER_COUNT = 2;
+
     public static void main(String[] args){
 
         if(parseRawFile){
@@ -67,8 +82,16 @@ public class Main {
                     System.out.println();
                     System.out.println("*** " + GraphFactory.searchKeywords.get(i).name + " " + Integer.toString(GraphFactory.searchKeywords.get(i).searchResults.size()) + " ***");
                     System.out.println();
-                    //KMeansFactory.performSquareErrorClustering(GraphFactory.searchKeywords.get(i).searchResults, GraphFactory.rootKeywordVertices, GraphFactory.keywordVertices);
-                    ISODATAFactory.performISODATAClustering(GraphFactory.searchKeywords.get(i).searchResults, i, GraphFactory.keywordVertices, GraphFactory.rootKeywordVertices);
+                    ISODATAFactory.performISODATAClustering(GraphFactory.searchKeywords.get(i).searchResults,
+                            i,
+                            GraphFactory.keywordVertices,
+                            GraphFactory.rootKeywordVertices,
+                            MAX_ITERATION,
+                            MIN_CLUSTER_SIZE,
+                            MIN_INTERCLUSTER_DISTANCE,
+                            MAX_STANDARD_DEVIATION,
+                            MAX_PAIR,
+                            MAX_ASD);
                 }
                 for(int i = 0; i < GraphFactory.searchKeywords.size(); i++){
                     WordleFactory.renderWordle(GraphFactory.searchKeywords.get(i).clusters, GraphFactory.searchKeywords.get(i).countOriginalMembers, GraphFactory.searchKeywords.get(i).name, WORDLE_SKETCH_WIDTH, WORDLE_SKETCH_HEIGHT);
@@ -90,7 +113,14 @@ public class Main {
                     System.out.println();
                     System.out.println("*** " + GraphFactory.searchKeywords.get(i).name + " " + Integer.toString(GraphFactory.searchKeywords.get(i).searchResults.size()) + " ***");
                     System.out.println();
-                    KMeansFactory.performSquareErrorClustering(GraphFactory.searchKeywords.get(i).searchResults, GraphFactory.rootKeywordVertices, GraphFactory.keywordVertices);
+                    KMeansFactory.performSquareErrorClustering(GraphFactory.searchKeywords.get(i).searchResults,
+                            GraphFactory.rootKeywordVertices,
+                            GraphFactory.keywordVertices,
+                            MAX_ITERATION_KMEANS,
+                            MAX_ERROR,
+                            MAX_REALLOC_COUNT,
+                            MAX_MEMBER_COUNT,
+                            MIN_MEMBER_COUNT);
                 }
                 for(int i = 0; i < GraphFactory.searchKeywords.size(); i++){
                     WordleFactory.renderWordle(GraphFactory.searchKeywords.get(i).clusters, GraphFactory.searchKeywords.get(i).countOriginalMembers, GraphFactory.searchKeywords.get(i).name, WORDLE_SKETCH_WIDTH, WORDLE_SKETCH_HEIGHT);

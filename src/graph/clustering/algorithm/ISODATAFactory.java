@@ -47,32 +47,32 @@ public class ISODATAFactory {
     /**
      * Number of iteration
      */
-    public static final int MAX_ITERATION = 1000;
+    public static int MAX_ITERATION;
 
     /**
      * Minimum permitted number of points of a single cluster
      */
-    public static final int MIN_CLUSTER_SIZE = 1;
+    public static int MIN_CLUSTER_SIZE;
 
     /**
      * Minimum permitted intercluster distance
      */
-    public static final double MIN_INTERCLUSTER_DISTANCE = 0.45;
+    public static double MIN_INTERCLUSTER_DISTANCE;
 
     /**
      * Maximum permitted standard deviation
      */
-    public static final double MAX_STANDARD_DEVIATION = 0.1;
+    public static double MAX_STANDARD_DEVIATION;
 
     /**
      * Maximum permitted number of pairs that can be merged at one iteration
      */
-    public static final int MAX_PAIR = 3;
+    public static int MAX_PAIR;
 
     /**
      * Maximum permitted average squared distance
      */
-    public static final double MAX_ASD = 0.5;
+    public static double MAX_ASD;
 
     /**
      * performs the so called ISODATA clustering algorithm for the input list.
@@ -81,8 +81,15 @@ public class ISODATAFactory {
     public static void performISODATAClustering(ArrayList<KeywordVertex> inputKeywords,
                                                 int searchKeywordIndex,
                                                 ArrayList<KeywordVertex> keywordVertices,
-                                                ArrayList<RootKeywordVertex> rootKeywordVertices){
+                                                ArrayList<RootKeywordVertex> rootKeywordVertices,
+                                                int maxIteration,
+                                                int minClusterSize,
+                                                double minInterclusterDistance,
+                                                double maxStandardDeviation,
+                                                int maxPair,
+                                                double maxASD){
 
+        setParameters(maxIteration, minClusterSize, minInterclusterDistance, maxStandardDeviation, maxPair, maxASD);
         GraphFactory.calculateSparseVector(inputKeywords);
 
         // step 1
@@ -157,6 +164,30 @@ public class ISODATAFactory {
                 }
             }*/
         }
+    }
+
+    /**
+     * sets all parameter to input values
+     * @param maxIteration
+     * @param minClusterSize
+     * @param minInterclusterDistance
+     * @param maxStandardDeviation
+     * @param maxPair
+     * @param maxASD
+     */
+    private static void setParameters(int maxIteration,
+                                      int minClusterSize,
+                                      double minInterclusterDistance,
+                                      double maxStandardDeviation,
+                                      int maxPair,
+                                      double maxASD){
+
+        MAX_ITERATION = maxIteration;
+        MIN_CLUSTER_SIZE = minClusterSize;
+        MIN_INTERCLUSTER_DISTANCE = minInterclusterDistance;
+        MAX_STANDARD_DEVIATION = maxStandardDeviation;
+        MAX_PAIR = maxPair;
+        MAX_ASD = maxASD;
 
     }
 

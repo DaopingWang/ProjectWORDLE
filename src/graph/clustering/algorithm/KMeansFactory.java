@@ -42,28 +42,28 @@ public class KMeansFactory {
     /**
      * Number of iteration
      */
-    public static final int MAX_ITERATION = 10000;
+    public static int MAX_ITERATION;
 
     /**
      * Maximum internal distance
      */
-    public static final double MAX_ERROR = 0.5;
+    public static double MAX_ERROR;
 
     /**
      * If the number of position changes exceeds this parameter,
      * the iteration will continue. If not, the clustering converges.
      */
-    public static final int MAX_REALLOC_COUNT = 0;
+    public static int MAX_REALLOC_COUNT;
 
     /**
      * Maximum permitted number of members of a single cluster
      */
-    public static final int MAX_MEMBER_COUNT = 15;
+    public static int MAX_MEMBER_COUNT;
 
     /**
      * Minimum permitted number of members of a single cluster
      */
-    public static final int MIN_MEMBER_COUNT = 2;
+    public static int MIN_MEMBER_COUNT;
 
     /**
      * performs the actual K-Means clustering algorithm.
@@ -71,7 +71,13 @@ public class KMeansFactory {
      */
     public static void performSquareErrorClustering(ArrayList<KeywordVertex> inputKeywords,
                                                     ArrayList<RootKeywordVertex> rootKeywordVertices,
-                                                    ArrayList<KeywordVertex> keywordVertices){
+                                                    ArrayList<KeywordVertex> keywordVertices,
+                                                    int maxIteration,
+                                                    double maxError,
+                                                    int maxReallocCount,
+                                                    int maxMemberCount,
+                                                    int minMemberCount){
+        setParameters(maxIteration, maxError, maxReallocCount, maxMemberCount, minMemberCount);
         GraphFactory.calculateSparseVector(inputKeywords);
 
         // step 1
@@ -125,6 +131,26 @@ public class KMeansFactory {
         DecimalFormat f = new DecimalFormat("#0.00");
         System.out.println("DropRate " + f.format(CoreFunctions.dropRate * 100) + "%");
         System.out.println();
+    }
+
+    /**
+     * sets parameters to input values
+     * @param maxIteration
+     * @param maxError
+     * @param maxReallocCount
+     * @param maxMemberCount
+     * @param minMemberCount
+     */
+    private static void setParameters(int maxIteration,
+                                      double maxError,
+                                      int maxReallocCount,
+                                      int maxMemberCount,
+                                      int minMemberCount){
+        MAX_ITERATION = maxIteration;
+        MAX_ERROR = maxError;
+        MAX_REALLOC_COUNT = maxReallocCount;
+        MAX_MEMBER_COUNT = maxMemberCount;
+        MIN_MEMBER_COUNT = minMemberCount;
     }
 
     /**
