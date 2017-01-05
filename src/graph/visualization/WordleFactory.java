@@ -16,8 +16,12 @@ public class WordleFactory {
 
     public static void renderWordle(ArrayList<Vertex[]> list,
                                     ArrayList originalMembers,
-                                    String title){
+                                    String title,
+                                    float width,
+                                    float height){
 
+        SKETCH_X = width;
+        SKETCH_Y = height;
         Sketch sketch = new Sketch(SKETCH_X, SKETCH_Y);
         ArrayList<Word[]> words = convertKeywordListToWords(list, originalMembers, sketch);
         sketch.setClusters(words);

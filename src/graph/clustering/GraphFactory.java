@@ -21,14 +21,16 @@ public class GraphFactory {
     public static ArrayList<Article> articles;
     public static int layerNum = 0;
 
-    public static void readGraphFromParsedCSV(String filename) throws IOException{
+    public static void readGraphFromParsedCSV(String cachePath) throws IOException{
         keywordVertices = new ArrayList<>();
         rootKeywordVertices = new ArrayList<>();
         String[] lineBuffer = null;
+        String parsedCSVFilepath = cachePath + "ParsedCSV.csv";
+
         int index;
 
         System.out.println("Read ParsedCSV...");
-        CSVReader reader = new CSVReader(new InputStreamReader(new FileInputStream(filename), "Cp1252"), ';', '\"', 0);
+        CSVReader reader = new CSVReader(new InputStreamReader(new FileInputStream(parsedCSVFilepath), "Cp1252"), ';', '\"', 0);
         try {
             while ((lineBuffer = reader.readNext()) != null) {
                 switch (Integer.parseInt(lineBuffer[1])) {
@@ -72,10 +74,10 @@ public class GraphFactory {
         //calculateProbabilityList();
 
 
-        readProbabilityListFromCSV("C:/Users/wang.daoping/Documents/project_wordle_cache/ProbabilityCSV.csv");
-        readSubordinatesListFromCSV("C:/Users/wang.daoping/Documents/project_wordle_cache/SubordinatesCSV.csv");
-        readArticlesFromCSV("C:/Users/wang.daoping/Documents/project_wordle_cache/Keywords_Artikel.csv");
-        readSearchExampleFromCSV("C:/Users/wang.daoping/Documents/project_wordle_cache/Suchen_example.csv");
+        readProbabilityListFromCSV(cachePath + "ProbabilityCSV.csv");
+        readSubordinatesListFromCSV(cachePath + "SubordinatesCSV.csv");
+        readArticlesFromCSV(cachePath + "Keywords_Artikel.csv");
+        readSearchExampleFromCSV(cachePath + "Suchen_example.csv");
     }
 
     public static void readArticlesFromCSV(String filename) throws IOException{
@@ -190,13 +192,14 @@ public class GraphFactory {
         reader.close();
     }
 
-    public static void parseGraphFromRawCSV(String filename) throws IOException{
+    public static void parseGraphFromRawCSV(String rawOrderPath) throws IOException{
         keywordVertices = new ArrayList<>();
         rootKeywordVertices = new ArrayList<>();
         String[] lineBuffer;
+        String rawFilepath = rawOrderPath + "Keyword_Graph.csv";
         int index;
 
-        CSVReader reader = new CSVReader(new InputStreamReader(new FileInputStream(filename), "Cp1252"), ',', '\"', 1);
+        CSVReader reader = new CSVReader(new InputStreamReader(new FileInputStream(rawFilepath), "Cp1252"), ',', '\"', 1);
         while((lineBuffer = reader.readNext()) != null){
             System.out.println(lineBuffer[0] + " " + lineBuffer[1]);
             switch (lineBuffer[1]){
@@ -244,8 +247,8 @@ public class GraphFactory {
             }
         }
         calculateProbabilityList();
-        readArticlesFromCSV("C:/Users/wang.daoping/Documents/project_wordle_cache/Keywords_Artikel.csv");
-        readSearchExampleFromCSV("C:/Users/wang.daoping/Documents/project_wordle_cache/Suchen_example.csv");
+        readArticlesFromCSV(rawOrderPath + "Keywords_Artikel.csv");
+        readSearchExampleFromCSV(rawOrderPath + "Suchen_example.csv");
     }
 
     public static void createProbabilityCSVFromGraph(String filepath) throws IOException{
