@@ -14,12 +14,20 @@ public class WordleFactory {
     public static float SKETCH_X = 1300;
     public static float SKETCH_Y = 700;
 
-    public static void renderWordle(ArrayList<Word[]> inputClusters, String searchWord){
-        Sketch sketch = new Sketch(inputClusters, searchWord, SKETCH_X, SKETCH_Y);
+    public static void renderWordle(ArrayList<Vertex[]> list,
+                                    ArrayList originalMembers,
+                                    String title){
+
+        Sketch sketch = new Sketch(SKETCH_X, SKETCH_Y);
+        ArrayList<Word[]> words = convertKeywordListToWords(list, originalMembers, sketch);
+        sketch.setClusters(words);
+        sketch.setSearchW(title);
         PApplet.runSketch(new String[]{"graph.visualization.Sketch"}, sketch);
     }
 
-    public static ArrayList<Word[]> convertKeywordListToWords(ArrayList<Vertex[]> list){
+    public static ArrayList<Word[]> convertKeywordListToWords(ArrayList<Vertex[]> list,
+                                                              ArrayList originalMembers,
+                                                              Sketch sketch){
         ArrayList<Word[]> words = new ArrayList<>();
         for(int i = 0; i < list.size(); i++){
             int maxDuplicateCount = 0;
@@ -43,6 +51,10 @@ public class WordleFactory {
                 {
                     buffer[j].setAngle(PConstants.PI / 2f);
                 }
+            }
+
+            for(int j = (int) originalMembers.get(i); j < list.get(i).length; j++){
+                buffer[j].setColor(sketch.color(100));          // set complementary words to a different color.
             }
             buffer[0].setAngle(0);
                     //.setPlace(SKETCH_X / 4, SKETCH_Y / 3);

@@ -135,7 +135,9 @@ public class ISODATAFactory {
             for(int z = 0; z < currentCategory.clusters.size(); z++){
 
                 Vertex[] vertexArray = CoreFunctions.convertClusterToVertexArray(currentCategory.clusters.get(z));
+                GraphFactory.searchKeywords.get(searchKeywordIndex).countOriginalMembers.add(currentCategory.clusters.get(z).memberVertices.size() + 1);
                 GraphFactory.searchKeywords.get(searchKeywordIndex).clusters.add(vertexArray);
+
             }
 
             /*

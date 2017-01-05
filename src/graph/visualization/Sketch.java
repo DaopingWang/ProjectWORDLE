@@ -7,6 +7,7 @@ import processing.core.PApplet;
 import wordcram.*;
 
 import java.util.ArrayList;
+import java.util.StringJoiner;
 
 public class Sketch extends PApplet{
     private ArrayList<Word[]> clusters;
@@ -16,13 +17,19 @@ public class Sketch extends PApplet{
     private int x;
     private int y;
 
-    public Sketch(ArrayList<Word[]> words, String searchWord, float X, float Y){
+    public Sketch(float X, float Y){
         super();
-        this.clusters = words;
-        this.searchW = searchWord;
         this.counter = 0;
         this.x = (int) X;
         this.y = (int) Y;
+    }
+
+    public void setClusters(ArrayList<Word[]> words){
+        this.clusters = words;
+    }
+
+    public void setSearchW(String searchWord){
+        this.searchW = searchWord;
     }
 
     public void settings(){
