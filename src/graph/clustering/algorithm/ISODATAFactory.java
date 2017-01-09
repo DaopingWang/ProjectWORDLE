@@ -228,15 +228,16 @@ public class ISODATAFactory {
         for(int i = 0; i < currentCategory.clusters.size(); i++){
             Cluster currentCluster = currentCategory.clusters.get(i);
             if (currentCluster.maxStandardDeviation > currentCategory.stdv){
-                if((currentCluster.averageEuclideanDistance > currentCategory.overallAverageEuclideanDistance && currentCluster.memberVertices.size() > 2 * (currentCategory.samprm + 1)) || (currentCategory.clusters.size() <= 1 + currentCategory.numClus / 2)){
+                //if((currentCluster.averageEuclideanDistance > currentCategory.overallAverageEuclideanDistance && currentCluster.memberVertices.size() > 2 * (currentCategory.samprm + 1)) || (currentCategory.clusters.size() <= 1 + currentCategory.numClus / 2)){
                     currentCategory.clusters.remove(currentCluster);
                     Initializer.kMeansPPInitializer(2, currentCluster.memberVertices, currentCategory.clusters);
                     return true;
-                } else if(currentCluster.averageEuclideanDistance > MAX_ASD){
+                /*} else
+                    if(currentCluster.averageEuclideanDistance > MAX_ASD){
                     currentCategory.clusters.remove(currentCluster);
                     Initializer.kMeansPPInitializer(2, currentCluster.memberVertices, currentCategory.clusters);
                     return true;
-                }
+                }*/
             } else if(currentCluster.averageEuclideanDistance > MAX_ASD){
                 currentCategory.clusters.remove(currentCluster);
                 Initializer.kMeansPPInitializer(2, currentCluster.memberVertices, currentCategory.clusters);
@@ -287,8 +288,8 @@ public class ISODATAFactory {
             Cluster old2 = currentCategory.clusters.get(clusterPairs.get(i)[1]);
             if(!old1.involvedInMerge && !old2.involvedInMerge){
                 Cluster mergedCluster = new Cluster();
-                mergedCluster.memberVertices.addAll(old1.memberVertices);
-                mergedCluster.memberVertices.addAll(old2.memberVertices);
+                //mergedCluster.memberVertices.addAll(old1.memberVertices);
+                //mergedCluster.memberVertices.addAll(old2.memberVertices);
                 int memberCount1 = 0;
                 int memberCount2 = 0;
                 for(int k = 0; k < old1.memberVertices.size(); k++){
@@ -308,12 +309,10 @@ public class ISODATAFactory {
                 old2.involvedInMerge = true;
             }
         }
-        int size = currentCategory.clusters.size();
-        for(int i = 0; i < size; i++){
+        for(int i = 0; i < currentCategory.clusters.size(); i++){
             if(currentCategory.clusters.get(i).involvedInMerge){
                 currentCategory.clusters.remove(currentCategory.clusters.get(i));
                 i--;
-                size--;
             }
         }
     }

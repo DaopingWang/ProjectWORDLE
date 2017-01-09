@@ -15,6 +15,8 @@ public class CustomSwirlWordPlacer implements WordPlacer {
                          int wordImageWidth, int wordImageHeight, int fieldWidth,
                          int fieldHeight) {
 
+        // the greater this value is set, the farther radially each point is taken from the last point
+        // (the smaller the value, the denser the swirl)
         float normalizedIndex = (float) wordIndex / wordsCount / 10;
 
         float theta = normalizedIndex * 6 * PConstants.TWO_PI;

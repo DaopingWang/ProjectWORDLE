@@ -28,7 +28,9 @@ public class WordleRenderer {
                 .keepCase()
                 .sizedByRank(3, 50)
                 .withNudger(new PlottingWordNudger(parent, new CustomSpiralWordNudger()))
+                //.withNudger(new CustomSpiralWordNudger())
                 .withPlacer(new PlottingWordPlacer(parent, new CustomSwirlWordPlacer()))
+                //.withPlacer(new CustomSwirlWordPlacer())
                 .drawAll();
     }
 

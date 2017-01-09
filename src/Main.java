@@ -27,6 +27,7 @@ public class Main {
     public static final Boolean enableKeywordInspector = false;
     public static final Boolean enableWordleRenderer = true;
 
+    // 1 for ISODATA, 2 for traditional K-Means
     public static final int CLUSTERING_MODE = 1;
     public static final String TARGET_WORD = null;
 
@@ -36,10 +37,10 @@ public class Main {
     // ISODATA parameters
     public static final int MAX_ITERATION_ISODATA = 1000;
     public static final int MIN_CLUSTER_SIZE = 1;
-    public static final double MIN_INTERCLUSTER_DISTANCE = 0.45;
-    public static final double MAX_STANDARD_DEVIATION = 0.1;
-    public static final int MAX_PAIR = 3;
-    public static final double MAX_ASD = 0.5;
+    public static final double MIN_INTERCLUSTER_DISTANCE = 0.15;
+    public static final double MAX_STANDARD_DEVIATION = 0.4;
+    public static final int MAX_PAIR = 1;
+    public static final double MAX_ASD = 0.4;
 
     // Traditional K-Means parameters
     public static final int MAX_ITERATION_K_MEANS = 10000;
