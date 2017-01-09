@@ -119,6 +119,7 @@ public class Main {
                     System.out.println("*** " + GraphFactory.searchKeywords.get(i).name + " " + Integer.toString(GraphFactory.searchKeywords.get(i).searchResults.size()) + " ***");
                     System.out.println();
                     KMeansFactory.performSquareErrorClustering(GraphFactory.searchKeywords.get(i).searchResults,
+                            GraphFactory.searchKeywords.get(i),
                             GraphFactory.rootKeywordVertices,
                             GraphFactory.keywordVertices,
                             MAX_ITERATION_K_MEANS,

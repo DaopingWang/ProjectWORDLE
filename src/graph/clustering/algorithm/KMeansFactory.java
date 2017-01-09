@@ -8,6 +8,8 @@ import graph.clustering.algorithm.process.CoreFunctions;
 import graph.clustering.algorithm.process.Initializer;
 import graph.clustering.vertex.KeywordVertex;
 import graph.clustering.vertex.RootKeywordVertex;
+import graph.clustering.vertex.SearchKeyword;
+import graph.clustering.vertex.Vertex;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -70,6 +72,7 @@ public class KMeansFactory {
      * @param inputKeywords given input data
      */
     public static void performSquareErrorClustering(ArrayList<KeywordVertex> inputKeywords,
+                                                    SearchKeyword currentSearchKeyword,
                                                     ArrayList<RootKeywordVertex> rootKeywordVertices,
                                                     ArrayList<KeywordVertex> keywordVertices,
                                                     int maxIteration,
@@ -84,6 +87,7 @@ public class KMeansFactory {
         Initializer.categoriesBasedInitializer(inputKeywords, keywordVertices);
 
         for(int i = 0; i < CoreFunctions.categories.size(); i++){
+            Category currentCategory = CoreFunctions.categories.get(i);
 
             if(CoreFunctions.categories.get(i).categoryIndex == 1) { // Alle Keywords der Kategorie Ba liegen in der 1. Ebene und haben keinerlei Querverbindungen miteinander => Kein Vektor kann erstellt werden.
                 Cluster cluster = new Cluster();
@@ -125,6 +129,14 @@ public class KMeansFactory {
             if(CoreFunctions.categories.get(i).clusters.size() == 0) continue;
             CoreFunctions.mergeSameClusters(CoreFunctions.categories.get(i));
             CoreFunctions.systemOutPrint(i);
+
+            for(int z = 0; z < currentCategory.clusters.size(); z++){
+
+                Vertex[] vertexArray = CoreFunctions.convertClusterToVertexArray(currentCategory.clusters.get(z));
+                currentSearchKeyword.countOriginalMembers.add(currentCategory.clusters.get(z).memberVertices.size() + 1);
+                currentSearchKeyword.clusters.add(vertexArray);
+
+            }
         }
 
         CoreFunctions.dropRate = (double) CoreFunctions.abandonedKeywords / (double) CoreFunctions.searchExampleCount;
