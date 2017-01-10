@@ -1,5 +1,6 @@
 package graph.visualization;
 
+import graph.clustering.algorithm.process.CoreFunctions;
 import graph.clustering.vertex.Vertex;
 import processing.core.PApplet;
 import processing.core.PConstants;
@@ -18,46 +19,83 @@ public class WordleFactory {
                                     ArrayList originalMembers,
                                     String title,
                                     float width,
-                                    float height){
+                                    float height,
+                                    int renderLimit){
 
         SKETCH_X = width;
         SKETCH_Y = height;
         Sketch sketch = new Sketch(SKETCH_X, SKETCH_Y);
-        ArrayList<Word[]> words = convertKeywordListToWords(list, originalMembers, sketch);
+        ArrayList<Word[]> words = convertKeywordListToWords(list, originalMembers, sketch, renderLimit);
         sketch.setClusters(words);
         sketch.setSearchW(title);
         PApplet.runSketch(new String[]{"graph.visualization.Sketch"}, sketch);
     }
 
-    public static ArrayList<Word[]> convertKeywordListToWords(ArrayList<Vertex[]> list,
-                                                              ArrayList originalMembers,
-                                                              Sketch sketch){
-        ArrayList<Word[]> words = new ArrayList<>();
-        for(int i = 0; i < list.size(); i++){
-            int maxDuplicateCount = 0;
-            for(int j = 0; j < list.get(i).length; j++){
-                try {
-                    maxDuplicateCount = (maxDuplicateCount < list.get(i)[j].duplicateCount) ? list.get(i)[j].duplicateCount : maxDuplicateCount;
-                } catch (NullPointerException e){
-                    System.out.println("j=" + Integer.toString(j) + " i=" + Integer.toString(i));
-                    System.exit(666);
+    private static ArrayList<Vertex[]> bestKClusters(ArrayList<Vertex[]> list,
+                                                     int renderLimit,
+                                                     ArrayList originalMembers,
+                                                     ArrayList newOriginalMembers){
+
+        if((list.size() <= renderLimit) || (renderLimit == -1)) return list;
+
+        ArrayList<Vertex[]> bestKClusters = new ArrayList<>();
+        int addedCount = 0;
+
+        do{
+            int maxDuplicatesCount = 0;
+            Vertex[] bestCluster = null;
+            int index = -1;
+            for(int i = 0; i < list.size(); i++){
+                int duplicateCount = 0;
+                for(int j = 1; j < (int) originalMembers.get(i); j++){
+                    duplicateCount += list.get(i)[j].duplicateCount;
+                }
+                if(maxDuplicatesCount < duplicateCount && !bestKClusters.contains(list.get(i))){
+                    maxDuplicatesCount = duplicateCount;
+                    bestCluster = list.get(i);
+                    index = i;
                 }
             }
+            if(bestCluster == null){
+                System.out.println("Error: No best cluster found.");
+                System.exit(6);
+            }
+            bestKClusters.add(bestCluster);
+            newOriginalMembers.add(originalMembers.get(index));
+            addedCount++;
+        } while (addedCount < renderLimit);
+        return bestKClusters;
+    }
 
-            Word[] buffer = new Word[list.get(i).length];
-            buffer[0] = new Word(list.get(i)[0].name, 1f);
-            for(int j = 1; j < list.get(i).length; j++){
-                buffer[j] = new Word(list.get(i)[j].name, (float) list.get(i)[j].duplicateCount / (float) maxDuplicateCount);
-                if(list.get(i)[j].name.length() > 15)               // if a word is too long, it will not be rotated.
+    public static ArrayList<Word[]> convertKeywordListToWords(ArrayList<Vertex[]> list,
+                                                              ArrayList originalMembers,
+                                                              Sketch sketch,
+                                                              int k){
+
+        ArrayList<Word[]> words = new ArrayList<>();
+        ArrayList newOriginalMembers = new ArrayList();
+        ArrayList<Vertex[]> bestKClusters = bestKClusters(list, k, originalMembers, newOriginalMembers);
+
+        for(int i = 0; i < bestKClusters.size(); i++){
+            int maxDuplicateCount = 0;
+            for(int j = 0; j < bestKClusters.get(i).length; j++){
+                maxDuplicateCount = (maxDuplicateCount < bestKClusters.get(i)[j].duplicateCount) ? bestKClusters.get(i)[j].duplicateCount : maxDuplicateCount;
+            }
+
+            Word[] buffer = new Word[bestKClusters.get(i).length];
+            buffer[0] = new Word(bestKClusters.get(i)[0].name, 1f);
+            for(int j = 1; j < bestKClusters.get(i).length; j++){
+                buffer[j] = new Word(bestKClusters.get(i)[j].name, (float) bestKClusters.get(i)[j].duplicateCount / (float) maxDuplicateCount);
+                if(bestKClusters.get(i)[j].name.length() > 15)               // if a word is too long, it will not be rotated.
                 {
                     buffer[j].setAngle(0);
-                } else if(list.get(i)[j].name.length() < 9)         // if a word is short, it will certainly be rotated to create some newness.
+                } else if(bestKClusters.get(i)[j].name.length() < 9)         // if a word is short, it will certainly be rotated to create some newness.
                 {
                     buffer[j].setAngle(PConstants.PI / 2f);
                 }
             }
 
-            for(int j = (int) originalMembers.get(i); j < list.get(i).length; j++){
+            for(int j = (int) newOriginalMembers.get(i); j < bestKClusters.get(i).length; j++){
                 buffer[j].setColor(sketch.color(100));          // set complementary words to a different color.
                 buffer[j].setSize(20);
             }

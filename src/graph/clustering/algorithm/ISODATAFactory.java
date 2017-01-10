@@ -87,6 +87,7 @@ public class ISODATAFactory {
      * @param maxStandardDeviation
      * @param maxPair
      * @param maxASD
+     * @param presetNumClus wished number of final clusters by user
      */
     public static void performISODATAClustering(ArrayList<KeywordVertex> inputKeywords,
                                                 SearchKeyword currentSearchKeyword,
@@ -97,14 +98,18 @@ public class ISODATAFactory {
                                                 double minInterclusterDistance,
                                                 double maxStandardDeviation,
                                                 int maxPair,
-                                                double maxASD){
+                                                double maxASD,
+                                                int presetNumClus){
 
+        int numClus = presetNumClus;
         setParameters(maxIteration, minClusterSize, minInterclusterDistance, maxStandardDeviation, maxPair, maxASD);
         GraphFactory.calculateSparseVector(inputKeywords);
 
         // step 1
         Initializer.categoriesBasedInitializer(inputKeywords, GraphFactory.keywordVertices, MAX_ITERATION, MIN_CLUSTER_SIZE, MAX_PAIR, MAX_STANDARD_DEVIATION, MIN_INTERCLUSTER_DISTANCE);
-
+        if(CoreFunctions.categories.size() >= numClus){
+            numClus = 1;
+        }
         for(int i = 0; i < CoreFunctions.categories.size(); i++){
             Category currentCategory = CoreFunctions.categories.get(i);
             int iteration = 0;
@@ -131,7 +136,7 @@ public class ISODATAFactory {
 
                 // step 6
                 if(iteration == currentCategory.maxIter){
-                    Vector<int[]> minClusterPair = CoreFunctions.calculateInterclusterDistances(currentCategory);
+                    Vector<int[]> minClusterPair = CoreFunctions.calculateInterclusterDistances(currentCategory, numClus);
                     mergeClusterPairs(minClusterPair, currentCategory);
                     continue;
                 }
@@ -140,10 +145,10 @@ public class ISODATAFactory {
                 calculateStandardDeviationVectors(currentCategory);
 
                 // step 8
-                if(splitCluster(currentCategory)) continue;
+                if(splitCluster(currentCategory, numClus)) continue;
 
                 // step 9
-                Vector<int[]> minClusterPair = CoreFunctions.calculateInterclusterDistances(currentCategory);
+                Vector<int[]> minClusterPair = CoreFunctions.calculateInterclusterDistances(currentCategory, numClus);
 
                 // step 10
                 mergeClusterPairs(minClusterPair, currentCategory);
@@ -222,9 +227,14 @@ public class ISODATAFactory {
      * average squared distance of the current cluster are exceeding the limit. If true, it splits that cluster
      * by passing it's member points to the K-Means++ method and deleting the original cluster.
      * @param currentCategory current keyword category
+     * @param clusNum wished number of resulting clusters by user
      * @return true if any splits occur
      */
-    private static boolean splitCluster(Category currentCategory){
+    private static boolean splitCluster(Category currentCategory,
+                                        int clusNum){
+        Cluster largestCluster = null;
+        int maxClusterSize = 0;
+
         for(int i = 0; i < currentCategory.clusters.size(); i++){
             Cluster currentCluster = currentCategory.clusters.get(i);
             if (currentCluster.maxStandardDeviation > currentCategory.stdv){
@@ -243,6 +253,20 @@ public class ISODATAFactory {
                 Initializer.kMeansPPInitializer(2, currentCluster.memberVertices, currentCategory.clusters);
                 return true;
             }
+            int numDuplicates = CoreFunctions.totalNumberOfDuplicates(currentCluster);
+            if(maxClusterSize < numDuplicates){
+                maxClusterSize = numDuplicates;
+                largestCluster = currentCluster;
+            }
+        }
+        if(currentCategory.categoryMembers.size() >= clusNum && currentCategory.clusters.size() < clusNum){
+            if(largestCluster == null){
+                System.out.println("Error: Not enough clusters created, but no largest cluster found.");
+                return false;
+            }
+            currentCategory.clusters.remove(largestCluster);
+            Initializer.kMeansPPInitializer(2, largestCluster.memberVertices, currentCategory.clusters);
+            return true;
         }
         return false;
     }

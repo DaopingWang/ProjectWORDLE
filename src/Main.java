@@ -13,9 +13,11 @@ import graph.visualization.WordleFactory;
 
 import java.io.IOException;
 import java.util.Scanner;
+import java.util.StringJoiner;
 
 public class Main {
-    public static final String CACHE_PATH = "C:/Users/wang.daoping/Documents/project_wordle_cache/";
+    //public static final String CACHE_PATH = "C:/Users/wang.daoping/Documents/project_wordle_cache/";
+    public static final String CACHE_PATH = "D:/project_wordle_cache/";
     public static final String RAW_PATH = "C:/Users/wang.daoping/Documents/project_wordle_raw/";
 
     public static final Boolean parseRawFile = false;
@@ -31,6 +33,8 @@ public class Main {
     public static final int CLUSTERING_MODE = 1;
     public static final String TARGET_WORD = null;
 
+    public static final int RENDER_BEST_K_CLUS_ONLY = 3;
+
     public static final float WORDLE_SKETCH_WIDTH = 1300;
     public static final float WORDLE_SKETCH_HEIGHT = 700;
 
@@ -38,9 +42,10 @@ public class Main {
     public static final int MAX_ITERATION_ISODATA = 1000;
     public static final int MIN_CLUSTER_SIZE = 1;
     public static final double MIN_INTERCLUSTER_DISTANCE = 0.15;
-    public static final double MAX_STANDARD_DEVIATION = 0.4;
+    public static final double MAX_STANDARD_DEVIATION = 0.6;
     public static final int MAX_PAIR = 1;
-    public static final double MAX_ASD = 0.4;
+    public static final double MAX_ASD = 0.6;
+    public static final int NUMBER_CLUSTER_ISODATA = 2;
 
     // Traditional K-Means parameters
     public static final int MAX_ITERATION_K_MEANS = 10000;
@@ -48,6 +53,8 @@ public class Main {
     public static final int MAX_REALLOC_COUNT = 0;
     public static final int MAX_MEMBER_COUNT = 15;
     public static final int MIN_MEMBER_COUNT = 2;
+    public static final int NUMBER_CLUSTER_K_MEANS = 2;
+
 
     public static void main(String[] args){
 
@@ -94,7 +101,8 @@ public class Main {
                             MIN_INTERCLUSTER_DISTANCE,
                             MAX_STANDARD_DEVIATION,
                             MAX_PAIR,
-                            MAX_ASD);
+                            MAX_ASD,
+                            NUMBER_CLUSTER_ISODATA);
                 }
                 if (enableWordleRenderer){
                     System.out.println();
@@ -102,7 +110,7 @@ public class Main {
                     System.out.println("\"exit\" terminates the renderer");
                     System.out.println("any other inputs will render the next search result");
                     for(int i = 0; i < GraphFactory.searchKeywords.size(); i++){
-                        WordleFactory.renderWordle(GraphFactory.searchKeywords.get(i).clusters, GraphFactory.searchKeywords.get(i).countOriginalMembers, GraphFactory.searchKeywords.get(i).name, WORDLE_SKETCH_WIDTH, WORDLE_SKETCH_HEIGHT);
+                        WordleFactory.renderWordle(GraphFactory.searchKeywords.get(i).clusters, GraphFactory.searchKeywords.get(i).countOriginalMembers, GraphFactory.searchKeywords.get(i).name, WORDLE_SKETCH_WIDTH, WORDLE_SKETCH_HEIGHT, RENDER_BEST_K_CLUS_ONLY);
                         Scanner scanner = new Scanner(System.in);
                         if(scanner.nextLine().equals("exit")) break;
                     }
@@ -127,7 +135,8 @@ public class Main {
                             MAX_ERROR,
                             MAX_REALLOC_COUNT,
                             MAX_MEMBER_COUNT,
-                            MIN_MEMBER_COUNT);
+                            MIN_MEMBER_COUNT,
+                            NUMBER_CLUSTER_K_MEANS);
                 }
                 if (enableWordleRenderer){
                     System.out.println();
@@ -135,7 +144,7 @@ public class Main {
                     System.out.println("\"exit\" terminates the renderer");
                     System.out.println("any other inputs will render the next search result");
                     for(int i = 0; i < GraphFactory.searchKeywords.size(); i++){
-                        WordleFactory.renderWordle(GraphFactory.searchKeywords.get(i).clusters, GraphFactory.searchKeywords.get(i).countOriginalMembers, GraphFactory.searchKeywords.get(i).name, WORDLE_SKETCH_WIDTH, WORDLE_SKETCH_HEIGHT);
+                        WordleFactory.renderWordle(GraphFactory.searchKeywords.get(i).clusters, GraphFactory.searchKeywords.get(i).countOriginalMembers, GraphFactory.searchKeywords.get(i).name, WORDLE_SKETCH_WIDTH, WORDLE_SKETCH_HEIGHT, RENDER_BEST_K_CLUS_ONLY);
 
                         Scanner scanner = new Scanner(System.in);
                         if(scanner.nextLine().equals("exit")) break;

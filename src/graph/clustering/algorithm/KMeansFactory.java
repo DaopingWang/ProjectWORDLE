@@ -70,6 +70,7 @@ public class KMeansFactory {
     /**
      * performs the actual K-Means clustering algorithm.
      * @param inputKeywords given input data
+     * @param presetNumClus wished number of resulting clusters by user
      */
     public static void performSquareErrorClustering(ArrayList<KeywordVertex> inputKeywords,
                                                     SearchKeyword currentSearchKeyword,
@@ -79,13 +80,18 @@ public class KMeansFactory {
                                                     double maxError,
                                                     int maxReallocCount,
                                                     int maxMemberCount,
-                                                    int minMemberCount){
+                                                    int minMemberCount,
+                                                    int presetNumClus){
+
+        int numClus = presetNumClus;
         setParameters(maxIteration, maxError, maxReallocCount, maxMemberCount, minMemberCount);
         GraphFactory.calculateSparseVector(inputKeywords);
 
         // step 1
         Initializer.categoriesBasedInitializer(inputKeywords, keywordVertices);
-
+        if(CoreFunctions.categories.size() >= numClus){
+            numClus = 1;
+        }
         for(int i = 0; i < CoreFunctions.categories.size(); i++){
             Category currentCategory = CoreFunctions.categories.get(i);
 
@@ -123,7 +129,7 @@ public class KMeansFactory {
                 // step 2 + 3
                 CoreFunctions.performKMeans(MAX_ITERATION, MAX_REALLOC_COUNT, i, rootKeywordVertices);
                 ISODATAFactory.assignDeltaDistance(CoreFunctions.categories.get(i));
-                } while (splitCluster(CoreFunctions.categories.get(i)));
+                } while (splitCluster(CoreFunctions.categories.get(i), numClus));
 
             CoreFunctions.flushEmptyClusters(CoreFunctions.categories.get(i));
             if(CoreFunctions.categories.get(i).clusters.size() == 0) continue;
@@ -166,30 +172,51 @@ public class KMeansFactory {
     }
 
     /**
-     * splits large clusters / clusters with high internal distance.
-     * @param category current category
+     * splits large clusters / clusters with high internal euclidean distance.
+     * @param currentCategory current category
+     * @param numClus wished number of final clusters, preset by user
      * @return true if any splits occur
      */
-    public static boolean splitCluster(Category category){
-        CoreFunctions.eliminateOutstanders(category);
-        for(int i = 0; i < category.clusters.size(); i++){
-            Cluster currentCluster = category.clusters.get(i);
+    public static boolean splitCluster(Category currentCategory,
+                                       int numClus){
+        CoreFunctions.eliminateOutstanders(currentCategory, numClus);
+        int maxDuplicatesNum = 0;
+        Cluster largestCluster = null;
+
+        for(int i = 0; i < currentCategory.clusters.size(); i++){
+            Cluster currentCluster = currentCategory.clusters.get(i);
             if(currentCluster.memberVertices.size() > MAX_MEMBER_COUNT && currentCluster.averageEuclideanDistance > 0.0){   // Cluster too big
-                category.clusters.remove(currentCluster);
-                category.categoryMembers = currentCluster.memberVertices;
-                Initializer.kMeansPPInitializer(2, currentCluster.memberVertices, category.clusters);
+                currentCategory.clusters.remove(currentCluster);
+                currentCategory.categoryMembers = currentCluster.memberVertices;
+                Initializer.kMeansPPInitializer(2, currentCluster.memberVertices, currentCategory.clusters);
                 return true;
             } else if(currentCluster.averageEuclideanDistance > MAX_ERROR){                                   // Members' divergence too high
-                category.clusters.remove(currentCluster);
-                category.categoryMembers = currentCluster.memberVertices;
-                Initializer.kMeansPPInitializer(2, currentCluster.memberVertices, category.clusters);
+                currentCategory.clusters.remove(currentCluster);
+                currentCategory.categoryMembers = currentCluster.memberVertices;
+                Initializer.kMeansPPInitializer(2, currentCluster.memberVertices, currentCategory.clusters);
                 return true;
             } else if(Utility.findIndexForName(currentCluster.grandMaster.name) != -1 && currentCluster.averageEuclideanDistance > 0.0){  // Grandmaster should better not be a root keyword
-                category.clusters.remove(currentCluster);
-                category.categoryMembers = currentCluster.memberVertices;
-                Initializer.kMeansPPInitializer(2, currentCluster.memberVertices, category.clusters);
+                currentCategory.clusters.remove(currentCluster);
+                currentCategory.categoryMembers = currentCluster.memberVertices;
+                Initializer.kMeansPPInitializer(2, currentCluster.memberVertices, currentCategory.clusters);
                 return true;
             }
+            int numDuplicates = CoreFunctions.totalNumberOfDuplicates(currentCluster);
+            if(maxDuplicatesNum < numDuplicates){
+                maxDuplicatesNum = numDuplicates;
+                largestCluster = currentCluster;
+            }
+        }
+
+        if(currentCategory.clusters.size() < numClus && currentCategory.categoryMembers.size() >= numClus){
+            if(largestCluster == null){
+                System.out.println("Error: Not enough clusters created, but no largest cluster found.");
+                return false;
+            }
+            currentCategory.clusters.remove(largestCluster);
+            currentCategory.categoryMembers = largestCluster.memberVertices;
+            Initializer.kMeansPPInitializer(2, largestCluster.memberVertices, currentCategory.clusters);
+            return true;
         }
         return false;
     }

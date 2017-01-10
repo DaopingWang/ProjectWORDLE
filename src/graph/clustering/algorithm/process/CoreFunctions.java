@@ -35,10 +35,12 @@ public class CoreFunctions {
     public static boolean isoclusMode;
     public static boolean clusterSuspended;
 
-    public static Vector<int[]> calculateInterclusterDistances(Category currentCategory){
+    public static Vector<int[]> calculateInterclusterDistances(Category currentCategory,
+                                                               int numClus){
         double currentDistance;
         int mergeCount = 0;
         Vector<int[]> minPairVector = new Vector<>();
+        if(currentCategory.clusters.size() <= numClus) return minPairVector;
 
         for(int i = 0; i < currentCategory.clusters.size(); i++){
             Vector<Double> currentIDVector = currentCategory.clusters.get(i).interclusterDistance;
@@ -57,6 +59,19 @@ public class CoreFunctions {
             }
         }
         return minPairVector;
+    }
+
+    /**
+     * calculates the total number of duplicates of each cluster member.
+     * @param cluster the cluster we are talking about
+     * @return sum of the duplicate count of each cluster member
+     */
+    public static int totalNumberOfDuplicates(Cluster cluster){
+        int clusterSize = 0;
+        for(int i = 0; i < cluster.memberVertices.size(); i++){
+            clusterSize += cluster.memberVertices.get(i).duplicateCount;
+        }
+        return clusterSize;
     }
 
     public static boolean baSpecialTreatment(Category currentCategory, int index){
@@ -158,18 +173,20 @@ public class CoreFunctions {
 
     /**
      * deletes outstanding points.
-     * @param category current keyword category
+     * @param currentCategory current keyword category
+     * @param numClus wished number of final clusters
      */
-    public static void eliminateOutstanders(Category category){
-        int clusterCount = category.clusters.size();
+    public static void eliminateOutstanders(Category currentCategory,
+                                            int numClus){
+
+        if(currentCategory.categoryMembers.size() <= numClus) return;
         //int categoryMemberCount = Utility.categoryMemberCounter(category);
-        for(int i = 0; i < clusterCount; i++){
-            Cluster currentCluster = category.clusters.get(i);
+        for(int i = 0; i < currentCategory.clusters.size(); i++){
+            Cluster currentCluster = currentCategory.clusters.get(i);
             if(currentCluster.memberVertices.size() < KMeansFactory.MIN_MEMBER_COUNT && Utility.clusterMemberCounter(currentCluster) < searchExampleCount / 4){
-                category.clusters.remove(currentCluster);
+                currentCategory.clusters.remove(currentCluster);
                 //searchExampleCount -= Utility.clusterMemberCounter(currentCluster);
                 i--;
-                clusterCount--;
                 abandonedKeywords++;
             }
         }
