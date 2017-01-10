@@ -134,7 +134,12 @@ public class Utility {
                 }
             }
             if(index == -1) {
-                index = masterSimilarityVector.size() - 1;
+                for(int i = 0; i < masterSimilarityVector.size() - 1; i++){
+                    if((masterSimilarityVector.get(i) != 1) && (masterSimilarityVector.get(i) < min)) {
+                        min = masterSimilarityVector.get(i);
+                        index = i;
+                    }
+                }
                 return index;
             } else {
                 return index;
