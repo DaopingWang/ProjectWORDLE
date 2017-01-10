@@ -36,7 +36,10 @@ public class WordleFactory {
                                                      ArrayList originalMembers,
                                                      ArrayList newOriginalMembers){
 
-        if((list.size() <= renderLimit) || (renderLimit == -1)) return list;
+        if((list.size() <= renderLimit) || (renderLimit == -1)) {
+            newOriginalMembers.addAll(originalMembers);
+            return list;
+        }
 
         ArrayList<Vertex[]> bestKClusters = new ArrayList<>();
         int addedCount = 0;
