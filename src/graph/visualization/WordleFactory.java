@@ -1,6 +1,7 @@
 package graph.visualization;
 
-import graph.clustering.algorithm.process.CoreFunctions;
+import graph.clustering.Utility;
+import graph.clustering.vertex.RootKeywordVertex;
 import graph.clustering.vertex.Vertex;
 import processing.core.PApplet;
 import processing.core.PConstants;
@@ -20,24 +21,38 @@ public class WordleFactory {
                                     String title,
                                     float width,
                                     float height,
-                                    int renderLimit){
+                                    int renderLimit,
+                                    ArrayList<RootKeywordVertex> rootKeywordVertices){
 
         SKETCH_X = width;
         SKETCH_Y = height;
+        ArrayList<String> categoryList = new ArrayList<>();
+        ArrayList<String> newCategoryList = new ArrayList<>();
+
+        for(int i = 0; i < list.size(); i++){
+            categoryList.add(rootKeywordVertices.get(list.get(i)[0].dominantCategory).name);
+        }
+
         Sketch sketch = new Sketch(SKETCH_X, SKETCH_Y);
-        ArrayList<Word[]> words = convertKeywordListToWords(list, originalMembers, sketch, renderLimit);
+        ArrayList<Word[]> words = convertKeywordListToWords(list, categoryList, newCategoryList, originalMembers, sketch, renderLimit);
         sketch.setClusters(words);
-        sketch.setSearchW(title);
+        sketch.setSearchKeyword(title);
+        sketch.setCategoryList(newCategoryList);
+        sketch.setTotalNumberClusters(list.size());
+
         PApplet.runSketch(new String[]{"graph.visualization.Sketch"}, sketch);
     }
 
     private static ArrayList<Vertex[]> bestKClusters(ArrayList<Vertex[]> list,
+                                                     ArrayList<String> categoryList,
+                                                     ArrayList<String> newCategoryList,
                                                      int renderLimit,
                                                      ArrayList originalMembers,
                                                      ArrayList newOriginalMembers){
 
         if((list.size() <= renderLimit) || (renderLimit == -1)) {
             newOriginalMembers.addAll(originalMembers);
+            newCategoryList.addAll(categoryList);
             return list;
         }
 
@@ -65,19 +80,22 @@ public class WordleFactory {
             }
             bestKClusters.add(bestCluster);
             newOriginalMembers.add(originalMembers.get(index));
+            newCategoryList.add(categoryList.get(index));
             addedCount++;
         } while (addedCount < renderLimit);
         return bestKClusters;
     }
 
     public static ArrayList<Word[]> convertKeywordListToWords(ArrayList<Vertex[]> list,
+                                                              ArrayList<String> categoryList,
+                                                              ArrayList<String> newCategoryList,
                                                               ArrayList originalMembers,
                                                               Sketch sketch,
                                                               int k){
 
         ArrayList<Word[]> words = new ArrayList<>();
         ArrayList newOriginalMembers = new ArrayList();
-        ArrayList<Vertex[]> bestKClusters = bestKClusters(list, k, originalMembers, newOriginalMembers);
+        ArrayList<Vertex[]> bestKClusters = bestKClusters(list, categoryList, newCategoryList, k, originalMembers, newOriginalMembers);
 
         for(int i = 0; i < bestKClusters.size(); i++){
             int maxDuplicateCount = 0;

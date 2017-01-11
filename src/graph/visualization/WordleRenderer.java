@@ -12,13 +12,14 @@ import wordcram.*;
 
 public class WordleRenderer {
     private PApplet parent;
+    private PFont adobeSourceSansPro;
 
     public WordleRenderer(PApplet p){
         parent = p;
+        adobeSourceSansPro = parent.createFont("SourceSansPro-Regular.ttf", 16);
     }
 
     public void renderWordCram(Word[] keywords){
-        PFont adobeSourceSansPro = parent.createFont("SourceSansPro-Regular.ttf", 16);
 
         new WordCram(parent)
                 .fromWords(keywords)
@@ -37,18 +38,41 @@ public class WordleRenderer {
                 .drawAll();
     }
 
-    public void renderTitle(String searchWord){
-        Word[] title = new Word[1];
-        Word searchW = new Word("Keyword: " + searchWord, 1f);
-        searchW.setAngle(0)
-                .setSize(20)
+    public void renderTitle(String searchKeyword,
+                            String currentCategory,
+                            int currentClusterIndex,
+                            int totalNumberClusters){
+        Word[] info = new Word[3];
+        Word searchKeywordInfo = new Word("Search keyword: " + searchKeyword, 1f);
+        searchKeywordInfo
+                .setAngle(0)
+                .setSize(16)
+                .setFont(adobeSourceSansPro)
                 .setColor(parent.color(0))
-                .setPlace(10, 10);
+                .setPlace(10f,(float) 10);
 
-        title[0] = searchW;
+        Word categoryInfo = new Word("Current MKX category: " + currentCategory, 1f);
+        categoryInfo
+                .setAngle(0)
+                .setSize(16)
+                .setFont(adobeSourceSansPro)
+                .setColor(parent.color(0))
+                .setPlace(10f, (float) 20 + searchKeywordInfo.getRenderedHeight());
+
+        Word clusterInfo = new Word("Cluster " + Integer.toString(currentClusterIndex) + "/" + Integer.toString(totalNumberClusters), 1f);
+        clusterInfo
+                .setAngle(0)
+                .setSize(16)
+                .setFont(adobeSourceSansPro)
+                .setColor(parent.color(0))
+                .setPlace(10f, (float) 30 + searchKeywordInfo.getRenderedHeight() + categoryInfo.getRenderedHeight());
+
+        info[0] = searchKeywordInfo;
+        info[1] = categoryInfo;
+        info[2] = clusterInfo;
 
         new WordCram(parent)
-                .fromWords(title)
+                .fromWords(info)
                 .drawAll();
     }
 }

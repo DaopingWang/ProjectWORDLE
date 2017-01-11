@@ -8,11 +8,12 @@ import processing.core.PSurface;
 import wordcram.*;
 
 import java.util.ArrayList;
-import java.util.StringJoiner;
 
 public class Sketch extends PApplet{
     private ArrayList<Word[]> clusters;
-    private String searchW;
+    private String searchKeyword;
+    private ArrayList<String> categoryList;
+    private int totalNumberClusters;
     private int counter;
     private WordleRenderer wordleRenderer;
     private int x;
@@ -25,12 +26,20 @@ public class Sketch extends PApplet{
         this.y = (int) Y;
     }
 
+    public void setCategoryList(ArrayList<String> categoryList) {
+        this.categoryList = categoryList;
+    }
+
+    public void setTotalNumberClusters(int totalNumberClusters) {
+        this.totalNumberClusters = totalNumberClusters;
+    }
+
     public void setClusters(ArrayList<Word[]> words){
         this.clusters = words;
     }
 
-    public void setSearchW(String searchWord){
-        this.searchW = searchWord;
+    public void setSearchKeyword(String searchWord){
+        this.searchKeyword = searchWord;
     }
 
     public void settings(){
@@ -45,7 +54,7 @@ public class Sketch extends PApplet{
 
     public void draw(){
         background(255);
-        this.wordleRenderer.renderTitle(this.searchW);
+        this.wordleRenderer.renderTitle(this.searchKeyword, categoryList.get(counter), counter + 1, totalNumberClusters);
         this.wordleRenderer.renderWordCram(clusters.get(counter));
         counter++;
     }
