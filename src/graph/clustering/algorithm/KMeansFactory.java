@@ -152,7 +152,7 @@ public class KMeansFactory {
     }
 
     /**
-     * sets parameters to input values
+     * sets parameters to input values.
      * @param maxIteration
      * @param maxError
      * @param maxReallocCount
@@ -173,6 +173,8 @@ public class KMeansFactory {
 
     /**
      * splits large clusters / clusters with high internal euclidean distance.
+     * If wished number of clusters isn't reached, the largest cluster among all
+     * will be split.
      * @param currentCategory current category
      * @param numClus wished number of final clusters, preset by user
      * @return true if any splits occur
@@ -221,6 +223,11 @@ public class KMeansFactory {
         return false;
     }
 
+    /**
+     * <b>Deprecated</b>
+     * @param inputKeywords
+     * @param rootKeywordVertices
+     */
     public static void performSquareErrorClustering(ArrayList<KeywordVertex> inputKeywords,
                                                     ArrayList<RootKeywordVertex> rootKeywordVertices){
 

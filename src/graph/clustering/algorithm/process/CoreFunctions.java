@@ -23,18 +23,59 @@ import java.util.Vector;
  * clustering algorithm.
  */
 public class CoreFunctions {
+    /**
+     * The clusters under clustering process.
+     */
     public static ArrayList<Cluster> clusters;
+
+    /**
+     * The preclustered keywords by MKX categories
+     */
     public static ArrayList<Category> categories;
 
+    /**
+     * The dimension of the current category
+     */
     public static int vectorSpaceDimension;
+
+    /**
+     *
+     */
     public static double squareError;
+
+    /**
+     * Number of keywords discarded during traditional K-Means
+     */
     public static int abandonedKeywords;
+
+    /**
+     * Number of search keyword sets
+     */
     public static int searchExampleCount;
+
+    /**
+     * Percentage of discarded keywords
+     */
     public static double dropRate;
 
+    /**
+     * If the ISODATA algorithm is chosen
+     */
     public static boolean isoclusMode;
+
+    /**
+     * If any cluster is suspended due to undersize.
+     */
     public static boolean clusterSuspended;
 
+    /**
+     * calculates intercluster distances and return a vector object whose entries are
+     * cluster pairs which are too close to each other.
+     * @param currentCategory The preclustered-by-categories keywords we are processing.
+     * @param numClus Wished number of clusters. If the current number of clusters is lesser
+     *                or equals numClus, then no more clusters should be merged.
+     * @return A vector object containing cluster pairs which shall be merged.
+     */
     public static Vector<int[]> calculateInterclusterDistances(Category currentCategory,
                                                                int numClus){
         double currentDistance;
@@ -74,6 +115,14 @@ public class CoreFunctions {
         return clusterSize;
     }
 
+    /**
+     * Currently, all the subordinates of "Ba" category cannot be clustered properly.
+     * The reason is that they are all directly connected to "Ba" (meaning they are in the 1. layer)
+     * and there are no cross connections between them.
+     * @param currentCategory The preclustered-by-categories keywords we are processing.
+     * @param index The index of the current MKX category in GraphFactory.rootKeywordVertices
+     * @return true if the current keywords are subordinates of "Ba"
+     */
     public static boolean baSpecialTreatment(Category currentCategory, int index){
         if(currentCategory.categoryIndex == 1) { // Alle Keywords der Kategorie Ba liegen in der 1. Ebene und haben keinerlei Querverbindungen miteinander => Kein Vektor kann erstellt werden.
             Cluster cluster = new Cluster();
@@ -91,8 +140,8 @@ public class CoreFunctions {
     }
 
     /**
-     * This is the core function of our clustering algorithm implementation.
-     * It assigns and repositions points and cluster centers until convergence.
+     * This is the core function of both the ISODATA and the traditional K-Means clustering algorithms.
+     * It assigns points to clusters and repositions cluster centers until convergence.
      * @param maxIteration Number of iteration
      * @param maxRealloc Maximum permitted reallocation count
      * @param i index of the current category
@@ -193,8 +242,8 @@ public class CoreFunctions {
     }
 
     /**
-     * deletes empty clusters.
-     * @param category current category
+     * removes empty clusters.
+     * @param category current MKX category
      */
     public static void flushEmptyClusters(Category category){
         for(int i = 0; i < category.clusters.size(); i++){
@@ -207,7 +256,7 @@ public class CoreFunctions {
 
     /**
      * merges clusters which are sharing the same grand master.
-     * @param category current keyword category
+     * @param category current MKX category
      */
     public static void mergeSameClusters(Category category){
         for(int i = 0; i < category.clusters.size(); i++){
@@ -223,7 +272,7 @@ public class CoreFunctions {
     }
 
     /**
-     * System output
+     * Console output
      * @param index index of the current cluster
      */
     public static void systemOutPrint(int index){
@@ -242,6 +291,13 @@ public class CoreFunctions {
         }
     }
 
+    /**
+     * converts the input cluster to a keyword array.
+     * If the input cluster is too small (less than 5), the (up to 4) most relevant keywords
+     * of the input cluster's outnumbering member will be added into the keyword array.
+     * @param currentCluster The input cluster
+     * @return The converted (completed) keyword array
+     */
     public static Vertex[] convertClusterToVertexArray(Cluster currentCluster){
         Vertex[] list = new Vertex[currentCluster.memberVertices.size() + 1];
         list[0] = currentCluster.grandMaster;
@@ -260,6 +316,11 @@ public class CoreFunctions {
         return list;
     }
 
+    /**
+     * <b>Deprecated</b>
+     * @param inputKeywords
+     * @param rootKeywordVertices
+     */
     public static void performSquareErrorClusteringPP(ArrayList<KeywordVertex> inputKeywords,
                                                       ArrayList<RootKeywordVertex> rootKeywordVertices){
 
@@ -315,7 +376,7 @@ public class CoreFunctions {
     }
 
     /**
-     * Calculates distances between the input keyword and all cluster centers, then returns the nearest cluster.
+     * Calculates the distances between the input keyword and cluster centers, then returns the nearest cluster.
      * @param currentMasterSimilarityVector Vector of the input keyword
      * @param currentClusters cluster list of current category
      * @return the nearest cluster.
@@ -362,6 +423,11 @@ public class CoreFunctions {
         return nearestCluster;
     }
 
+    /**
+     * <b>Deprecated</b>
+     * @param dimension
+     * @return
+     */
     public static double calculateSquareErrorFORGYStyle(int dimension){
         double withinClusterVariation = 0;
         for(int k = 0; k < clusters.size(); k++){
@@ -372,6 +438,12 @@ public class CoreFunctions {
         return withinClusterVariation;
     }
 
+    /**
+     * <b>Deprecated</b>
+     * @param dimension
+     * @param currentCluster
+     * @return
+     */
     public static double calculateAverageSquareDistance(int dimension, Cluster currentCluster){
         int memberCount = currentCluster.memberVertices.size();
         double averageSquareDistance = 0;
@@ -381,6 +453,11 @@ public class CoreFunctions {
         return Math.sqrt(averageSquareDistance / dimension);
     }
 
+    /**
+     * calculates the average euclidean distance between given cluster members and cluster center.
+     * @param k The given cluster
+     * @return The average euclidean distance
+     */
     public static double calculateAverageEuclideanDistance(Cluster k){
         double averageEuclideanDistance = 0;
         for(int i = 0; i < k.memberVertices.size(); i++){
@@ -389,6 +466,11 @@ public class CoreFunctions {
         return averageEuclideanDistance / k.memberVertices.size();
     }
 
+    /**
+     * recalculates the position of each cluster center in the given dimension.
+     * @param dimension The given dimension
+     * @param clusters The given clusters
+     */
     public static void recentralizeCentroids(int dimension, ArrayList<Cluster> clusters){
         int counter = 0;
         for(int j = 0; j < dimension; j++){
@@ -408,15 +490,32 @@ public class CoreFunctions {
 
     }
 
-    // Calculates the error between given vertex and given cluster.
+    /**
+     * <b>Deprecated</b>
+     * @param inputVertex
+     * @param inputCentroid
+     * @return
+     */
     public static double calculateError(KeywordVertex inputVertex, Vector<Double> inputCentroid){
         return euclideanDistance(inputVertex.categorySimilarityVector, inputCentroid);
     }
 
+    /**
+     * <b>Deprecated</b>
+     * @param inputVertex
+     * @param inputCentroid
+     * @return
+     */
     public static double calculateError(KeywordVertex inputVertex, SparseDoubleMatrix1D inputCentroid){
         return euclideanDistance(inputVertex.pathLengthVector, inputCentroid);
     }
 
+    /**
+     * calculates the euclidean distance between two vectors.
+     * @param a Vector a
+     * @param b Vector b
+     * @return The euclidean distance
+     */
     public static double euclideanDistance(Vector<Double> a, Vector<Double> b){
         double distance = 0;
         boolean infinityA;
@@ -439,6 +538,12 @@ public class CoreFunctions {
         return Math.sqrt(distance);
     }
 
+    /**
+     * <b>Deprecated</b>
+     * @param a
+     * @param b
+     * @return
+     */
     public static double euclideanDistance(SparseDoubleMatrix1D a, SparseDoubleMatrix1D b){
         double distance = 0;
         for(int i = 0; i < a.size(); i++){
@@ -450,6 +555,12 @@ public class CoreFunctions {
         return Math.sqrt(distance);
     }
 
+    /**
+     * <b>Deprecated</b>
+     * @param currentDimension
+     * @param currentCluster
+     * @return
+     */
     public static double calculateWithinClusterVariation(int currentDimension, Cluster currentCluster){
         double variance = 0;
         for(int i = 0; i < currentCluster.memberVertices.size(); i++){
