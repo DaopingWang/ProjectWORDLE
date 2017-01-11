@@ -57,7 +57,7 @@ public class WordleRenderer {
                 .setSize(16)
                 .setFont(adobeSourceSansPro)
                 .setColor(parent.color(0))
-                .setPlace(10f, (float) 20 + searchKeywordInfo.getRenderedHeight());
+                .setPlace(10f, (float) 30 + searchKeywordInfo.getRenderedHeight());
 
         Word clusterInfo = new Word("Cluster " + Integer.toString(currentClusterIndex) + "/" + Integer.toString(totalNumberClusters), 1f);
         clusterInfo
@@ -65,7 +65,7 @@ public class WordleRenderer {
                 .setSize(16)
                 .setFont(adobeSourceSansPro)
                 .setColor(parent.color(0))
-                .setPlace(10f, (float) 30 + searchKeywordInfo.getRenderedHeight() + categoryInfo.getRenderedHeight());
+                .setPlace(10f, (float) 50 + searchKeywordInfo.getRenderedHeight() + categoryInfo.getRenderedHeight());
 
         info[0] = searchKeywordInfo;
         info[1] = categoryInfo;

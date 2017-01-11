@@ -30,9 +30,9 @@ public class Main {
 
     // 1 for ISODATA, 2 for traditional K-Means
     public static final int CLUSTERING_MODE = 1;
-    public static final String TARGET_WORD = null;
+    public static final String TARGET_WORD = "tape";
 
-    public static final int RENDER_BEST_K_CLUS_ONLY = -1;
+    public static final int RENDER_BEST_K_CLUS_ONLY = 4;
 
     public static final float WORDLE_SKETCH_WIDTH = 1300;
     public static final float WORDLE_SKETCH_HEIGHT = 700;
@@ -56,6 +56,7 @@ public class Main {
 
 
     public static void main(String[] args){
+        int index = -1;
 
         if(parseRawFile){
             try {
@@ -87,6 +88,7 @@ public class Main {
                             continue;
                         }
                     }
+                    index = i;
                     Utility.reinitializer(GraphFactory.keywordVertices, GraphFactory.rootKeywordVertices);
                     System.out.println();
                     System.out.println("*** " + GraphFactory.searchKeywords.get(i).name + " " + Integer.toString(GraphFactory.searchKeywords.get(i).searchResults.size()) + " ***");
@@ -106,6 +108,14 @@ public class Main {
                 if (enableWordleRenderer){
                     System.out.println();
                     System.out.println("********************************");
+
+                    if(TARGET_WORD != null){
+                        WordleFactory.renderWordle(GraphFactory.searchKeywords.get(index).clusters, GraphFactory.searchKeywords.get(index).countOriginalMembers, GraphFactory.searchKeywords.get(index).name, WORDLE_SKETCH_WIDTH, WORDLE_SKETCH_HEIGHT, RENDER_BEST_K_CLUS_ONLY, GraphFactory.rootKeywordVertices);
+                        System.out.println("Enter \"exit\" to continue");
+                        Scanner scanner = new Scanner(System.in);
+                        if(scanner.nextLine().equals("exit")) break;
+                    }
+
                     System.out.println("\"exit\" terminates the renderer");
                     System.out.println("any other inputs will render the next search result");
                     for(int i = 0; i < GraphFactory.searchKeywords.size(); i++){
@@ -140,6 +150,15 @@ public class Main {
                 if (enableWordleRenderer){
                     System.out.println();
                     System.out.println("********************************");
+
+                    if(TARGET_WORD != null){
+                        WordleFactory.renderWordle(GraphFactory.searchKeywords.get(index).clusters, GraphFactory.searchKeywords.get(index).countOriginalMembers, GraphFactory.searchKeywords.get(index).name, WORDLE_SKETCH_WIDTH, WORDLE_SKETCH_HEIGHT, RENDER_BEST_K_CLUS_ONLY, GraphFactory.rootKeywordVertices);
+                        System.out.println("Enter \"exit\" to continue");
+                        Scanner scanner = new Scanner(System.in);
+                        if(scanner.nextLine().equals("exit")) break;
+                        break;
+                    }
+
                     System.out.println("\"exit\" terminates the renderer");
                     System.out.println("any other inputs will render the next search result");
                     for(int i = 0; i < GraphFactory.searchKeywords.size(); i++){
