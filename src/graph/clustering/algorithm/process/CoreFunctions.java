@@ -341,6 +341,12 @@ public class CoreFunctions {
         return nearestCluster;
     }
 
+    /**
+     * <b>Deprecated</b>
+     * @param inputVertex
+     * @param clusters
+     * @return
+     */
     public static Cluster nearestCentroid(SparseDoubleMatrix1D inputVertex,
                                           ArrayList<Cluster> clusters){
 
