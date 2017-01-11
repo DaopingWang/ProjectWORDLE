@@ -43,7 +43,7 @@ public class Main {
     public static final double MIN_INTERCLUSTER_DISTANCE = 0.15;
     public static final double MAX_STANDARD_DEVIATION = 0.6;
     public static final int MAX_PAIR = 1;
-    public static final double MAX_ASD = 0.6;
+    public static final double MAX_ASD = 0.5;
     public static final int MIN_NUMBER_CLUSTER_ISODATA = 2;
 
     // Traditional K-Means parameters

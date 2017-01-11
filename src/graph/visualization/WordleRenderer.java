@@ -43,7 +43,7 @@ public class WordleRenderer {
                             int currentClusterIndex,
                             int totalNumberClusters){
         Word[] info = new Word[3];
-        Word searchKeywordInfo = new Word("Search keyword: " + searchKeyword, 1f);
+        Word searchKeywordInfo = new Word("User query: " + searchKeyword, 1f);
         searchKeywordInfo
                 .setAngle(0)
                 .setSize(16)

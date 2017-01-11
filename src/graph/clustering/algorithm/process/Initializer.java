@@ -15,6 +15,10 @@ import static graph.clustering.algorithm.process.CoreFunctions.categories;
  */
 public class Initializer {
 
+    /**
+     * <b>Deprecated</b>
+     * @param rootKeywordVertices
+     */
     public static void categoriesBasedInitializer(ArrayList<RootKeywordVertex> rootKeywordVertices){
         for(int i = 0; i < rootKeywordVertices.size(); i++){
             Cluster k = new Cluster(rootKeywordVertices.get(i).categorySimilarityVector);
@@ -22,6 +26,16 @@ public class Initializer {
         }
     }
 
+    /**
+     * initializes
+     * @param inputKeywords
+     * @param keywordVertices
+     * @param maxIter
+     * @param samprm
+     * @param maxpair
+     * @param stdv
+     * @param lump
+     */
     public static void categoriesBasedInitializer(ArrayList<KeywordVertex> inputKeywords,
                                                   ArrayList<KeywordVertex> keywordVertices,
                                                   int maxIter,

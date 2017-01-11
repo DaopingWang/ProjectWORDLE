@@ -19,7 +19,7 @@ import java.util.ArrayList;
  */
 
 /**
- * The K-Means clustering is a widely used algorithm for data clustering.
+ * The K-Means clustering is a widely used algorithm for data classification.
  * It's approach is quite simple and straight forward:
  * 1. Initialize k cluster centers by picking points from the input data set
  * randomly.
