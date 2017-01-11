@@ -44,7 +44,7 @@ public class Sketch extends PApplet{
     }
 
     public void draw(){
-        background(0);
+        background(255);
         this.wordleRenderer.renderTitle(this.searchW);
         this.wordleRenderer.renderWordCram(clusters.get(counter));
         counter++;

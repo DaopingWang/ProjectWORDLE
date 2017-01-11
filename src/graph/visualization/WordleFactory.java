@@ -99,7 +99,7 @@ public class WordleFactory {
             }
 
             for(int j = (int) newOriginalMembers.get(i); j < bestKClusters.get(i).length; j++){
-                buffer[j].setColor(sketch.color(100));          // set complementary words to a different color.
+                buffer[j].setColor(sketch.color(66,66,66));          // set complementary words to a different color.
                 buffer[j].setSize(20);
             }
             buffer[0].setAngle(0);

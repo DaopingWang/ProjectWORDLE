@@ -16,8 +16,8 @@ import java.util.Scanner;
 import java.util.StringJoiner;
 
 public class Main {
-    //public static final String CACHE_PATH = "C:/Users/wang.daoping/Documents/project_wordle_cache/";
-    public static final String CACHE_PATH = "D:/project_wordle_cache/";
+    public static final String CACHE_PATH = "C:/Users/wang.daoping/Documents/project_wordle_cache/";
+    //public static final String CACHE_PATH = "D:/project_wordle_cache/";
     public static final String RAW_PATH = "C:/Users/wang.daoping/Documents/project_wordle_raw/";
 
     public static final Boolean parseRawFile = false;
@@ -33,7 +33,7 @@ public class Main {
     public static final int CLUSTERING_MODE = 1;
     public static final String TARGET_WORD = null;
 
-    public static final int RENDER_BEST_K_CLUS_ONLY = 3;
+    public static final int RENDER_BEST_K_CLUS_ONLY = -1;
 
     public static final float WORDLE_SKETCH_WIDTH = 1300;
     public static final float WORDLE_SKETCH_HEIGHT = 700;

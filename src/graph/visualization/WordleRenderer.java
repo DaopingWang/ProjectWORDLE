@@ -3,6 +3,7 @@ package graph.visualization;
 import graph.visualization.nudger.CustomSpiralWordNudger;
 import graph.visualization.placer.CustomSwirlWordPlacer;
 import processing.core.PApplet;
+import processing.core.PFont;
 import wordcram.*;
 
 /**
@@ -17,20 +18,22 @@ public class WordleRenderer {
     }
 
     public void renderWordCram(Word[] keywords){
+        PFont adobeSourceSansPro = parent.createFont("SourceSansPro-Regular.ttf", 16);
+
         new WordCram(parent)
                 .fromWords(keywords)
                 //.withColors(parent.color(255), parent.color(255), parent.color(255))
-                .withColor(parent.color(255))
-                .withFont("Copse")
+                .withColor(parent.color(242,28,10))
+                .withFont(adobeSourceSansPro)
                 .includeNumbers()
                 //.angledAt(0f)
                 .maxAttemptsToPlaceWord(Integer.MAX_VALUE)
                 .keepCase()
                 .sizedByRank(3, 50)
-                .withNudger(new PlottingWordNudger(parent, new CustomSpiralWordNudger()))
-                //.withNudger(new CustomSpiralWordNudger())
-                .withPlacer(new PlottingWordPlacer(parent, new CustomSwirlWordPlacer()))
-                //.withPlacer(new CustomSwirlWordPlacer())
+                //.withNudger(new PlottingWordNudger(parent, new CustomSpiralWordNudger()))
+                .withNudger(new CustomSpiralWordNudger())
+                //.withPlacer(new PlottingWordPlacer(parent, new CustomSwirlWordPlacer()))
+                .withPlacer(new CustomSwirlWordPlacer())
                 .drawAll();
     }
 
@@ -39,7 +42,7 @@ public class WordleRenderer {
         Word searchW = new Word("Keyword: " + searchWord, 1f);
         searchW.setAngle(0)
                 .setSize(20)
-                .setColor(parent.color(255))
+                .setColor(parent.color(0))
                 .setPlace(10, 10);
 
         title[0] = searchW;
