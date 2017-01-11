@@ -30,9 +30,9 @@ public class Main {
 
     // 1 for ISODATA, 2 for traditional K-Means
     public static final int CLUSTERING_MODE = 1;
-    public static final String TARGET_WORD = "tape";
+    public static final String TARGET_WORD = null;
 
-    public static final int RENDER_BEST_K_CLUS_ONLY = 4;
+    public static final int RENDER_BEST_K_CLUS_ONLY = -1;
 
     public static final float WORDLE_SKETCH_WIDTH = 1300;
     public static final float WORDLE_SKETCH_HEIGHT = 700;
@@ -111,9 +111,13 @@ public class Main {
 
                     if(TARGET_WORD != null){
                         WordleFactory.renderWordle(GraphFactory.searchKeywords.get(index).clusters, GraphFactory.searchKeywords.get(index).countOriginalMembers, GraphFactory.searchKeywords.get(index).name, WORDLE_SKETCH_WIDTH, WORDLE_SKETCH_HEIGHT, RENDER_BEST_K_CLUS_ONLY, GraphFactory.rootKeywordVertices);
-                        System.out.println("Enter \"exit\" to continue");
-                        Scanner scanner = new Scanner(System.in);
-                        if(scanner.nextLine().equals("exit")) break;
+                        System.out.println("Enter anything to continue");
+                        try {
+                            System.in.read();
+                        } catch (IOException e){
+                            e.printStackTrace();
+                        }
+                        break;
                     }
 
                     System.out.println("\"exit\" terminates the renderer");
@@ -153,9 +157,12 @@ public class Main {
 
                     if(TARGET_WORD != null){
                         WordleFactory.renderWordle(GraphFactory.searchKeywords.get(index).clusters, GraphFactory.searchKeywords.get(index).countOriginalMembers, GraphFactory.searchKeywords.get(index).name, WORDLE_SKETCH_WIDTH, WORDLE_SKETCH_HEIGHT, RENDER_BEST_K_CLUS_ONLY, GraphFactory.rootKeywordVertices);
-                        System.out.println("Enter \"exit\" to continue");
-                        Scanner scanner = new Scanner(System.in);
-                        if(scanner.nextLine().equals("exit")) break;
+                        System.out.println("Enter anything to continue");
+                        try {
+                            System.in.read();
+                        } catch (IOException e){
+                            e.printStackTrace();
+                        }
                         break;
                     }
 
