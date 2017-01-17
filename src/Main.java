@@ -32,7 +32,7 @@ public class Main {
     public static final int CLUSTERING_MODE = 1;
     public static final String TARGET_WORD = null;
 
-    public static final int RENDER_BEST_K_CLUS_ONLY = -1;
+    public static final int RENDER_BEST_K_CLUS_ONLY = 5;
 
     public static final float WORDLE_SKETCH_WIDTH = 1300;
     public static final float WORDLE_SKETCH_HEIGHT = 700;
@@ -40,8 +40,8 @@ public class Main {
     // ISODATA parameters
     public static final int MAX_ITERATION_ISODATA = 1000;
     public static final int MIN_CLUSTER_SIZE = 1;
-    public static final double MIN_INTERCLUSTER_DISTANCE = 0.5;
-    public static final double MAX_STANDARD_DEVIATION = 0.5;
+    public static final double MIN_INTERCLUSTER_DISTANCE = 0.4;
+    public static final double MAX_STANDARD_DEVIATION = 0.3;
     public static final int MAX_PAIR = 1;
     public static final double MAX_ASD = 1;
     public static final int MIN_NUMBER_CLUSTER_ISODATA = 2;

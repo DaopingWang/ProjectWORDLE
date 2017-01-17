@@ -62,9 +62,10 @@ public class DijkstraPathFinder {
                 if(keywordVertices.get(i).distance != Double.MAX_VALUE){
                 startVertex.pathLengthVector.set(i, keywordVertices.get(i).distance); // sparse
                 //startVertex.densePathLengthVector.set(i, keywordVertices.get(i).distance); // dense
-                //keywordVertices.get(i).pathLengthVector.set(Utility.findIndexForName(startVertex.name, keywordVertices), keywordVertices.get(i).distance); // Undirected
+                keywordVertices.get(i).pathLengthVector.set(Utility.findIndexForName(startVertex.name, keywordVertices), keywordVertices.get(i).distance); // Undirected
                 } else if(keywordVertices.get(i).name.equals(startVertex.name)){
                     startVertex.pathLengthVector.set(i, 0);
+                    keywordVertices.get(i).pathLengthVector.set(Utility.findIndexForName(startVertex.name, keywordVertices), 0); // Undirected
                     //startVertex.densePathLengthVector.set(i, 0);
                 }
         }
