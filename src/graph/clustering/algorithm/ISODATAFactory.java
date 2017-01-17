@@ -138,6 +138,7 @@ public class ISODATAFactory {
                 if(iteration == currentCategory.maxIter){
                     Vector<int[]> minClusterPair = CoreFunctions.calculateInterclusterDistances(currentCategory, numClus);
                     mergeClusterPairs(minClusterPair, currentCategory);
+                    CoreFunctions.performKMeans(currentCategory.maxIter, KMeansFactory.MAX_REALLOC_COUNT, i, rootKeywordVertices);
                     continue;
                 }
 

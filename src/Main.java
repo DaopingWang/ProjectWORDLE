@@ -40,10 +40,10 @@ public class Main {
     // ISODATA parameters
     public static final int MAX_ITERATION_ISODATA = 1000;
     public static final int MIN_CLUSTER_SIZE = 1;
-    public static final double MIN_INTERCLUSTER_DISTANCE = 0.15;
-    public static final double MAX_STANDARD_DEVIATION = 0.6;
+    public static final double MIN_INTERCLUSTER_DISTANCE = 0.5;
+    public static final double MAX_STANDARD_DEVIATION = 0.5;
     public static final int MAX_PAIR = 1;
-    public static final double MAX_ASD = 0.5;
+    public static final double MAX_ASD = 1;
     public static final int MIN_NUMBER_CLUSTER_ISODATA = 2;
 
     // Traditional K-Means parameters
