@@ -16,7 +16,7 @@ import java.util.LinkedList;
 
 /**
  * In order to apply the k-means clustering algorithm on our keywords, we need
- * to firstly define a specific vector space for each set of keywords, individually.
+ * to firstly define a specific Euclidean space for each set of keywords, individually.
  * To find out how keywords are chosen as the dimensions / coordinates of
  * these vector spaces, see Initializer.checkMasterQualification() method.
  *

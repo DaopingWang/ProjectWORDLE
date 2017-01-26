@@ -14,27 +14,71 @@ import graph.visualization.WordleFactory;
 import java.io.IOException;
 import java.util.Scanner;
 
+/**
+ * The "console" of this program. In this class, various parameters can be set according to your preferences.
+ */
 public class Main {
+    /**
+     * Local path of the cache files: SubordinatesCSV.csv, ParsedCSV.csv, ProbabilityCSV.csv, Keyword_Graph.csv, Keywords_Artikel.csv, Suchen_example.csv.
+     */
     public static final String CACHE_PATH = "C:/Users/wang.daoping/Documents/project_wordle_cache/";
     //public static final String CACHE_PATH = "D:/project_wordle_cache/";
+
+    /**
+     * Local path of the raw csv files: Keyword_Graph.csv, Keywords_Artikel.csv, Suchen_example.csv.
+     */
     public static final String RAW_PATH = "C:/Users/wang.daoping/Documents/project_wordle_raw/";
 
+    /**
+     * Set to true if you do not have cache files. The program will start parsing from the beginning.
+     */
     public static final Boolean parseRawFile = false;
+
+    /**
+     * Set to true if You have cache files. Note that only one of parseRawFile and readCacheFile can be true.
+     */
     public static final Boolean readCacheFile = true;
+
+    /**
+     * Set to true if you want save the parsing results as cache.
+     */
     public static final Boolean writeCacheFile = false;
 
     // not ready for wordle renderer
     public static final Boolean enableRandomInputGenerator = false;
+    /**
+     * Set to true if you want to look up the assignment probabilities of the keywords.
+     */
     public static final Boolean enableKeywordInspector = false;
+
+    /**
+     * Set to true if you want to render the wordles.
+     */
     public static final Boolean enableWordleRenderer = true;
 
-    // 1 for ISODATA, 2 for traditional K-Means
+    /**
+     * 1 for ISODATA algorithms, 2 for traditional K-means.
+     */
     public static final int CLUSTERING_MODE = 1;
+
+    /**
+     * Enter the name of the particular search query you want to look up. If set to null, all search queries will be clustered.
+     */
     public static final String TARGET_WORD = null;
 
+    /**
+     * Enter the number of clusters that you want each keyword set to be clustered.
+     */
     public static final int RENDER_BEST_K_CLUS_ONLY = 5;
 
+    /**
+     * Width of the panel.
+     */
     public static final float WORDLE_SKETCH_WIDTH = 1300;
+
+    /**
+     * Height of the panel.
+     */
     public static final float WORDLE_SKETCH_HEIGHT = 700;
 
     // ISODATA parameters

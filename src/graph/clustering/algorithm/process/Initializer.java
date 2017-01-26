@@ -13,6 +13,10 @@ import static graph.clustering.algorithm.process.CoreFunctions.categories;
 /**
  * Created by wang.daoping on 07.12.2016.
  */
+
+/**
+ * This is where the K-means++ seeding algorithm is implemented.
+ */
 public class Initializer {
 
     /**
