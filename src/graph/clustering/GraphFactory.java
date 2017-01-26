@@ -3,8 +3,6 @@ package graph.clustering;
 import cern.colt.matrix.impl.SparseDoubleMatrix1D;
 import com.opencsv.CSVReader;
 import com.opencsv.CSVWriter;
-import graph.clustering.vector.DijkstraPathFinder;
-import graph.clustering.vector.GraphParser;
 import graph.clustering.vertex.*;
 
 import java.io.*;

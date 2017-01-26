@@ -126,6 +126,7 @@ public class Main {
 
         switch (CLUSTERING_MODE){
             case 1:
+                System.out.println(Integer.toString(GraphFactory.searchKeywords.size()));
                 for(int i = 0; i < GraphFactory.searchKeywords.size(); i++){
                     if(TARGET_WORD != null){
                         if(!GraphFactory.searchKeywords.get(i).name.equals(TARGET_WORD)) {

@@ -1,4 +1,4 @@
-package graph.clustering.vector;
+package graph.clustering;
 
 import graph.clustering.GraphFactory;
 import graph.clustering.Utility;

@@ -1,4 +1,4 @@
-package graph.clustering.vector;
+package graph.clustering;
 
 import cern.colt.matrix.impl.DenseDoubleMatrix1D;
 import cern.colt.matrix.impl.SparseDoubleMatrix1D;
