@@ -13,7 +13,7 @@ import java.util.ArrayList;
  * Created by wang.daoping on 03.01.2017.
  */
 public class WordleFactory {
-    public static float SKETCH_X = 1300;
+    public static float SKETCH_X = 700;
     public static float SKETCH_Y = 700;
 
     public static void renderWordle(ArrayList<Vertex[]> list,

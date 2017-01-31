@@ -29,7 +29,7 @@ public class GraphParser {
             }
         }
 
-        System.out.println("Start layer computation...");
+        System.out.println("Start layer computation... (no percentage shown)");
         while(!bfsQueue.isEmpty()){
             v = bfsQueue.pollFirst();
             for(int i = 0; i < v.subordinateList.size(); i++){
@@ -49,7 +49,7 @@ public class GraphParser {
         String currentEndVertexName;
         Edge currentEdge;
 
-        System.out.println("Start edges calculations...");
+        System.out.println("Start edges computation... (no percentage shown)");
         for(int i = 0; i < keywordVertices.size(); i++){
             for(int j = 0; j < keywordVertices.get(i).edgeList.size(); j++){
                 currentEndVertexName = keywordVertices.get(i).edgeList.get(j).getTargetVertexName();

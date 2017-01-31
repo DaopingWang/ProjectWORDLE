@@ -19,13 +19,12 @@ import java.util.Scanner;
  */
 public class Main {
     /**
-     * Local path of the cache files: SubordinatesCSV.csv, ParsedCSV.csv, ProbabilityCSV.csv, Keyword_Graph.csv, Keywords_Artikel.csv, Suchen_example.csv.
+     * Local path of the folder that contains the following cache files: SubordinatesCSV.csv, ParsedCSV.csv, ProbabilityCSV.csv, Keyword_Graph.csv, Keywords_Artikel.csv, Suchen_example.csv.
      */
     public static final String CACHE_PATH = "C:/Users/wang.daoping/Documents/project_wordle_cache/";
-    //public static final String CACHE_PATH = "D:/project_wordle_cache/";
 
     /**
-     * Local path of the raw csv files: Keyword_Graph.csv, Keywords_Artikel.csv, Suchen_example.csv.
+     * Local path of the folder that contains the following raw csv files: Keyword_Graph.csv, Keywords_Artikel.csv, Suchen_example.csv.
      */
     public static final String RAW_PATH = "C:/Users/wang.daoping/Documents/project_wordle_raw/";
 
@@ -35,7 +34,7 @@ public class Main {
     public static final Boolean parseRawFile = false;
 
     /**
-     * Set to true if You have cache files. Note that only one of parseRawFile and readCacheFile can be true.
+     * Set to true if you have cache files. Note that only one of parseRawFile and readCacheFile can be true.
      */
     public static final Boolean readCacheFile = true;
 
@@ -49,7 +48,7 @@ public class Main {
     /**
      * Set to true if you want to look up the assignment probabilities of the keywords.
      */
-    public static final Boolean enableKeywordInspector = false;
+    public static final Boolean enableKeywordInspector = true;
 
     /**
      * Set to true if you want to render the wordles.
@@ -67,9 +66,9 @@ public class Main {
     public static final String TARGET_WORD = null;
 
     /**
-     * Enter the number of clusters that you want each keyword set to be clustered.
+     * Enter the number of clusters that you want each keyword set to be clustered. Set to -1 if you want ISODATA to adjust k for you.
      */
-    public static final int RENDER_BEST_K_CLUS_ONLY = 5;
+    public static final int RENDER_BEST_K_CLUS_ONLY = -1;
 
     /**
      * Width of the panel.
@@ -109,6 +108,18 @@ public class Main {
                 System.out.println("RawFileNotFoundError");
                 e.printStackTrace();
                 System.exit(666);
+            }
+            if(writeCacheFile){
+                try {
+                    GraphFactory.createProbabilityCSVFromGraph(CACHE_PATH);
+                    //GraphFactory.createPathLengthMatrixFromGraph(CACHE_PATH);
+                    GraphFactory.createSubordinatesCSVFromGraph(CACHE_PATH);
+                    GraphFactory.createParsedCSVFromGraph(CACHE_PATH);
+                } catch (IOException e){
+                    System.out.println("caching failed");
+                    e.printStackTrace();
+                    System.exit(666);
+                }
             }
         } else if(readCacheFile){
             try {
@@ -243,19 +254,6 @@ public class Main {
                 }
 
                 System.out.println("Enter keyword:");
-            }
-        }
-
-        if(writeCacheFile){
-            try {
-                GraphFactory.createProbabilityCSVFromGraph(CACHE_PATH);
-                //GraphFactory.createPathLengthMatrixFromGraph(CACHE_PATH);
-                GraphFactory.createSubordinatesCSVFromGraph(CACHE_PATH);
-                GraphFactory.createParsedCSVFromGraph(CACHE_PATH);
-            } catch (IOException e){
-                System.out.println("caching failed");
-                e.printStackTrace();
-                System.exit(666);
             }
         }
 
